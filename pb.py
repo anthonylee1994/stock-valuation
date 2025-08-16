@@ -43,15 +43,15 @@ pe_mean = pe_daily.mean()
 pe_std = pe_daily.std(ddof=1)
 
 hist = pd.DataFrame(index=prices.index)
-hist["P/B + 2STD"] = pe_mean[-1] + 2 * pe_std[-1]
-hist["P/B + 1STD"] = pe_mean[-1] + pe_std[-1]
-hist["P/B AVG"] = pe_mean[-1]
-hist["P/B - 1STD"] = pe_mean[-1] - pe_std[-1]
-hist["P/B - 2STD"] = pe_mean[-1] - 2 * pe_std[-1]
+hist["P/B + 2STD"] = (pe_mean.iloc[-1] + 2 * pe_std.iloc[-1]) * nav
+hist["P/B + 1STD"] = (pe_mean.iloc[-1] + pe_std.iloc[-1]) * nav
+hist["P/B AVG"] = pe_mean.iloc[-1] * nav
+hist["P/B - 1STD"] = (pe_mean.iloc[-1] - pe_std.iloc[-1]) * nav
+hist["P/B - 2STD"] = (pe_mean.iloc[-1] - 2 * pe_std.iloc[-1]) * nav
 
 # Create the plot
 plt.figure(figsize=(14, 8))
-plt.plot(prices.index, pe_daily, label="P/B", color="black")
+plt.plot(prices.index, prices, label="Price", color="black")
 plt.plot(
     hist.index, hist["P/B + 2STD"], label="P/B + 2STD", linestyle="--", color="red"
 )
@@ -66,7 +66,7 @@ plt.plot(
     hist.index, hist["P/B - 2STD"], label="P/B - 2STD", linestyle="--", color="purple"
 )
 plt.xlabel("Date")
-plt.ylabel("Price (USD)")
+plt.ylabel("Price")
 plt.title(f"{ticker} Historical P/B")
 plt.legend()
 plt.grid(True)
