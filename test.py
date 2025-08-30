@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class StockValuationModel:
-    """股票估值模型類，封裝EPS獲取、股價獲取和估值分析功能"""
+    """股票估值模型類，封裝財務比率獲取、股價獲取和估值分析功能"""
 
     def __init__(self, api_key: str):
         self.api_key = api_key
@@ -25,12 +25,12 @@ class StockValuationModel:
         self,
         symbol: str,
         pages: int = 2,
-        period: str = "annual",
+        period: str = "FY",
         limit: int = 10,
         min_year: int = 2016,
     ) -> pd.DataFrame:
         """
-        從Financial Modeling Prep獲取多頁財務比率數據
+        從Financial Modeling Prep獲取多頁財務比率數據，並獲取最新的TTM數據
 
         Args:
             symbol: 股票代碼
@@ -40,7 +40,7 @@ class StockValuationModel:
             min_year: 最小年份
 
         Returns:
-            EPS、NAV、SPS數據的DataFrame
+            EPS、NAV、SPS、OCF數據的DataFrame
         """
         dfs = []
         for page in range(pages):
@@ -69,7 +69,7 @@ class StockValuationModel:
 
         if not dfs:
             logger.error("未能獲取任何財務比率數據")
-            return pd.DataFrame(columns=["Year", "EPS", "NAV", "SPS"])
+            return pd.DataFrame(columns=["Year", "EPS", "NAV", "SPS", "OCF"])
 
         # 合併所有頁的數據
         key_metrics_df = pd.concat(dfs, ignore_index=True)
@@ -100,6 +100,51 @@ class StockValuationModel:
         # 過濾年份
         if min_year:
             key_metrics_df = key_metrics_df[key_metrics_df["Year"].dt.year >= min_year]
+
+        # 獲取最新的TTM數據
+        try:
+            ttm_url = f"https://financialmodelingprep.com/stable/ratios-ttm?symbol={symbol}&apikey={self.api_key}"
+            ttm_resp = requests.get(ttm_url, timeout=10)
+            ttm_resp.raise_for_status()
+            ttm_data = ttm_resp.json()
+
+            if ttm_data and len(ttm_data) > 0:
+                ttm_row = ttm_data[0]  # 取第一條TTM數據
+
+                # 創建TTM數據行
+                current_date = pd.Timestamp.now()
+                ttm_df = pd.DataFrame(
+                    [
+                        {
+                            "Year": current_date,
+                            "EPS": ttm_row.get("netIncomePerShareTTM"),
+                            "SPS": ttm_row.get("revenuePerShareTTM"),
+                            "NAV": ttm_row.get("bookValuePerShareTTM"),
+                            "OCF": ttm_row.get("operatingCashFlowPerShareTTM"),
+                        }
+                    ]
+                )
+
+                # 將TTM數據添加到現有數據中
+                key_metrics_df = pd.concat([key_metrics_df, ttm_df], ignore_index=True)
+                key_metrics_df = key_metrics_df.sort_values("Year").reset_index(
+                    drop=True
+                )
+
+                logger.info("成功獲取TTM數據並添加到財務比率數據中")
+                logger.info(f"TTM EPS: {ttm_row.get('netIncomePerShareTTM'):.4f}")
+                logger.info(f"TTM SPS: {ttm_row.get('revenuePerShareTTM'):.4f}")
+                logger.info(f"TTM NAV: {ttm_row.get('bookValuePerShareTTM'):.4f}")
+                logger.info(
+                    f"TTM OCF: {ttm_row.get('operatingCashFlowPerShareTTM'):.4f}"
+                )
+            else:
+                logger.warning("未能獲取TTM數據")
+
+        except requests.exceptions.RequestException as e:
+            logger.error(f"獲取TTM數據時發生錯誤: {e}")
+        except Exception as e:
+            logger.error(f"處理TTM數據時發生錯誤: {e}")
 
         self.key_metrics_df = key_metrics_df
         return key_metrics_df
@@ -149,13 +194,13 @@ class StockValuationModel:
 
     def merge_key_metrics(self) -> pd.DataFrame:
         """
-        合併股價和EPS數據
+        合併股價和財務比率數據
 
         Returns:
             合併後的DataFrame
         """
         if self.key_metrics_df is None or self.price_df is None:
-            logger.error("需要先獲取EPS和股價數據")
+            logger.error("需要先獲取財務比率數據和股價數據")
             return pd.DataFrame()
 
         # 創建股價數據的副本
@@ -189,10 +234,36 @@ class StockValuationModel:
         }
 
         # 為每個交易日分配對應的年度財務數據
-        result_df["EPS"] = result_df.index.map(lambda x: eps_by_year.get(x.year, None))
-        result_df["NAV"] = result_df.index.map(lambda x: nav_by_year.get(x.year, None))
-        result_df["SPS"] = result_df.index.map(lambda x: sps_by_year.get(x.year, None))
-        result_df["OCF"] = result_df.index.map(lambda x: ocf_by_year.get(x.year, None))
+        # 使用更智能的數據分配，優先使用TTM數據（如果可用）
+        for idx, date in enumerate(result_df.index):
+            # 檢查是否有TTM數據（使用當前日期作為標識）
+            current_year = pd.Timestamp.now().year
+            current_month = pd.Timestamp.now().month
+
+            # 如果是最近幾個月的交易，優先使用TTM數據
+            if date.year == current_year and date.month >= current_month - 3:
+                # 嘗試使用TTM數據
+                ttm_data = self.key_metrics_df[
+                    self.key_metrics_df["Year"].dt.year == current_year
+                ]
+                if not ttm_data.empty and len(ttm_data) > 1:  # 有TTM數據
+                    ttm_row = ttm_data.iloc[-1]  # 取最新的TTM數據
+                    result_df.loc[date, "EPS"] = ttm_row["EPS"]
+                    result_df.loc[date, "NAV"] = ttm_row["NAV"]
+                    result_df.loc[date, "SPS"] = ttm_row["SPS"]
+                    result_df.loc[date, "OCF"] = ttm_row["OCF"]
+                else:
+                    # 回退到年度數據
+                    result_df.loc[date, "EPS"] = eps_by_year.get(date.year, None)
+                    result_df.loc[date, "NAV"] = nav_by_year.get(date.year, None)
+                    result_df.loc[date, "SPS"] = sps_by_year.get(date.year, None)
+                    result_df.loc[date, "OCF"] = ocf_by_year.get(date.year, None)
+            else:
+                # 使用年度數據
+                result_df.loc[date, "EPS"] = eps_by_year.get(date.year, None)
+                result_df.loc[date, "NAV"] = nav_by_year.get(date.year, None)
+                result_df.loc[date, "SPS"] = sps_by_year.get(date.year, None)
+                result_df.loc[date, "OCF"] = ocf_by_year.get(date.year, None)
 
         self.merged_df = result_df
         return result_df
@@ -205,7 +276,7 @@ class StockValuationModel:
             包含PE比率和統計指標的DataFrame
         """
         if self.merged_df is None:
-            logger.error("需要先合併EPS和股價數據")
+            logger.error("需要先合併財務比率數據和股價數據")
             return pd.DataFrame()
 
         # 計算市盈率
@@ -657,7 +728,7 @@ class StockValuationModel:
 
 def main():
     """主函數"""
-    SYMBOL = "AMZN"
+    SYMBOL = "BRK-B"
     API_KEY = "e4033a3a64146ef3745733670bf6e0ae"
 
     # 創建估值模型實例
