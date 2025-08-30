@@ -46,7 +46,7 @@ class StockValuationModel:
         for page in range(pages):
             try:
                 url = (
-                    f"https://financialmodelingprep.com/stable/analyst-estimates"
+                    f"https://financialmodelingprep.com/stable/ratios"
                     f"?symbol={symbol}&period={period}&page={page}&limit={limit}&apikey={self.api_key}"
                 )
                 resp = requests.get(url, timeout=10)
@@ -73,8 +73,15 @@ class StockValuationModel:
         eps_df = pd.concat(dfs, ignore_index=True)
 
         # 數據清洗和轉換
-        eps_df = eps_df[["date", "epsAvg"]].rename(
-            columns={"date": "Year", "epsAvg": "EPS"}
+        eps_df = eps_df[
+            ["fiscalYear", "netIncomePerShare", "revenuePerShare", "bookValuePerShare"]
+        ].rename(
+            columns={
+                "fiscalYear": "Year",
+                "netIncomePerShare": "EPS",
+                "revenuePerShare": "SPS",
+                "bookValuePerShare": "NAV",
+            }
         )
         eps_df["Year"] = (
             pd.to_datetime(eps_df["Year"]).dt.to_period("Y").dt.to_timestamp()
@@ -338,7 +345,7 @@ class StockValuationModel:
 
 def main():
     """主函數"""
-    SYMBOL = "NUE"
+    SYMBOL = "MSFT"
     API_KEY = "e4033a3a64146ef3745733670bf6e0ae"
 
     # 創建估值模型實例
