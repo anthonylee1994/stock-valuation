@@ -167,7 +167,7 @@ class StockValuationModel:
             股價數據的DataFrame
         """
         try:
-            # 如果沒有提供日期，使用EPS數據的日期範圍
+            # 如果沒有提供日期，使用財務比率數據的日期範圍
             if start_date is None and self.key_metrics_df is not None:
                 start_date = self.key_metrics_df["Year"].min().strftime("%Y-%m-%d")
 
@@ -728,13 +728,13 @@ class StockValuationModel:
 
 def main():
     """主函數"""
-    SYMBOL = "BRK-B"
+    SYMBOL = "NVDA"
     API_KEY = "e4033a3a64146ef3745733670bf6e0ae"
 
     # 創建估值模型實例
     model = StockValuationModel(API_KEY)
 
-    # 1. 獲取EPS數據
+    # 1. 獲取財務比率數據
     logger.info(f"獲取 {SYMBOL} 的財務比率數據...")
     key_metrics_df = model.fetch_key_metrics(SYMBOL, pages=2, min_year=2016)
     if key_metrics_df.empty:
