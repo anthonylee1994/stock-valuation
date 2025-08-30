@@ -235,7 +235,7 @@ class StockValuationModel:
 
         # 為每個交易日分配對應的年度財務數據
         # 使用更智能的數據分配，優先使用TTM數據（如果可用）
-        for idx, date in enumerate(result_df.index):
+        for _, date in enumerate(result_df.index):
             # 檢查是否有TTM數據（使用當前日期作為標識）
             current_year = pd.Timestamp.now().year
             current_month = pd.Timestamp.now().month
