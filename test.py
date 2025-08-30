@@ -17,7 +17,7 @@ class StockValuationModel:
 
     def __init__(self, api_key: str):
         self.api_key = api_key
-        self.eps_df = None
+        self.key_metrics_df = None
         self.price_df = None
         self.merged_df = None
 
@@ -72,30 +72,37 @@ class StockValuationModel:
             return pd.DataFrame(columns=["Year", "EPS", "NAV", "SPS"])
 
         # 合併所有頁的數據
-        eps_df = pd.concat(dfs, ignore_index=True)
+        key_metrics_df = pd.concat(dfs, ignore_index=True)
 
         # 數據清洗和轉換
-        eps_df = eps_df[
-            ["fiscalYear", "netIncomePerShare", "revenuePerShare", "bookValuePerShare"]
+        key_metrics_df = key_metrics_df[
+            [
+                "fiscalYear",
+                "netIncomePerShare",
+                "revenuePerShare",
+                "bookValuePerShare",
+                "operatingCashFlowPerShare",
+            ]
         ].rename(
             columns={
                 "fiscalYear": "Year",
                 "netIncomePerShare": "EPS",
                 "revenuePerShare": "SPS",
                 "bookValuePerShare": "NAV",
+                "operatingCashFlowPerShare": "OCF",
             }
         )
-        eps_df["Year"] = (
-            pd.to_datetime(eps_df["Year"]).dt.to_period("Y").dt.to_timestamp()
+        key_metrics_df["Year"] = (
+            pd.to_datetime(key_metrics_df["Year"]).dt.to_period("Y").dt.to_timestamp()
         )
-        eps_df = eps_df.sort_values("Year").reset_index(drop=True)
+        key_metrics_df = key_metrics_df.sort_values("Year").reset_index(drop=True)
 
         # 過濾年份
         if min_year:
-            eps_df = eps_df[eps_df["Year"].dt.year >= min_year]
+            key_metrics_df = key_metrics_df[key_metrics_df["Year"].dt.year >= min_year]
 
-        self.eps_df = eps_df
-        return eps_df
+        self.key_metrics_df = key_metrics_df
+        return key_metrics_df
 
     def fetch_stock_prices(
         self,
@@ -116,11 +123,11 @@ class StockValuationModel:
         """
         try:
             # 如果沒有提供日期，使用EPS數據的日期範圍
-            if start_date is None and self.eps_df is not None:
-                start_date = self.eps_df["Year"].min().strftime("%Y-%m-%d")
+            if start_date is None and self.key_metrics_df is not None:
+                start_date = self.key_metrics_df["Year"].min().strftime("%Y-%m-%d")
 
-            if end_date is None and self.eps_df is not None:
-                end_year = self.eps_df["Year"].max().year + 1
+            if end_date is None and self.key_metrics_df is not None:
+                end_year = self.key_metrics_df["Year"].max().year + 1
                 end_date = f"{end_year}-01-01"
 
             ticker = yf.Ticker(symbol)
@@ -147,7 +154,7 @@ class StockValuationModel:
         Returns:
             合併後的DataFrame
         """
-        if self.eps_df is None or self.price_df is None:
+        if self.key_metrics_df is None or self.price_df is None:
             logger.error("需要先獲取EPS和股價數據")
             return pd.DataFrame()
 
@@ -158,21 +165,34 @@ class StockValuationModel:
         # 使用字典提高查找性能
         eps_by_year = {
             year: eps
-            for year, eps in zip(self.eps_df["Year"].dt.year, self.eps_df["EPS"])
+            for year, eps in zip(
+                self.key_metrics_df["Year"].dt.year, self.key_metrics_df["EPS"]
+            )
         }
         nav_by_year = {
             year: nav
-            for year, nav in zip(self.eps_df["Year"].dt.year, self.eps_df["NAV"])
+            for year, nav in zip(
+                self.key_metrics_df["Year"].dt.year, self.key_metrics_df["NAV"]
+            )
         }
         sps_by_year = {
             year: sps
-            for year, sps in zip(self.eps_df["Year"].dt.year, self.eps_df["SPS"])
+            for year, sps in zip(
+                self.key_metrics_df["Year"].dt.year, self.key_metrics_df["SPS"]
+            )
+        }
+        ocf_by_year = {
+            year: ocf
+            for year, ocf in zip(
+                self.key_metrics_df["Year"].dt.year, self.key_metrics_df["OCF"]
+            )
         }
 
         # 為每個交易日分配對應的年度財務數據
         result_df["EPS"] = result_df.index.map(lambda x: eps_by_year.get(x.year, None))
         result_df["NAV"] = result_df.index.map(lambda x: nav_by_year.get(x.year, None))
         result_df["SPS"] = result_df.index.map(lambda x: sps_by_year.get(x.year, None))
+        result_df["OCF"] = result_df.index.map(lambda x: ocf_by_year.get(x.year, None))
 
         self.merged_df = result_df
         return result_df
@@ -279,6 +299,40 @@ class StockValuationModel:
         self.merged_df = merged_df
         return merged_df
 
+    def calculate_pocf_ratios(self) -> pd.DataFrame:
+        """
+        計算P/OCF比率及其統計指標
+
+        Returns:
+            包含P/OCF比率和統計指標的DataFrame
+        """
+        if self.merged_df is None:
+            logger.error("需要先合併EPS和股價數據")
+            return pd.DataFrame()
+
+        # 計算P/OCF比率
+        merged_df = self.merged_df.copy()
+        merged_df["P/OCF"] = merged_df["Price"] / merged_df["OCF"]
+
+        # 計算統計指標
+        pocf_series = merged_df["P/OCF"].dropna()
+        if len(pocf_series) == 0:
+            logger.error("沒有有效的P/OCF數據可供計算")
+            return merged_df
+
+        pocf_mean = pocf_series.mean()
+        pocf_std = pocf_series.std(ddof=1)
+
+        # 添加統計線
+        merged_df["P/OCF + 2STD"] = pocf_mean + 2 * pocf_std
+        merged_df["P/OCF + 1STD"] = pocf_mean + pocf_std
+        merged_df["P/OCF AVG"] = pocf_mean
+        merged_df["P/OCF - 1STD"] = pocf_mean - pocf_std
+        merged_df["P/OCF - 2STD"] = pocf_mean - 2 * pocf_std
+
+        self.merged_df = merged_df
+        return merged_df
+
     def plot_valuation(self, symbol: str) -> plt.Figure:
         """
         繪製估值圖表
@@ -299,6 +353,8 @@ class StockValuationModel:
         available_ratios = []
         if "P/E" in df.columns:
             available_ratios.append("P/E")
+        if "P/OCF" in df.columns:
+            available_ratios.append("P/OCF")
         if "P/B" in df.columns:
             available_ratios.append("P/B")
         if "P/S" in df.columns:
@@ -310,11 +366,16 @@ class StockValuationModel:
 
         # 根據可用的比率數量決定子圖佈局
         num_ratios = len(available_ratios)
-        fig, axes = plt.subplots(num_ratios, 1, figsize=(14, 3 * num_ratios))
-
-        # 如果只有一個子圖，確保axes是列表
-        if num_ratios == 1:
-            axes = [axes]
+        if num_ratios == 4:
+            # 2x2 grid for 4 ratios
+            fig, axes = plt.subplots(2, 2, figsize=(16, 10))
+            axes = axes.flatten()  # Flatten to 1D array for easier iteration
+        else:
+            # Fallback to vertical layout for other numbers
+            fig, axes = plt.subplots(num_ratios, 1, figsize=(14, 3 * num_ratios))
+            # 如果只有一個子圖，確保axes是列表
+            if num_ratios == 1:
+                axes = [axes]
 
         # 繪製各種比率圖表
         for i, ratio in enumerate(available_ratios):
@@ -527,6 +588,41 @@ class StockValuationModel:
                     }
                 )
 
+        # 添加P/OCF比率信息
+        if "P/OCF" in df.columns:
+            current_pocf = df["P/OCF"].iloc[-1] if not df.empty else None
+            current_ocf = df["OCF"].iloc[-1] if not df.empty else None
+
+            report.update(
+                {
+                    "current_ocf": current_ocf,
+                    "current_pocf": current_pocf,
+                }
+            )
+
+            # 計算P/OCF統計指標
+            pocf_series = df["P/OCF"].dropna()
+            if len(pocf_series) > 0:
+                pocf_mean = pocf_series.mean()
+                pocf_std = pocf_series.std()
+                pocf_zscore = (
+                    (current_pocf - pocf_mean) / pocf_std if pocf_std > 0 else 0
+                )
+                pocf_percentile = (
+                    stats.percentileofscore(pocf_series, current_pocf)
+                    if len(pocf_series) > 0
+                    else 0
+                )
+
+                report.update(
+                    {
+                        "historical_pocf_mean": pocf_mean,
+                        "historical_pocf_std": pocf_std,
+                        "pocf_zscore": pocf_zscore,
+                        "pocf_percentile": pocf_percentile,
+                    }
+                )
+
         # 計算綜合估值狀態
         zscores = []
         if "pe_zscore" in report:
@@ -535,6 +631,8 @@ class StockValuationModel:
             zscores.append(report["pb_zscore"])
         if "ps_zscore" in report:
             zscores.append(report["ps_zscore"])
+        if "pocf_zscore" in report:
+            zscores.append(report["pocf_zscore"])
 
         if zscores:
             avg_zscore = sum(zscores) / len(zscores)
@@ -559,7 +657,7 @@ class StockValuationModel:
 
 def main():
     """主函數"""
-    SYMBOL = "JD"
+    SYMBOL = "AMZN"
     API_KEY = "e4033a3a64146ef3745733670bf6e0ae"
 
     # 創建估值模型實例
@@ -591,6 +689,7 @@ def main():
 
     # 計算各種估值比率
     merged_df = model.calculate_pe_ratios()
+    merged_df = model.calculate_pocf_ratios()
     merged_df = model.calculate_pb_ratios()
     merged_df = model.calculate_ps_ratios()
 
