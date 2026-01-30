@@ -3,29 +3,14 @@
     "currency": "USD",
     "stocks": [
         {
-            "symbol": "NVDA",
-            "valuationLow": 193.25,
-            "valuationHigh": 309.2
-        },
-        {
-            "symbol": "GOOG",
-            "valuationLow": 239.2,
-            "valuationHigh": 358.8
-        },
-        {
-            "symbol": "MSFT",
-            "valuationLow": 503.75,
-            "valuationHigh": 705.25
+            "symbol": "AAPL",
+            "valuationLow": 189.52,
+            "valuationHigh": 288.4
         },
         {
             "symbol": "AMZN",
             "valuationLow": 218.88,
             "valuationHigh": 304.0
-        },
-        {
-            "symbol": "TSM",
-            "valuationLow": 254.4,
-            "valuationHigh": 381.6
         },
         {
             "symbol": "AVGO",
@@ -38,14 +23,34 @@
             "valuationHigh": 355.56
         },
         {
+            "symbol": "GOOG",
+            "valuationLow": 239.2,
+            "valuationHigh": 358.8
+        },
+        {
+            "symbol": "HOOD",
+            "valuationLow": 78.75,
+            "valuationHigh": 141.75
+        },
+        {
             "symbol": "META",
             "valuationLow": 534.7,
             "valuationHigh": 802.06
         },
         {
-            "symbol": "AAPL",
-            "valuationLow": 189.52,
-            "valuationHigh": 288.4
+            "symbol": "MSFT",
+            "valuationLow": 503.75,
+            "valuationHigh": 705.25
+        },
+        {
+            "symbol": "NVDA",
+            "valuationLow": 193.25,
+            "valuationHigh": 309.2
+        },
+        {
+            "symbol": "TSM",
+            "valuationLow": 254.4,
+            "valuationHigh": 381.6
         }
     ]
 }
