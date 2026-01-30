@@ -38,8 +38,8 @@ export function StockCard({stock}: StockCardProps) {
     const lowPosition = barRange > 0 ? ((valuationLow - barMin) / barRange) * 100 : 0;
     const highPosition = barRange > 0 ? ((valuationHigh - barMin) / barRange) * 100 : 100;
 
-    const pctFromLow = valuationLow > 0 ? ((currentPrice - valuationLow) / valuationLow) * 100 : 0;
-    const pctFromHigh = valuationHigh > 0 ? ((currentPrice - valuationHigh) / valuationHigh) * 100 : 0;
+    const potentialDownside = currentPrice > 0 ? -1 * ((currentPrice - valuationLow) / currentPrice) * 100 : 0;
+    const potentialUpside = currentPrice > 0 ? ((valuationHigh - currentPrice) / currentPrice) * 100 : 0;
 
     return (
         <article className={`stock-card ${config.borderClass}`}>
@@ -86,8 +86,8 @@ export function StockCard({stock}: StockCardProps) {
             </div>
 
             <div className="stock-meta">
-                <span className="pct-from-low">距估值下限 {formatPercent(pctFromLow)}</span>
-                <span className="pct-from-high">距估值上限 {formatPercent(pctFromHigh)}</span>
+                <span className={`potential-downside ${potentialDownside > 0 ? "positive" : "negative"}`}>距估值底部 {formatPercent(potentialDownside)}</span>
+                <span className={`potential-upside ${potentialUpside > 0 ? "positive" : "negative"}`}>距估值頂部 {formatPercent(potentialUpside)}</span>
             </div>
         </article>
     );

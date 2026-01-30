@@ -141,6 +141,14 @@
     flex-wrap: wrap;
 }
 
+.positive {
+    color: #22c55e;
+}
+
+.negative {
+    color: #ef4444;
+}
+
 @media (max-width: 480px) {
     .stock-prices {
         grid-template-columns: 1fr;
