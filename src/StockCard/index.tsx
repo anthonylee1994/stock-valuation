@@ -1,5 +1,5 @@
-import type {StockWithQuote, ValuationStatus} from "./types";
-import "./StockCard.css";
+import type {StockWithQuote, ValuationStatus} from "../types";
+import "./index.css";
 
 const STATUS_CONFIG: Record<ValuationStatus, {emoji: string; label: string; borderClass: string}> = {
     undervalued: {emoji: "🟢", label: "低估", borderClass: "status-undervalued"},
@@ -27,7 +27,7 @@ interface StockCardProps {
 }
 
 export function StockCard({stock}: StockCardProps) {
-    const {symbol, currentPrice, valuationLow, valuationHigh, change, percentChange} = stock;
+    const {symbol, currentPrice, valuationLow, valuationHigh} = stock;
     const status = getStatus(currentPrice, valuationLow, valuationHigh);
     const config = STATUS_CONFIG[status];
 
@@ -39,6 +39,7 @@ export function StockCard({stock}: StockCardProps) {
     const highPosition = barRange > 0 ? ((valuationHigh - barMin) / barRange) * 100 : 100;
 
     const pctFromLow = valuationLow > 0 ? ((currentPrice - valuationLow) / valuationLow) * 100 : 0;
+    const pctFromHigh = valuationHigh > 0 ? ((currentPrice - valuationHigh) / valuationHigh) * 100 : 0;
 
     return (
         <article className={`stock-card ${config.borderClass}`}>
@@ -85,10 +86,8 @@ export function StockCard({stock}: StockCardProps) {
             </div>
 
             <div className="stock-meta">
-                <span className={`pct-from-low ${pctFromLow >= 0 ? "positive" : "negative"}`}>距估值下限 {formatPercent(pctFromLow)}</span>
-                <span className={`price-change ${change >= 0 ? "positive" : "negative"}`}>
-                    {change >= 0 ? "↑" : "↓"} {formatPercent(percentChange)}
-                </span>
+                <span className="pct-from-low">距估值下限 {formatPercent(pctFromLow)}</span>
+                <span className="pct-from-high">距估值上限 {formatPercent(pctFromHigh)}</span>
             </div>
         </article>
     );
