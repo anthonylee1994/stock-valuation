@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import valuationData from "./valuation.json";
-import { StockCard } from "./StockCard";
-import type { StockWithQuote, Quote, ValuationData as ValuationDataT } from "./types";
-import "./App.css";
+import {StockCard} from "./StockCard";
+import type {StockWithQuote, Quote, ValuationData as ValuationDataT} from "./types";
+import "./app.css";
 
 const API_BASE = "https://stock-prices.kaului.com/quotes";
 
@@ -18,13 +18,10 @@ function formatHKTime(date: Date): string {
     });
 }
 
-function mergeStocksWithQuotes(
-    stocks: ValuationDataT["stocks"],
-    quotes: Quote[]
-): StockWithQuote[] {
-    const quoteMap = new Map(quotes.map((q) => [q.symbol, q]));
+function mergeStocksWithQuotes(stocks: ValuationDataT["stocks"], quotes: Quote[]): StockWithQuote[] {
+    const quoteMap = new Map(quotes.map(q => [q.symbol, q]));
     return stocks
-        .map((stock) => {
+        .map(stock => {
             const quote = quoteMap.get(stock.symbol);
             if (!quote) return null;
             return {
@@ -44,7 +41,7 @@ export function App() {
     const [pulse, setPulse] = useState(false);
 
     const data = valuationData as ValuationDataT;
-    const symbols = data.stocks.map((s) => s.symbol).join(",");
+    const symbols = data.stocks.map(s => s.symbol).join(",");
 
     useEffect(() => {
         let cancelled = false;
@@ -52,10 +49,8 @@ export function App() {
         async function fetchQuotes() {
             setLoading(true);
             try {
-                const res = await fetch(
-                    `${API_BASE}?symbols=${encodeURIComponent(symbols)}`
-                );
-                const json = (await res.json()) as { quotes: Quote[] };
+                const res = await fetch(`${API_BASE}?symbols=${encodeURIComponent(symbols)}`);
+                const json = (await res.json()) as {quotes: Quote[]};
                 if (cancelled) return;
                 const merged = mergeStocksWithQuotes(data.stocks, json.quotes);
                 setStocks(merged);
@@ -81,13 +76,9 @@ export function App() {
     return (
         <div className="app">
             <header className="app-header">
-                <h1 className="app-title">股票估值分析</h1>
+                <h1 className="app-title">估值參考</h1>
                 <div className="app-meta">
-                    {lastUpdate && (
-                        <span className="update-time">
-                            更新時間（香港）: {formatHKTime(lastUpdate)}
-                        </span>
-                    )}
+                    {lastUpdate && <span className="update-time">更新時間（香港）: {formatHKTime(lastUpdate)}</span>}
                     {pulse && <span className="live-pulse" aria-hidden />}
                 </div>
             </header>
@@ -96,7 +87,7 @@ export function App() {
                 <div className="loading">載入中…</div>
             ) : (
                 <main className="card-grid">
-                    {stocks.map((stock) => (
+                    {stocks.map(stock => (
                         <StockCard key={stock.symbol} stock={stock} />
                     ))}
                 </main>
