@@ -4,7 +4,7 @@ import {StockCard} from "./StockCard";
 import type {StockWithQuote, Quote, ValuationData as ValuationDataT} from "./types";
 import "./app.css";
 
-const API_BASE = "https://stock-prices.kaului.com/quotes";
+const API_BASE = "https://stock-prices.on99.app/quotes";
 
 function formatHKTime(date: Date): string {
     return date.toLocaleString("zh-HK", {
