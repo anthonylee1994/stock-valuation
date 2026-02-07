@@ -37,9 +37,24 @@ export function App() {
     const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
     const [loading, setLoading] = useState(true);
     const [pulse, setPulse] = useState(false);
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
     const data = valuationData as ValuationDataT;
     const symbols = data.stocks.map(s => s.symbol).join(",");
+
+    const sortedStocks = [...stocks].sort((a, b) => {
+        // Calculate distance from valuation bottom for each stock
+        const aDistance = a.currentPrice > 0 ? -1 * ((a.currentPrice - a.valuationLow) / a.currentPrice) * 100 : 0;
+        const bDistance = b.currentPrice > 0 ? -1 * ((b.currentPrice - b.valuationLow) / b.currentPrice) * 100 : 0;
+
+        if (sortOrder === "asc") {
+            // Ascending: most negative (furthest from bottom) to least negative (closest to bottom)
+            return aDistance - bDistance;
+        } else {
+            // Descending: least negative (closest to bottom) to most negative (furthest from bottom)
+            return bDistance - aDistance;
+        }
+    });
 
     useEffect(() => {
         let cancelled = false;
@@ -64,7 +79,7 @@ export function App() {
         }
 
         fetchQuotes();
-        const interval = setInterval(fetchQuotes, 60_000);
+        const interval = setInterval(fetchQuotes, 5 * 60 * 1000);
         return () => {
             cancelled = true;
             clearInterval(interval);
@@ -84,11 +99,21 @@ export function App() {
             {loading && stocks.length === 0 ? (
                 <div className="loading">載入中…</div>
             ) : (
-                <main className="card-grid">
-                    {stocks.map(stock => (
-                        <StockCard key={stock.symbol} stock={stock} />
-                    ))}
-                </main>
+                <>
+                    <div className="controls">
+                        <button className={`sort-button ${sortOrder === "desc" ? "active" : ""}`} onClick={() => setSortOrder("desc")}>
+                            由殘到貴
+                        </button>
+                        <button className={`sort-button ${sortOrder === "asc" ? "active" : ""}`} onClick={() => setSortOrder("asc")}>
+                            由貴到殘
+                        </button>
+                    </div>
+                    <main className="card-grid">
+                        {sortedStocks.map(stock => (
+                            <StockCard key={stock.symbol} stock={stock} />
+                        ))}
+                    </main>
+                </>
             )}
         </div>
     );
