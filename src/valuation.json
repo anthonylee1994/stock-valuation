@@ -23,9 +23,24 @@
             "valuationHigh": 355.56
         },
         {
+            "symbol": "CRM",
+            "valuationLow": 215,
+            "valuationHigh": 343.9
+        },
+        {
+            "symbol": "ETN",
+            "valuationLow": 267.2,
+            "valuationHigh": 427.6
+        },
+        {
             "symbol": "GOOG",
             "valuationLow": 239.2,
             "valuationHigh": 358.8
+        },
+        {
+            "symbol": "HON",
+            "valuationLow": 177.1,
+            "valuationHigh": 260.5
         },
         {
             "symbol": "HOOD",
