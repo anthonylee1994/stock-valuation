@@ -18,7 +18,7 @@ export const App = () => {
     const sortedStocks = sortStocks(stocks, sortOrder);
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-200 p-6 max-[640px]:p-4">
+        <div className="min-h-screen text-slate-200 p-6 max-[640px]:p-4">
             <Header lastUpdate={lastUpdate} pulse={pulse} />
 
             {loading && stocks.length === 0 ? (
