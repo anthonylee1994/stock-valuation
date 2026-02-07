@@ -4,6 +4,8 @@ import {StockCard} from "./StockCard";
 import type {StockWithQuote, Quote, ValuationData as ValuationDataT} from "./types";
 import "./app.css";
 
+const API_BASE = "https://stock-prices.on99.app/quotes";
+
 function formatHKTime(date: Date): string {
     return date.toLocaleString("zh-HK", {
         timeZone: "Asia/Hong_Kong",
@@ -47,7 +49,7 @@ export function App() {
         async function fetchQuotes() {
             setLoading(true);
             try {
-                const res = await fetch(`${import.meta.env.VITE_QUOTES_API_KEY}?symbols=${encodeURIComponent(symbols)}`);
+                const res = await fetch(`${API_BASE}?symbols=${encodeURIComponent(symbols)}`);
                 const json = (await res.json()) as {quotes: Quote[]};
                 if (cancelled) return;
                 const merged = mergeStocksWithQuotes(data.stocks, json.quotes);
