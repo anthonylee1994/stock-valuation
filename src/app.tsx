@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import valuationData from "./valuation.json";
 import {Header} from "./components/Header";
 import {SortButtonGroup} from "./components/SortButtonGroup";
@@ -8,14 +8,23 @@ import {useStockQuotes} from "./hooks/useStockQuotes";
 import {sortStocks} from "./utils/sortStocks";
 import type {ValuationData} from "./types";
 
+const SORT_ORDER_KEY = "stock-valuation-sort-order";
+
 export const App = () => {
-    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">(() => {
+        const saved = localStorage.getItem(SORT_ORDER_KEY);
+        return saved === "asc" || saved === "desc" ? saved : "asc";
+    });
 
     const data = valuationData as ValuationData;
     const symbols = data.stocks.map(s => s.symbol).join(",");
 
     const {data: stocks, lastUpdate, loading, pulse} = useStockQuotes(symbols, data.stocks);
     const sortedStocks = sortStocks(stocks, sortOrder);
+
+    useEffect(() => {
+        localStorage.setItem(SORT_ORDER_KEY, sortOrder);
+    }, [sortOrder]);
 
     return (
         <div className="min-h-screen text-slate-200 p-6 max-[640px]:p-4">
