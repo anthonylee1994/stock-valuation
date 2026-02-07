@@ -3,18 +3,6 @@ interface Props {
     pulse: boolean;
 }
 
-const formatHKTime = (date: Date): string => {
-    return date.toLocaleString("zh-HK", {
-        timeZone: "Asia/Hong_Kong",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-    });
-};
-
 export const Header = ({lastUpdate, pulse}: Props) => {
     return (
         <header className="flex flex-wrap items-center justify-between gap-3 max-w-[1400px] mx-auto mb-6">
@@ -25,4 +13,16 @@ export const Header = ({lastUpdate, pulse}: Props) => {
             </div>
         </header>
     );
+};
+
+const formatHKTime = (date: Date): string => {
+    return date.toLocaleString("zh-HK", {
+        timeZone: "Asia/Hong_Kong",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+    });
 };
