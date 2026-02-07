@@ -1,4 +1,4 @@
-import type {StockWithQuote, ValuationStatus} from "./types";
+import type {StockWithQuote, ValuationStatus} from "../types";
 
 const STATUS_CONFIG: Record<ValuationStatus, {emoji: string; label: string; borderColor: string; shadowColor: string}> = {
     undervalued: {emoji: "🟢", label: "低估", borderColor: "border-green-500", shadowColor: "shadow-green-500/15"},
@@ -6,26 +6,26 @@ const STATUS_CONFIG: Record<ValuationStatus, {emoji: string; label: string; bord
     overvalued: {emoji: "🔴", label: "高估", borderColor: "border-red-500", shadowColor: "shadow-red-500/15"},
 };
 
-function getStatus(currentPrice: number, low: number, high: number): ValuationStatus {
+const getStatus = (currentPrice: number, low: number, high: number): ValuationStatus => {
     if (currentPrice < low) return "undervalued";
     if (currentPrice > high) return "overvalued";
     return "fair";
-}
+};
 
-function formatPrice(value: number): string {
+const formatPrice = (value: number): string => {
     return "$" + value.toFixed(2);
-}
+};
 
-function formatPercent(value: number): string {
+const formatPercent = (value: number): string => {
     const sign = value >= 0 ? "+" : "";
     return sign + value.toFixed(2) + "%";
-}
+};
 
-interface StockCardProps {
+interface Props {
     stock: StockWithQuote;
 }
 
-export function StockCard({stock}: StockCardProps) {
+export const StockCard = ({stock}: Props) => {
     const {symbol, currentPrice, valuationLow, valuationHigh} = stock;
     const status = getStatus(currentPrice, valuationLow, valuationHigh);
     const config = STATUS_CONFIG[status];
@@ -96,4 +96,4 @@ export function StockCard({stock}: StockCardProps) {
             </div>
         </article>
     );
-}
+};
