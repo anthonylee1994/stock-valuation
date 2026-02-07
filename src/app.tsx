@@ -2,7 +2,6 @@ import {useEffect, useState} from "react";
 import valuationData from "./valuation.json";
 import {StockCard} from "./StockCard";
 import type {StockWithQuote, Quote, ValuationData as ValuationDataT} from "./types";
-import "./app.css";
 
 function formatHKTime(date: Date): string {
     return date.toLocaleString("zh-HK", {
@@ -37,22 +36,19 @@ export function App() {
     const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
     const [loading, setLoading] = useState(true);
     const [pulse, setPulse] = useState(false);
-    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
     const data = valuationData as ValuationDataT;
     const symbols = data.stocks.map(s => s.symbol).join(",");
 
     const sortedStocks = [...stocks].sort((a, b) => {
-        // Calculate distance from valuation bottom for each stock
         const aDistance = a.currentPrice > 0 ? -1 * ((a.currentPrice - a.valuationLow) / a.currentPrice) * 100 : 0;
         const bDistance = b.currentPrice > 0 ? -1 * ((b.currentPrice - b.valuationLow) / b.currentPrice) * 100 : 0;
 
         if (sortOrder === "asc") {
-            // Ascending: most negative (furthest from bottom) to least negative (closest to bottom)
-            return aDistance - bDistance;
-        } else {
-            // Descending: least negative (closest to bottom) to most negative (furthest from bottom)
             return bDistance - aDistance;
+        } else {
+            return aDistance - bDistance;
         }
     });
 
@@ -87,28 +83,38 @@ export function App() {
     }, [symbols]);
 
     return (
-        <div className="app">
-            <header className="app-header">
-                <h1 className="app-title">估值參考</h1>
-                <div className="app-meta">
-                    {lastUpdate && <span className="update-time">更新時間（香港）: {formatHKTime(lastUpdate)}</span>}
-                    {pulse && <span className="live-pulse" aria-hidden />}
+        <div className="min-h-screen bg-slate-950 text-slate-200 p-6 max-[640px]:p-4">
+            <header className="flex flex-wrap items-center justify-between gap-3 max-w-[1400px] mx-auto mb-6">
+                <h1 className="m-0 text-[1.75rem] font-bold text-slate-50 tracking-wide max-[640px]:text-[1.35rem]">估值參考</h1>
+                <div className="flex items-center gap-2">
+                    {lastUpdate && <span className="text-[0.8rem] text-slate-400">更新時間（香港）: {formatHKTime(lastUpdate)}</span>}
+                    {pulse && <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" aria-hidden />}
                 </div>
             </header>
 
             {loading && stocks.length === 0 ? (
-                <div className="loading">載入中…</div>
+                <div className="text-center py-12 text-slate-400 text-base">載入中…</div>
             ) : (
                 <>
-                    <div className="controls">
-                        <button className={`sort-button ${sortOrder === "desc" ? "active" : ""}`} onClick={() => setSortOrder("desc")}>
-                            由殘到貴
+                    <div className="max-w-[1400px] mx-auto mb-6 flex gap-3 flex-wrap">
+                        <button
+                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                                sortOrder === "asc" ? "bg-blue-600 border-blue-600 text-white" : "bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700 hover:border-slate-600"
+                            } border`}
+                            onClick={() => setSortOrder("asc")}
+                        >
+                            由殘到貴 ↑
                         </button>
-                        <button className={`sort-button ${sortOrder === "asc" ? "active" : ""}`} onClick={() => setSortOrder("asc")}>
-                            由貴到殘
+                        <button
+                            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                                sortOrder === "desc" ? "bg-blue-600 border-blue-600 text-white" : "bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700 hover:border-slate-600"
+                            } border`}
+                            onClick={() => setSortOrder("desc")}
+                        >
+                            由貴到殘 ↓
                         </button>
                     </div>
-                    <main className="card-grid">
+                    <main className="grid grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-5 max-w-[1400px] mx-auto max-[640px]:grid-cols-1 max-[640px]:gap-4">
                         {sortedStocks.map(stock => (
                             <StockCard key={stock.symbol} stock={stock} />
                         ))}
