@@ -42,7 +42,7 @@ export const StockCard = ({stock}: Props) => {
 
     return (
         <article
-            className={`bg-gradient-to-br from-slate-800 to-slate-950 rounded-xl p-5 shadow-[0_4px_20px_rgba(0,0,0,0.4)] border-2 ${config.borderColor} ${config.shadowColor} transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_8px_28px_rgba(0,0,0,0.5)]`}
+            className={`bg-gradient-to-br from-slate-800 to-slate-950 rounded-xl p-5 shadow-[0_4px_20px_rgba(0,0,0,0.4)] border-2 ${config.borderColor} ${config.shadowColor} transition-all duration-500`}
         >
             <header className="flex items-center justify-between mb-4">
                 <h2 className="m-0 text-2xl font-bold text-slate-100 tracking-wide max-[480px]:text-xl">{symbol}</h2>
