@@ -68,9 +68,9 @@ export const StockCard = ({stock}: Props) => {
                     </div>
                 </div>
 
-                <div className="relative h-7 mb-10 rounded-full overflow-hidden">
+                <div className="relative h-7 mb-10 rounded-full overflow-visible">
                     {/* Three colored sections that transition their widths */}
-                    <div className="absolute inset-0 flex">
+                    <div className="absolute inset-0 flex rounded-full overflow-hidden">
                         {/* Green section (undervalued) */}
                         <div className="h-full bg-[#00c755] transition-all duration-500 ease-in-out" style={{width: `${lowPosition}%`}} />
                         {/* Yellow section (fair value range) */}
