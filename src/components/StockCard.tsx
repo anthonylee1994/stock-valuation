@@ -1,4 +1,5 @@
 import {Card, Chip} from "@heroui/react";
+import {useEffect, useRef, useState} from "react";
 import type {StockWithQuote, ValuationStatus} from "../types";
 
 const STATUS_CONFIG: Record<ValuationStatus, {emoji: string; label: string; color: "success" | "warning" | "danger"}> = {
@@ -27,19 +28,57 @@ interface Props {
 }
 
 export const StockCard = ({stock}: Props) => {
-    const {symbol, currentPrice, valuationLow, valuationHigh} = stock;
-    const status = getStatus(currentPrice, valuationLow, valuationHigh);
+    const {
+        symbol,
+        currentPrice,
+        preMarketPrice,
+        change: currentChange,
+        percentChange: currentPercentChange,
+        preMarketChange,
+        preMarketChangePercent,
+        postMarketChange,
+        postMarketChangePercent,
+        postMarketPrice,
+        valuationLow,
+        valuationHigh,
+    } = stock;
+    const price = typeof preMarketPrice !== "undefined" ? preMarketPrice : typeof postMarketPrice !== "undefined" ? postMarketPrice : currentPrice;
+    const change = typeof preMarketChange !== "undefined" ? preMarketChange : typeof postMarketChange !== "undefined" ? postMarketChange : currentChange;
+    const percentChange = typeof preMarketChangePercent !== "undefined" ? preMarketChangePercent : typeof postMarketChangePercent !== "undefined" ? postMarketChangePercent : currentPercentChange;
+    const status = getStatus(price, valuationLow, valuationHigh);
     const config = STATUS_CONFIG[status];
 
-    const barMin = Math.min(valuationLow, currentPrice) * 0.9;
-    const barMax = Math.max(valuationHigh, currentPrice) * 1.1;
+    // Price flash animation state
+    const prevPriceRef = useRef<number>(price);
+    const [flashClass, setFlashClass] = useState<string>("");
+
+    useEffect(() => {
+        const prevPrice = prevPriceRef.current;
+
+        if (prevPrice !== price) {
+            // Determine flash color based on price direction
+            const isIncrease = price > prevPrice;
+            setFlashClass(isIncrease ? "flash-green" : "flash-red");
+
+            // Remove flash class after animation completes
+            const timer = setTimeout(() => setFlashClass(""), 600);
+
+            // Update previous price
+            prevPriceRef.current = price;
+
+            return () => clearTimeout(timer);
+        }
+    }, [price]);
+
+    const barMin = Math.min(valuationLow, price) * 0.9;
+    const barMax = Math.max(valuationHigh, price) * 1.1;
     const barRange = barMax - barMin;
-    const markerPosition = barRange > 0 ? ((currentPrice - barMin) / barRange) * 100 : 50;
+    const markerPosition = barRange > 0 ? ((price - barMin) / barRange) * 100 : 50;
     const lowPosition = barRange > 0 ? ((valuationLow - barMin) / barRange) * 100 : 0;
     const highPosition = barRange > 0 ? ((valuationHigh - barMin) / barRange) * 100 : 100;
 
-    const potentialDownside = currentPrice > 0 ? -1 * ((currentPrice - valuationLow) / currentPrice) * 100 : 0;
-    const potentialUpside = currentPrice > 0 ? ((valuationHigh - currentPrice) / currentPrice) * 100 : 0;
+    const potentialDownside = price > 0 ? -1 * ((price - valuationLow) / price) * 100 : 0;
+    const potentialUpside = price > 0 ? ((valuationHigh - price) / price) * 100 : 0;
 
     const borderClass = status === "undervalued" ? "border-green-500 shadow-green-500/15" : status === "overvalued" ? "border-red-500 shadow-red-500/15" : "border-yellow-500 shadow-yellow-500/15";
 
@@ -53,10 +92,15 @@ export const StockCard = ({stock}: Props) => {
             </Card.Header>
 
             <Card.Content>
-                <div className="grid grid-cols-3 gap-3 mb-5">
-                    <div className="bg-slate-950/60 rounded-lg px-3 py-2 text-center">
+                <div className="grid grid-cols-2 gap-3 mb-5">
+                    <div className={`col-span-2 bg-slate-950/60 rounded-lg px-3 py-2 text-center transition-all duration-150 ${flashClass}`}>
                         <span className="block text-[0.7rem] text-slate-400 uppercase tracking-wider">現價</span>
-                        <span className="block text-[0.95rem] font-semibold text-slate-200 mt-1">{formatPrice(currentPrice)}</span>
+                        <div className="mt-1 flex items-center justify-center flex-col">
+                            <div className="text-[1.5rem] font-semibold text-slate-200">{formatPrice(price)}</div>
+                            <div className={`text-[1rem] font-medium ${change > 0 ? "text-green-400" : change < 0 ? "text-red-400" : "text-slate-400"}`}>
+                                {formatPrice(change)} ({formatPercent(percentChange)})
+                            </div>
+                        </div>
                     </div>
                     <div className="bg-slate-950/60 rounded-lg px-3 py-2 text-center">
                         <span className="block text-[0.7rem] text-slate-400 uppercase tracking-wider">估值下限</span>

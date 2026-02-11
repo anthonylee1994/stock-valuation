@@ -9,9 +9,7 @@ const mergeStocksWithQuotes = (stocks: ValuationData["stocks"], quotes: Quote[])
             if (!quote) return null;
             return {
                 ...stock,
-                currentPrice: quote.currentPrice,
-                change: quote.change,
-                percentChange: quote.percentChange,
+                ...quote,
             };
         })
         .filter((s): s is StockWithQuote => s !== null);
@@ -46,7 +44,7 @@ export const useStockQuotes = (symbols: string, stocks: ValuationData["stocks"])
         };
 
         fetchQuotes();
-        const interval = setInterval(fetchQuotes, 5 * 60 * 1000);
+        const interval = setInterval(fetchQuotes, 10_000);
         return () => {
             cancelled = true;
             clearInterval(interval);

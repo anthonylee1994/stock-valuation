@@ -16,12 +16,16 @@ export interface Quote {
     change: number;
     percentChange: number;
     previousClosePrice: number;
+    preMarketPrice?: number;
+    preMarketChange?: number;
+    preMarketTime?: string;
+    preMarketChangePercent?: number;
+    postMarketPrice?: number;
+    postMarketChange?: number;
+    postMarketChangePercent?: number;
+    postMarketTime?: string;
 }
 
-export interface StockWithQuote extends ValuationStock {
-    currentPrice: number;
-    change: number;
-    percentChange: number;
-}
+export type StockWithQuote = ValuationStock & Quote;
 
 export type ValuationStatus = "undervalued" | "fair" | "overvalued";
