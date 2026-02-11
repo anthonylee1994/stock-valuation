@@ -96,7 +96,11 @@ export const StockCard = ({stock}: Props) => {
                     <div className={`col-span-2 bg-slate-950/60 rounded-lg px-3 py-2 text-center transition-all duration-150 border-2 border-transparent ${flashClass}`}>
                         <span className="block text-[0.7rem] text-slate-400 uppercase tracking-wider">現價</span>
                         <div className="mt-1 flex items-center justify-center flex-col">
-                            <div className="text-[1.5rem] font-semibold text-slate-200">{formatPrice(price)}</div>
+                            <div className="flex items-center gap-2">
+                                {change > 0 && <span className="text-green-400 text-[1.2rem]">▲</span>}
+                                {change < 0 && <span className="text-red-400 text-[1.2rem]">▼</span>}
+                                <div className={`text-[1.5rem] font-semibold ${change > 0 ? "text-green-400" : change < 0 ? "text-red-400" : "text-slate-400"}`}>{formatPrice(price)}</div>
+                            </div>
                             <div className={`text-[1rem] font-medium ${change > 0 ? "text-green-400" : change < 0 ? "text-red-400" : "text-slate-400"}`}>
                                 {formatPrice(change)} ({formatPercent(percentChange)})
                             </div>
