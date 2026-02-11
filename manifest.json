@@ -1,0 +1,22 @@
+{
+    "name": "估值參考",
+    "short_name": "估值參考",
+    "description": "股票估值參考工具",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0f172a",
+    "theme_color": "#0f172a",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["finance", "business"],
+    "lang": "zh-Hant",
+    "dir": "ltr",
+    "scope": "/"
+}
