@@ -1,3 +1,5 @@
+import {ButtonGroup, Button} from "@heroui/react";
+
 interface Props {
     sortOrder: "asc" | "desc";
     onSortOrderChange: (order: "asc" | "desc") => void;
@@ -6,22 +8,14 @@ interface Props {
 export const SortButtonGroup = ({sortOrder, onSortOrderChange}: Props) => {
     return (
         <div className="max-w-[1400px] mx-auto mb-6 max-[640px]:text-center">
-            <div className="inline-flex rounded-md border border-slate-700 overflow-hidden">
-                <button
-                    className={`px-4 py-2 text-sm font-medium transition-all ${sortOrder === "asc" ? "bg-[#2ead5a] text-white" : "bg-slate-800 text-slate-300 hover:bg-slate-700"}`}
-                    onClick={() => onSortOrderChange("asc")}
-                >
+            <ButtonGroup>
+                <Button className={sortOrder === "asc" ? "bg-green-500/80" : "bg-transparent"} variant={sortOrder === "asc" ? "primary" : "outline"} onPress={() => onSortOrderChange("asc")}>
                     由殘到貴 ↑
-                </button>
-                <button
-                    className={`px-4 py-2 text-sm font-medium transition-all border-l border-slate-700 ${
-                        sortOrder === "desc" ? "bg-[#cb4745] text-white" : "bg-slate-800 text-slate-300 hover:bg-slate-700"
-                    }`}
-                    onClick={() => onSortOrderChange("desc")}
-                >
+                </Button>
+                <Button className={sortOrder === "desc" ? "bg-red-500/80" : "bg-transparent"} variant={sortOrder === "desc" ? "primary" : "outline"} onPress={() => onSortOrderChange("desc")}>
                     由貴到殘 ↓
-                </button>
-            </div>
+                </Button>
+            </ButtonGroup>
         </div>
     );
 };
