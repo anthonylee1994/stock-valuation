@@ -1,12 +1,11 @@
 import React, {useState, useEffect} from "react";
-import valuationData from "./valuation.json";
 import {Header} from "./components/Header";
 import {SortButtonGroup} from "./components/SortButtonGroup";
 import {StockGrid} from "./components/StockGrid";
 import {LoadingSpinner} from "./components/LoadingSpinner";
 import {useStockQuotes} from "./hooks/useStockQuotes";
 import {sortStocks} from "./utils/sortStocks";
-import type {ValuationData} from "./types";
+import {valuationData} from "./valuation";
 
 const SORT_ORDER_KEY = "stock-valuation-sort-order";
 
@@ -16,7 +15,7 @@ export const App = () => {
         return saved === "asc" || saved === "desc" ? saved : "asc";
     });
 
-    const data = valuationData as ValuationData;
+    const data = valuationData;
     const symbols = data.stocks.map(s => s.symbol).join(",");
 
     const {data: stocks, lastUpdate, loading, pulse} = useStockQuotes(symbols, data.stocks);

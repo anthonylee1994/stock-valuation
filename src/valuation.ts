@@ -1,0 +1,73 @@
+import type {ValuationData} from "./types";
+
+export const valuationData: ValuationData = {
+    lastUpdated: "2026-01-30",
+    currency: "USD",
+    stocks: [
+        {
+            symbol: "AAPL",
+            valuationLow: 189.52,
+            valuationHigh: 288.4,
+        },
+        {
+            symbol: "AMZN",
+            valuationLow: 218.88,
+            valuationHigh: 304.0,
+        },
+        {
+            symbol: "AVGO",
+            valuationLow: 250.0,
+            valuationHigh: 400.0,
+        },
+        {
+            symbol: "COIN",
+            valuationLow: 172.8,
+            valuationHigh: 345.6,
+        },
+        {
+            symbol: "CRM",
+            valuationLow: 215,
+            valuationHigh: 343.9,
+        },
+        {
+            symbol: "ETN",
+            valuationLow: 267.2,
+            valuationHigh: 427.6,
+        },
+        {
+            symbol: "GOOG",
+            valuationLow: 239.2,
+            valuationHigh: 358.8,
+        },
+        {
+            symbol: "HON",
+            valuationLow: 177.1,
+            valuationHigh: 260.5,
+        },
+        {
+            symbol: "HOOD",
+            valuationLow: 78.75,
+            valuationHigh: 141.75,
+        },
+        {
+            symbol: "META",
+            valuationLow: 534.7,
+            valuationHigh: 802.06,
+        },
+        {
+            symbol: "MSFT",
+            valuationLow: 503.75,
+            valuationHigh: 705.25,
+        },
+        {
+            symbol: "NVDA",
+            valuationLow: 193.25,
+            valuationHigh: 309.2,
+        },
+        {
+            symbol: "TSM",
+            valuationLow: 254.4,
+            valuationHigh: 381.6,
+        },
+    ],
+};
