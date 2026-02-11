@@ -68,17 +68,17 @@ export const StockCard = ({stock}: Props) => {
                     </div>
                 </div>
 
-                <div className="relative h-7 mb-10 rounded-md overflow-visible">
+                <div className="relative h-7 mb-10 rounded-full overflow-visible">
                     <div
-                        className="absolute inset-0 rounded-md opacity-85 transition-all duration-500"
+                        className="absolute inset-0 rounded-full transition-all duration-500"
                         style={{
                             background: `linear-gradient(to right,
-                            #22c55e 0%,
-                            #22c55e ${lowPosition}%,
-                            #eab308 ${lowPosition}%,
-                            #eab308 ${highPosition}%,
-                            #ef4444 ${highPosition}%,
-                            #ef4444 100%)`,
+                            #00c755 0%,
+                            #00c755 ${lowPosition}%,
+                            #e9b500 ${lowPosition}%,
+                            #e9b500 ${highPosition}%,
+                            #f73232 ${highPosition}%,
+                            #f73232 100%)`,
                         }}
                     />
                     <div
