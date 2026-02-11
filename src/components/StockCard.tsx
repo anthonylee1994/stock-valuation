@@ -135,7 +135,7 @@ export const StockCard = ({stock}: Props) => {
                     {/* Arrow and price label */}
                     <div className="absolute top-full translate-y-1 -translate-x-1/2 flex flex-col items-center gap-0 transition-all duration-500 z-[3]" style={{left: `${markerPosition}%`}}>
                         <span className="text-[0.65rem] text-white [text-shadow:0_0_8px_rgba(255,255,255,0.9)]">▼</span>
-                        <span className="text-xs font-semibold text-slate-100 whitespace-nowrap">{formatPrice(currentPrice)}</span>
+                        <span className="text-xs font-semibold text-slate-100 whitespace-nowrap">{formatPrice(price)}</span>
                     </div>
                 </div>
 
