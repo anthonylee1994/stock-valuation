@@ -53,7 +53,7 @@ export const StockCard = ({stock}: Props) => {
             </Card.Header>
 
             <Card.Content>
-                <div className="grid grid-cols-3 gap-3 mb-5 max-[480px]:grid-cols-1">
+                <div className="grid grid-cols-3 gap-3 mb-5">
                     <div className="bg-slate-950/60 rounded-lg px-3 py-2 text-center">
                         <span className="block text-[0.7rem] text-slate-400 uppercase tracking-wider">現價</span>
                         <span className="block text-[0.95rem] font-semibold text-slate-200 mt-1">{formatPrice(currentPrice)}</span>
