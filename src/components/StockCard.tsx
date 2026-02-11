@@ -44,7 +44,7 @@ export const StockCard = ({stock}: Props) => {
     const borderClass = status === "undervalued" ? "border-green-500 shadow-green-500/15" : status === "overvalued" ? "border-red-500 shadow-red-500/15" : "border-yellow-500 shadow-yellow-500/15";
 
     return (
-        <Card className={`bg-gradient-to-br from-slate-800 to-slate-950 border-2 shadow-[0_4px_20px_rgba(0,0,0,0.4)] ${borderClass}`}>
+        <Card className={`bg-gradient-to-br from-slate-800 to-slate-950 border-2 shadow-[0_4px_20px_rgba(0,0,0,0.4)] transition-all duration-500 ${borderClass}`}>
             <Card.Header className="flex flex-row items-center justify-between">
                 <h2 className="m-0 text-2xl font-bold text-slate-100 tracking-wide max-[480px]:text-xl">{symbol}</h2>
                 <Chip color={config.color} variant="soft" size="sm">
@@ -93,8 +93,8 @@ export const StockCard = ({stock}: Props) => {
                 </div>
 
                 <div className="flex justify-between items-center text-[0.8rem] gap-2 flex-wrap">
-                    <span className={potentialDownside > 0 ? "text-green-500" : "text-red-500"}>距估值底部 {formatPercent(potentialDownside)}</span>
-                    <span className={potentialUpside > 0 ? "text-green-500" : "text-red-500"}>距估值頂部 {formatPercent(potentialUpside)}</span>
+                    <span className={`transition-colors duration-300 ${potentialDownside > 0 ? "text-green-500" : "text-red-500"}`}>距估值底部 {formatPercent(potentialDownside)}</span>
+                    <span className={`transition-colors duration-300 ${potentialUpside > 0 ? "text-green-500" : "text-red-500"}`}>距估值頂部 {formatPercent(potentialUpside)}</span>
                 </div>
             </Card.Content>
         </Card>
