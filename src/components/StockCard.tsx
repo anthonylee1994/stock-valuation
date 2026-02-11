@@ -93,7 +93,7 @@ export const StockCard = ({stock}: Props) => {
 
             <Card.Content>
                 <div className="grid grid-cols-2 gap-3 mb-5">
-                    <div className={`col-span-2 bg-slate-950/60 rounded-lg px-3 py-2 text-center transition-all duration-150 ${flashClass}`}>
+                    <div className={`col-span-2 bg-slate-950/60 rounded-lg px-3 py-2 text-center transition-all duration-150 border-2 border-transparent ${flashClass}`}>
                         <span className="block text-[0.7rem] text-slate-400 uppercase tracking-wider">現價</span>
                         <div className="mt-1 flex items-center justify-center flex-col">
                             <div className="text-[1.5rem] font-semibold text-slate-200">{formatPrice(price)}</div>
