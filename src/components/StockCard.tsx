@@ -51,6 +51,8 @@ export const StockCard = ({stock}: Props) => {
     // Price flash animation state
     const prevPriceRef = useRef<number>(price);
     const [flashClass, setFlashClass] = useState<string>("");
+    const [showArrow, setShowArrow] = useState<boolean>(false);
+    const [arrowDirection, setArrowDirection] = useState<"up" | "down" | null>(null);
 
     useEffect(() => {
         const prevPrice = prevPriceRef.current;
@@ -59,14 +61,25 @@ export const StockCard = ({stock}: Props) => {
             // Determine flash color based on price direction
             const isIncrease = price > prevPrice;
             setFlashClass(isIncrease ? "flash-green" : "flash-red");
+            setArrowDirection(isIncrease ? "up" : "down");
+            setShowArrow(true);
 
             // Remove flash class after animation completes
-            const timer = setTimeout(() => setFlashClass(""), 600);
+            const flashTimer = setTimeout(() => setFlashClass(""), 600);
+
+            // Remove arrow after fade animation completes
+            const arrowTimer = setTimeout(() => {
+                setShowArrow(false);
+                setArrowDirection(null);
+            }, 2000);
 
             // Update previous price
             prevPriceRef.current = price;
 
-            return () => clearTimeout(timer);
+            return () => {
+                clearTimeout(flashTimer);
+                clearTimeout(arrowTimer);
+            };
         }
     }, [price]);
 
@@ -96,10 +109,9 @@ export const StockCard = ({stock}: Props) => {
                     <div className={`col-span-2 bg-slate-950/60 rounded-lg px-3 py-2 text-center transition-all duration-150 border-2 border-transparent ${flashClass}`}>
                         <span className="block text-[0.7rem] text-slate-400 uppercase tracking-wider">現價</span>
                         <div className="mt-1 flex items-center justify-center flex-col">
-                            <div className="flex items-center gap-2">
-                                {change > 0 && <span className="text-green-400 text-[1.2rem]">▲</span>}
-                                {change < 0 && <span className="text-red-400 text-[1.2rem]">▼</span>}
-                                {change === 0 && <span className="text-slate-400 text-[1.2rem]">—</span>}
+                            <div className="relative inline-block">
+                                {showArrow && arrowDirection === "up" && <span className="absolute right-full mr-1 top-0 text-green-400 text-[1.5rem] arrow-fade-up pointer-events-none">▲</span>}
+                                {showArrow && arrowDirection === "down" && <span className="absolute right-full mr-1 top-0 text-red-400 text-[1.5rem] arrow-fade-down pointer-events-none">▼</span>}
                                 <div className={`text-[1.5rem] font-semibold ${change > 0 ? "text-green-400" : change < 0 ? "text-red-400" : "text-slate-400"}`}>{formatPrice(price)}</div>
                             </div>
                             <div className={`text-[1rem] font-medium ${change > 0 ? "text-green-400" : change < 0 ? "text-red-400" : "text-slate-400"}`}>
