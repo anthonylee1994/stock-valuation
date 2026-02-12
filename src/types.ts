@@ -24,6 +24,9 @@ export interface Quote {
     postMarketChange?: number;
     postMarketChangePercent?: number;
     postMarketTime?: string;
+    forwardPE?: number;
+    priceToBook?: number;
+    dividendYield?: number;
 }
 
 export type StockWithQuote = ValuationStock & Quote;

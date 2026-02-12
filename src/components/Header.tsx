@@ -9,7 +9,7 @@ export const Header = ({lastUpdate, pulse}: Props) => {
             <h1 className="m-0 text-[1.75rem] font-bold text-slate-50 tracking-wide max-[640px]:text-[1.35rem]">估值參考</h1>
             <div className="flex items-center gap-2">
                 {lastUpdate && <span className="text-[0.8rem] text-slate-400">更新時間（香港）: {formatHKTime(lastUpdate)}</span>}
-                {pulse && <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />}
+                {lastUpdate && <div className={`w-2 h-2 rounded-full ${pulse ? "bg-green-500 pulse-glow" : "bg-slate-400"}`} />}
             </div>
         </header>
     );

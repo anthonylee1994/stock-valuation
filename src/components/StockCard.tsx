@@ -18,8 +18,8 @@ const formatPrice = (value: number): string => {
     return "$" + value.toFixed(2);
 };
 
-const formatPercent = (value: number): string => {
-    const sign = value >= 0 ? "+" : "";
+const formatPercent = (value: number, showSign: boolean): string => {
+    const sign = showSign && value >= 0 ? "+" : "";
     return sign + value.toFixed(2) + "%";
 };
 
@@ -41,6 +41,9 @@ export const StockCard = ({stock}: Props) => {
         postMarketPrice,
         valuationLow,
         valuationHigh,
+        forwardPE,
+        priceToBook,
+        dividendYield,
     } = stock;
     const price = typeof preMarketPrice !== "undefined" ? preMarketPrice : typeof postMarketPrice !== "undefined" ? postMarketPrice : currentPrice;
     const change = typeof preMarketChange !== "undefined" ? preMarketChange : typeof postMarketChange !== "undefined" ? postMarketChange : currentChange;
@@ -53,6 +56,7 @@ export const StockCard = ({stock}: Props) => {
     const [flashClass, setFlashClass] = useState<string>("");
     const [showArrow, setShowArrow] = useState<boolean>(false);
     const [arrowDirection, setArrowDirection] = useState<"up" | "down" | null>(null);
+    const [isFlipped, setIsFlipped] = useState<boolean>(false);
 
     useEffect(() => {
         const prevPrice = prevPriceRef.current;
@@ -106,16 +110,63 @@ export const StockCard = ({stock}: Props) => {
 
             <Card.Content>
                 <div className="grid grid-cols-2 gap-3 mb-5">
-                    <div className={`col-span-2 bg-slate-950/60 rounded-lg px-3 py-2 text-center transition-all duration-150 border-2 border-transparent ${flashClass}`}>
-                        <span className="block text-[0.7rem] text-slate-400 uppercase tracking-wider">現價</span>
-                        <div className="mt-1 flex items-center justify-center flex-col">
-                            <div className="relative inline-block">
-                                {showArrow && arrowDirection === "up" && <span className="absolute right-full mr-1 top-0 text-green-400 text-[1.5rem] arrow-fade-up pointer-events-none">▲</span>}
-                                {showArrow && arrowDirection === "down" && <span className="absolute right-full mr-1 top-0 text-red-400 text-[1.5rem] arrow-fade-down pointer-events-none">▼</span>}
-                                <div className={`text-[1.5rem] font-semibold ${change > 0 ? "text-green-400" : change < 0 ? "text-red-400" : "text-slate-400"}`}>{formatPrice(price)}</div>
+                    <div
+                        className={`col-span-2 bg-slate-950/60 rounded-lg px-3 py-2 text-center transition-all duration-150 border-2 border-transparent cursor-pointer ${flashClass}`}
+                        onClick={() => setIsFlipped(!isFlipped)}
+                        style={{perspective: "1000px"}}
+                    >
+                        <div
+                            className="relative transition-transform duration-500"
+                            style={{
+                                transformStyle: "preserve-3d",
+                                transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
+                            }}
+                        >
+                            <div
+                                className="w-full"
+                                style={{
+                                    backfaceVisibility: "hidden",
+                                    WebkitBackfaceVisibility: "hidden",
+                                }}
+                            >
+                                <span className="block text-[0.7rem] text-slate-400 uppercase tracking-wider">現價</span>
+                                <div className="mt-1 flex items-center justify-center flex-col">
+                                    <div className="relative inline-block">
+                                        {showArrow && arrowDirection === "up" && (
+                                            <span className="absolute right-full mr-1 top-0 text-green-400 text-[1.5rem] arrow-fade-up pointer-events-none">▲</span>
+                                        )}
+                                        {showArrow && arrowDirection === "down" && (
+                                            <span className="absolute right-full mr-1 top-0 text-red-400 text-[1.5rem] arrow-fade-down pointer-events-none">▼</span>
+                                        )}
+                                        <div className={`text-[1.5rem] font-semibold ${change > 0 ? "text-green-400" : change < 0 ? "text-red-400" : "text-slate-400"}`}>{formatPrice(price)}</div>
+                                    </div>
+                                    <div className={`text-[1rem] font-medium ${change > 0 ? "text-green-400" : change < 0 ? "text-red-400" : "text-slate-400"}`}>
+                                        {formatPrice(change)} ({formatPercent(percentChange, true)})
+                                    </div>
+                                </div>
                             </div>
-                            <div className={`text-[1rem] font-medium ${change > 0 ? "text-green-400" : change < 0 ? "text-red-400" : "text-slate-400"}`}>
-                                {formatPrice(change)} ({formatPercent(percentChange)})
+                            <div
+                                className="absolute inset-0 w-full"
+                                style={{
+                                    backfaceVisibility: "hidden",
+                                    WebkitBackfaceVisibility: "hidden",
+                                    transform: "rotateY(180deg)",
+                                }}
+                            >
+                                <div className="flex flex-col gap-1 mt-1">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[0.75rem] text-slate-400">預測市盈率</span>
+                                        <span className="text-[0.9rem] font-semibold text-slate-200">{forwardPE ? forwardPE.toFixed(2) : "-"}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[0.75rem] text-slate-400">市淨率</span>
+                                        <span className="text-[0.9rem] font-semibold text-slate-200">{priceToBook ? priceToBook.toFixed(2) : "-"}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-[0.75rem] text-slate-400">股息率</span>
+                                        <span className="text-[0.9rem] font-semibold text-slate-200">{dividendYield ? formatPercent(dividendYield, false) : "-"}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -153,8 +204,8 @@ export const StockCard = ({stock}: Props) => {
                 </div>
 
                 <div className="flex justify-between items-center text-[0.8rem] gap-2 flex-wrap">
-                    <span className={`transition-colors duration-300 ${potentialDownside > 0 ? "text-green-500" : "text-red-500"}`}>距估值底部 {formatPercent(potentialDownside)}</span>
-                    <span className={`transition-colors duration-300 ${potentialUpside > 0 ? "text-green-500" : "text-red-500"}`}>距估值頂部 {formatPercent(potentialUpside)}</span>
+                    <span className={`transition-colors duration-300 ${potentialDownside > 0 ? "text-green-500" : "text-red-500"}`}>距估值底部 {formatPercent(potentialDownside, true)}</span>
+                    <span className={`transition-colors duration-300 ${potentialUpside > 0 ? "text-green-500" : "text-red-500"}`}>距估值頂部 {formatPercent(potentialUpside, true)}</span>
                 </div>
             </Card.Content>
         </Card>
