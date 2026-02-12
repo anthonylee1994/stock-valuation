@@ -110,13 +110,9 @@ export const StockCard = ({stock}: Props) => {
 
             <Card.Content>
                 <div className="grid grid-cols-2 gap-3 mb-5">
-                    <div
-                        className={`col-span-2 bg-slate-950/60 rounded-lg px-3 py-2 text-center transition-all duration-150 border-2 border-transparent cursor-pointer ${flashClass}`}
-                        onClick={() => setIsFlipped(!isFlipped)}
-                        style={{perspective: "1000px"}}
-                    >
+                    <div className="col-span-2" onClick={() => setIsFlipped(!isFlipped)} style={{perspective: "1000px"}}>
                         <div
-                            className="relative transition-transform duration-500"
+                            className={`relative transition-transform duration-500 bg-slate-950/60 rounded-lg px-3 py-2 text-center transition-all duration-150 border-2 border-transparent cursor-pointer ${isFlipped ? "" : flashClass}`}
                             style={{
                                 transformStyle: "preserve-3d",
                                 transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
@@ -132,10 +128,10 @@ export const StockCard = ({stock}: Props) => {
                                 <span className="block text-[0.7rem] text-slate-400 uppercase tracking-wider">現價</span>
                                 <div className="mt-1 flex items-center justify-center flex-col">
                                     <div className="relative inline-block">
-                                        {showArrow && arrowDirection === "up" && (
+                                        {showArrow && arrowDirection === "up" && !isFlipped && (
                                             <span className="absolute right-full mr-1 top-0 text-green-400 text-[1.5rem] arrow-fade-up pointer-events-none">▲</span>
                                         )}
-                                        {showArrow && arrowDirection === "down" && (
+                                        {showArrow && arrowDirection === "down" && !isFlipped && (
                                             <span className="absolute right-full mr-1 top-0 text-red-400 text-[1.5rem] arrow-fade-down pointer-events-none">▼</span>
                                         )}
                                         <div className={`text-[1.5rem] font-semibold ${change > 0 ? "text-green-400" : change < 0 ? "text-red-400" : "text-slate-400"}`}>{formatPrice(price)}</div>
@@ -153,7 +149,7 @@ export const StockCard = ({stock}: Props) => {
                                     transform: "rotateY(180deg)",
                                 }}
                             >
-                                <div className="flex flex-col gap-1 mt-1">
+                                <div className="flex flex-col gap-1 p-2 mt-1">
                                     <div className="flex justify-between items-center">
                                         <span className="text-[0.75rem] text-slate-400">預測市盈率</span>
                                         <span className="text-[0.9rem] font-semibold text-slate-200">{forwardPE ? forwardPE.toFixed(2) : "-"}</span>
