@@ -1,12 +1,11 @@
 export interface ValuationStock {
     symbol: string;
+    market: "US" | "HK";
     valuationLow: number;
     valuationHigh: number;
 }
 
 export interface ValuationData {
-    lastUpdated: string;
-    currency: string;
     stocks: ValuationStock[];
 }
 

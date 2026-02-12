@@ -8,6 +8,7 @@ import {sortStocks} from "./utils/sortStocks";
 import {valuationData} from "./valuation";
 
 const SORT_ORDER_KEY = "stock-valuation-sort-order";
+const MARKET_FILTER_KEY = "stock-valuation-market-filter";
 
 export const App = () => {
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">(() => {
@@ -15,15 +16,31 @@ export const App = () => {
         return saved === "asc" || saved === "desc" ? saved : "asc";
     });
 
+    const [marketFilter, setMarketFilter] = useState<"hk" | "us">(() => {
+        const saved = localStorage.getItem(MARKET_FILTER_KEY);
+        return saved === "hk" || saved === "us" ? saved : "us";
+    });
+
     const data = valuationData;
     const symbols = data.stocks.map(s => s.symbol).join(",");
 
     const {data: stocks, lastUpdate, loading, pulse} = useStockQuotes(symbols, data.stocks);
-    const sortedStocks = sortStocks(stocks, sortOrder);
+
+    // Filter stocks by market
+    const filteredStocks = stocks.filter(stock => {
+        if (marketFilter === "hk") return stock.symbol.endsWith(".HK");
+        if (marketFilter === "us") return !stock.symbol.endsWith(".HK");
+    });
+
+    const sortedStocks = sortStocks(filteredStocks, sortOrder);
 
     useEffect(() => {
         localStorage.setItem(SORT_ORDER_KEY, sortOrder);
     }, [sortOrder]);
+
+    useEffect(() => {
+        localStorage.setItem(MARKET_FILTER_KEY, marketFilter);
+    }, [marketFilter]);
 
     return (
         <div className="min-h-screen text-slate-200 p-6 max-[640px]:p-4">
@@ -32,7 +49,7 @@ export const App = () => {
                 <LoadingSpinner />
             ) : (
                 <React.Fragment>
-                    <SortButtonGroup sortOrder={sortOrder} onSortOrderChange={setSortOrder} />
+                    <SortButtonGroup sortOrder={sortOrder} onSortOrderChange={setSortOrder} marketFilter={marketFilter} onMarketFilterChange={setMarketFilter} />
                     <StockGrid stocks={sortedStocks} />
                 </React.Fragment>
             )}
