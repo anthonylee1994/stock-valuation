@@ -129,5 +129,12 @@ export const valuationData: ValuationData = {
             valuationLow: 67.4,
             valuationHigh: 101,
         },
+
+        {
+            symbol: "0175.HK",
+            market: "HK",
+            valuationLow: 13.3,
+            valuationHigh: 26.6,
+        },
     ],
 };
