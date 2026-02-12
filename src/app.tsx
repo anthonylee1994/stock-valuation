@@ -24,7 +24,7 @@ export const App = () => {
     const data = valuationData;
     const symbols = data.stocks.map(s => s.symbol).join(",");
 
-    const {data: stocks, lastUpdate, loading, pulse} = useStockQuotes(symbols, data.stocks);
+    const {data: stocks, loading, pulse, lastUpdate} = useStockQuotes(symbols, data.stocks);
 
     // Filter stocks by market
     const filteredStocks = stocks.filter(stock => {

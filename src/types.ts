@@ -15,6 +15,7 @@ export interface Quote {
     change: number;
     percentChange: number;
     previousClosePrice: number;
+    regularMarketTime: string;
     preMarketPrice?: number;
     preMarketChange?: number;
     preMarketTime?: string;
