@@ -28,8 +28,8 @@ export const App = () => {
 
     // Filter stocks by market
     const filteredStocks = stocks.filter(stock => {
-        if (marketFilter === "hk") return stock.symbol.endsWith(".HK");
-        if (marketFilter === "us") return !stock.symbol.endsWith(".HK");
+        if (marketFilter === "hk") return stock.market === "HK";
+        if (marketFilter === "us") return stock.market === "US";
     });
 
     const sortedStocks = sortStocks(filteredStocks, sortOrder);
