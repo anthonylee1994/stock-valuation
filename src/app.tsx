@@ -1,46 +1,36 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect} from "react";
 import {Header} from "./components/Header";
 import {SortButtonGroup} from "./components/SortButtonGroup";
 import {StockGrid} from "./components/StockGrid";
 import {LoadingSpinner} from "./components/LoadingSpinner";
-import {useStockQuotes} from "./hooks/useStockQuotes";
+import {useStockStore} from "./store/useStockStore";
 import {sortStocks} from "./utils/sortStocks";
 import {valuationData} from "./valuation";
 
-const SORT_ORDER_KEY = "stock-valuation-sort-order";
-const MARKET_FILTER_KEY = "stock-valuation-market-filter";
-
 export const App = () => {
-    const [sortOrder, setSortOrder] = useState<"asc" | "desc">(() => {
-        const saved = localStorage.getItem(SORT_ORDER_KEY);
-        return saved === "asc" || saved === "desc" ? saved : "asc";
-    });
+    const stocks = useStockStore(state => state.stocks);
+    const loading = useStockStore(state => state.loading);
+    const pulse = useStockStore(state => state.pulse);
+    const lastUpdate = useStockStore(state => state.lastUpdate);
+    const sortOrder = useStockStore(state => state.sortOrder);
+    const marketFilter = useStockStore(state => state.marketFilter);
+    const setSortOrder = useStockStore(state => state.setSortOrder);
+    const setMarketFilter = useStockStore(state => state.setMarketFilter);
+    const startPolling = useStockStore(state => state.startPolling);
 
-    const [marketFilter, setMarketFilter] = useState<"hk" | "us">(() => {
-        const saved = localStorage.getItem(MARKET_FILTER_KEY);
-        return saved === "hk" || saved === "us" ? saved : "us";
-    });
+    const symbols = valuationData.stocks.map(s => s.symbol).join(",");
 
-    const data = valuationData;
-    const symbols = data.stocks.map(s => s.symbol).join(",");
+    useEffect(() => {
+        const cleanup = startPolling(symbols, valuationData.stocks);
+        return cleanup;
+    }, [symbols, startPolling]);
 
-    const {data: stocks, loading, pulse, lastUpdate} = useStockQuotes(symbols, data.stocks);
-
-    // Filter stocks by market
     const filteredStocks = stocks.filter(stock => {
         if (marketFilter === "hk") return stock.market === "HK";
         if (marketFilter === "us") return stock.market === "US";
     });
 
     const sortedStocks = sortStocks(filteredStocks, sortOrder);
-
-    useEffect(() => {
-        localStorage.setItem(SORT_ORDER_KEY, sortOrder);
-    }, [sortOrder]);
-
-    useEffect(() => {
-        localStorage.setItem(MARKET_FILTER_KEY, marketFilter);
-    }, [marketFilter]);
 
     return (
         <div className="min-h-screen text-slate-200 p-6 max-[640px]:p-4">
