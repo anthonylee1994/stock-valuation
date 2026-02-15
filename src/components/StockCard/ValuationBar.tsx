@@ -28,7 +28,7 @@ export const ValuationBar = ({currentPrice, price, valuationLow, valuationHigh}:
             </div>
             {/* White marker line */}
             <div
-                className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-1 h-9 bg-white rounded-sm shadow-[0_0_12px_rgba(255,255,255,0.8)] transition-all duration-500 z-[2]"
+                className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-1 h-9 bg-foreground rounded-sm shadow-[0_0_12px_rgba(255,255,255,0.8)] transition-all duration-500 z-[2]"
                 style={{left: `${markerPosition}%`}}
                 title={formatPrice(currentPrice)}
             />
