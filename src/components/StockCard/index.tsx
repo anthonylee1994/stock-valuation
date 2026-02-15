@@ -1,4 +1,4 @@
-import React from "react";
+import {memo} from "react";
 import {Card, Chip} from "@heroui/react";
 import type {StockWithQuote} from "../../types";
 import {STATUS_CONFIG, getStatus, calculatePotential} from "./constants";
@@ -18,7 +18,7 @@ const getActivePrice = (stock: StockWithQuote) => ({
 });
 
 // 用 memo 避免 stocks array reference 變咗但內容冇變時都 re-render
-export const StockCard = React.memo(({stock}: Props) => {
+export const StockCard = memo(({stock}: Props) => {
     const {price, change, percentChange} = getActivePrice(stock);
     const {symbol, currentPrice, valuationLow, valuationHigh, forwardPE, priceToBook, dividendYield} = stock;
 
@@ -49,4 +49,4 @@ export const StockCard = React.memo(({stock}: Props) => {
             </Card.Content>
         </Card>
     );
-});
+};
