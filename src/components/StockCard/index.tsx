@@ -12,10 +12,9 @@ interface Props {
 }
 
 const getActivePrice = (stock: StockWithQuote) => ({
-    // 加 fallback 避免 undefined 導致 NaN
-    price: stock.preMarketPrice ?? stock.postMarketPrice ?? stock.currentPrice ?? 0,
-    change: stock.preMarketChange ?? stock.postMarketChange ?? stock.change ?? 0,
-    percentChange: stock.preMarketChangePercent ?? stock.postMarketChangePercent ?? stock.percentChange ?? 0,
+    price: stock.preMarketPrice ?? stock.postMarketPrice ?? stock.currentPrice,
+    change: stock.preMarketChange ?? stock.postMarketChange ?? stock.change,
+    percentChange: stock.preMarketChangePercent ?? stock.postMarketChangePercent ?? stock.percentChange,
 });
 
 // 用 memo 避免 stocks array reference 變咗但內容冇變時都 re-render
