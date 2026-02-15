@@ -1,4 +1,4 @@
-# Stock Valuation Dashboard
+# 股票估值參考工具
 
 一個現代化、即時嘅股票估值追蹤應用程式，用 React、TypeScript 同 HeroUI 起嘅。可以監察股票同自訂估值範圍嘅對比，搵出美股同港股市場入面被低估或者高估嘅機會。
 
