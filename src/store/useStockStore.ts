@@ -1,9 +1,15 @@
 import {create} from "zustand";
 import type {StockWithQuote, Quote, ValuationData} from "../types";
+import {valuationData} from "../valuation";
 import moment from "moment";
 
+// LocalStorage keys
 const SORT_ORDER_KEY = "stock-valuation-sort-order";
 const MARKET_FILTER_KEY = "stock-valuation-market-filter";
+
+// Timing constants
+const PULSE_DURATION = 1500; // ms - duration of pulse animation
+const POLLING_INTERVAL = 10_000; // ms - interval between API calls (10 seconds)
 
 interface StockStore {
     stocks: StockWithQuote[];
@@ -20,6 +26,7 @@ interface StockStore {
     setMarketFilter: (marketFilter: "hk" | "us") => void;
     fetchQuotes: (symbols: string, stocksData: ValuationData["stocks"]) => Promise<void>;
     startPolling: (symbols: string, stocksData: ValuationData["stocks"]) => () => void;
+    retryFetch: () => void;
 }
 
 const mergeStocksWithQuotes = (stocks: ValuationData["stocks"], quotes: Quote[]): StockWithQuote[] => {
@@ -67,24 +74,25 @@ export const useStockStore = create<StockStore>((set, get) => ({
 
     fetchQuotes: async (symbols, stocksData) => {
         set({loading: true});
-        try {
-            const apiUrl = import.meta.env.VITE_QUOTES_API_URL;
-            const res = await fetch(`${apiUrl}?symbols=${encodeURIComponent(symbols)}`);
-            const json = (await res.json()) as {quotes: Quote[]};
-            const merged = mergeStocksWithQuotes(stocksData, json.quotes);
-            set({
-                stocks: merged,
-                lastUpdate: moment().format("YYYY-MM-DD HH:mm:ss"),
-                pulse: true,
-                loading: false,
-            });
+        const res = await fetch(`${import.meta.env.VITE_QUOTES_API_URL}?symbols=${encodeURIComponent(symbols)}`);
+        const json = (await res.json()) as {quotes: Quote[]};
+        const merged = mergeStocksWithQuotes(stocksData, json.quotes);
+        set({
+            stocks: merged,
+            lastUpdate: moment().format("YYYY-MM-DD HH:mm:ss"),
+            pulse: true,
+            loading: false,
+        });
 
-            setTimeout(() => {
-                set({pulse: false});
-            }, 1500);
-        } catch (e) {
-            set({stocks: [], loading: false});
-        }
+        setTimeout(() => {
+            set({pulse: false});
+        }, PULSE_DURATION);
+    },
+
+    retryFetch: () => {
+        const {fetchQuotes} = get();
+        const symbols = valuationData.stocks.map(s => s.symbol).join(",");
+        fetchQuotes(symbols, valuationData.stocks);
     },
 
     startPolling: (symbols, stocksData) => {
@@ -94,7 +102,7 @@ export const useStockStore = create<StockStore>((set, get) => ({
 
         const interval = setInterval(() => {
             fetchQuotes(symbols, stocksData);
-        }, 10_000);
+        }, POLLING_INTERVAL);
 
         return () => {
             clearInterval(interval);

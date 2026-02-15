@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useMemo} from "react";
 import {Header} from "./components/Header";
 import {SortButtonGroup} from "./components/SortButtonGroup";
 import {StockGrid} from "./components/StockGrid";
@@ -7,30 +7,28 @@ import {useStockStore} from "./store/useStockStore";
 import {sortStocks} from "./utils/sortStocks";
 import {valuationData} from "./valuation";
 
-export const App = () => {
-    const stocks = useStockStore(state => state.stocks);
-    const loading = useStockStore(state => state.loading);
-    const pulse = useStockStore(state => state.pulse);
-    const lastUpdate = useStockStore(state => state.lastUpdate);
-    const sortOrder = useStockStore(state => state.sortOrder);
-    const marketFilter = useStockStore(state => state.marketFilter);
-    const setSortOrder = useStockStore(state => state.setSortOrder);
-    const setMarketFilter = useStockStore(state => state.setMarketFilter);
-    const startPolling = useStockStore(state => state.startPolling);
+const SYMBOLS = valuationData.stocks.map(s => s.symbol).join(",");
+const STOCKS_DATA = valuationData.stocks;
 
-    const symbols = valuationData.stocks.map(s => s.symbol).join(",");
+export const App = () => {
+    const {stocks, loading, pulse, lastUpdate, sortOrder, marketFilter, setSortOrder, setMarketFilter, startPolling} = useStockStore();
 
     useEffect(() => {
-        const cleanup = startPolling(symbols, valuationData.stocks);
+        const cleanup = startPolling(SYMBOLS, STOCKS_DATA);
         return cleanup;
-    }, [symbols, startPolling]);
+    }, []);
 
-    const filteredStocks = stocks.filter(stock => {
-        if (marketFilter === "hk") return stock.market === "HK";
-        if (marketFilter === "us") return stock.market === "US";
-    });
+    const filteredStocks = useMemo(() => {
+        return stocks.filter(stock => {
+            if (marketFilter === "hk") return stock.market === "HK";
+            if (marketFilter === "us") return stock.market === "US";
+            return false;
+        });
+    }, [stocks, marketFilter]);
 
-    const sortedStocks = sortStocks(filteredStocks, sortOrder);
+    const sortedStocks = useMemo(() => {
+        return sortStocks(filteredStocks, sortOrder);
+    }, [filteredStocks, sortOrder]);
 
     return (
         <div className="min-h-screen text-slate-200 p-6 max-[640px]:p-4">
