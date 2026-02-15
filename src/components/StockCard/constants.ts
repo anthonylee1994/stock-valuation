@@ -1,9 +1,9 @@
 import type {ValuationStatus} from "../../types";
 
-export const STATUS_CONFIG: Record<ValuationStatus, {emoji: string; label: string; color: "success" | "warning" | "danger"}> = {
-    undervalued: {emoji: "🟢", label: "低估", color: "success"},
-    fair: {emoji: "🟡", label: "合理", color: "warning"},
-    overvalued: {emoji: "🔴", label: "高估", color: "danger"},
+export const STATUS_CONFIG: Record<ValuationStatus, {emoji: string; label: string; color: "success" | "warning" | "danger"; borderClass: "border-success" | "border-warning" | "border-danger"}> = {
+    undervalued: {emoji: "🟢", label: "低估", color: "success", borderClass: "border-success"},
+    fair: {emoji: "🟡", label: "合理", color: "warning", borderClass: "border-warning"},
+    overvalued: {emoji: "🔴", label: "高估", color: "danger", borderClass: "border-danger"},
 };
 
 export const getStatus = (currentPrice: number, low: number, high: number): ValuationStatus => {
