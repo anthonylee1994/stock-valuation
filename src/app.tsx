@@ -36,7 +36,7 @@ export const App = () => {
     }
 
     return (
-        <div className="min-h-screen text-slate-200 p-6 max-[640px]:p-4 mb-[env(safe-area-inset-bottom)]">
+        <div className="min-h-screen p-6 max-[640px]:p-4 mb-[env(safe-area-inset-bottom)]">
             <Header lastUpdate={lastUpdate} pulse={pulse} />
             {loading && stocks.length === 0 ? (
                 <LoadingSpinner />

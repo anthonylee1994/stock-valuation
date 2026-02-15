@@ -62,7 +62,7 @@ export const PriceCard = ({name, price, change, percentChange, forwardPE, priceT
     return (
         <div className="col-span-2" onClick={toggleCardsFlip} style={{perspective: "1000px"}}>
             <div
-                className={`relative transition-transform duration-500 bg-slate-950/60 rounded-lg px-3 py-2 text-center transition-all duration-150 border-2 border-transparent cursor-pointer ${isFlipped ? "" : animation.flashClass}`}
+                className={`relative transition-transform duration-500 bg-surface-secondary rounded-lg px-3 py-2 text-center transition-all duration-150 border-2 border-transparent cursor-pointer ${isFlipped ? "" : animation.flashClass}`}
                 style={{
                     transformStyle: "preserve-3d",
                     transform: `rotateY(${isFlipped ? 180 : 0}deg)`,
@@ -70,7 +70,7 @@ export const PriceCard = ({name, price, change, percentChange, forwardPE, priceT
             >
                 {/* Front Face */}
                 <div className="w-full" style={cardFaceStyle}>
-                    <span className="block text-[0.7rem] text-slate-400 uppercase tracking-wider">現價</span>
+                    <span className="block text-[0.7rem] text-muted uppercase tracking-wider">現價</span>
                     <div className="mt-1 flex items-center justify-center flex-col">
                         <div className="relative inline-block">
                             {!isFlipped && animation.arrowDirection && <PriceArrow direction={animation.arrowDirection} show={animation.showArrow} />}

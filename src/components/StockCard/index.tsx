@@ -27,9 +27,11 @@ export const StockCard = ({stock}: Props) => {
     const potentialUpside = calculatePotential(price, valuationHigh);
 
     return (
-        <Card className={`bg-gradient-to-br from-slate-800 to-slate-950 border-2 shadow-[0_4px_20px_rgba(0,0,0,0.4)] transition-all duration-500 ${config.borderClass}`}>
+        <Card role="article" aria-labelledby={`card-title-${symbol}`} className="bg-surface shadow-surface transition-all duration-500 hover:shadow-overlay">
             <Card.Header className="flex flex-row items-center justify-between">
-                <h2 className="m-0 text-2xl font-bold text-slate-100 tracking-wide max-[480px]:text-xl">{symbol}</h2>
+                <Card.Title id={`card-title-${symbol}`} className="m-0 text-2xl font-bold tracking-wide max-[480px]:text-xl">
+                    {symbol}
+                </Card.Title>
                 <Chip color={config.color} variant="soft" size="sm">
                     {config.emoji} {config.label}
                 </Chip>
