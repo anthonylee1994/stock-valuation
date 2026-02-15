@@ -1,7 +1,47 @@
 import {defineConfig} from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import {VitePWA} from "vite-plugin-pwa";
 
 export default defineConfig({
-    plugins: [react(), tailwindcss()],
+    plugins: [
+        react(),
+        tailwindcss(),
+        VitePWA({
+            registerType: "autoUpdate",
+            strategies: "injectManifest",
+            srcDir: "public",
+            filename: "sw.js",
+            injectManifest: {
+                globPatterns: ["**/*.{js,css,html,ico,png,svg,json}"],
+                maximumFileSizeToCacheInBytes: 5000000,
+            },
+            devOptions: {
+                enabled: true,
+                type: "module",
+            },
+            manifest: {
+                name: "估值參考",
+                short_name: "估值參考",
+                description: "股票估值參考工具",
+                start_url: "/",
+                display: "standalone",
+                background_color: "#0f172a",
+                theme_color: "#0f172a",
+                orientation: "portrait-primary",
+                icons: [
+                    {
+                        src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230f172a'/><text x='50' y='50' text-anchor='middle' dominant-baseline='middle' font-size='60'>🚀</text></svg>",
+                        sizes: "any",
+                        type: "image/svg+xml",
+                        purpose: "any maskable",
+                    },
+                ],
+                categories: ["finance", "business"],
+                lang: "zh-Hant",
+                dir: "ltr",
+                scope: "/",
+            },
+        }),
+    ],
 });
