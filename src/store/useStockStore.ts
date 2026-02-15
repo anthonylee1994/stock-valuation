@@ -16,12 +16,14 @@ interface StockStore {
     loading: boolean;
     pulse: boolean;
     lastUpdate: string | null;
+    error: string | null;
     sortOrder: "asc" | "desc";
     marketFilter: "hk" | "us";
     setStocks: (stocks: StockWithQuote[]) => void;
     setLoading: (loading: boolean) => void;
     setPulse: (pulse: boolean) => void;
     setLastUpdate: (lastUpdate: string | null) => void;
+    setError: (error: string | null) => void;
     setSortOrder: (sortOrder: "asc" | "desc") => void;
     setMarketFilter: (marketFilter: "hk" | "us") => void;
     fetchQuotes: (symbols: string, stocksData: ValuationData["stocks"]) => Promise<void>;
@@ -48,6 +50,7 @@ export const useStockStore = create<StockStore>((set, get) => ({
     loading: true,
     pulse: false,
     lastUpdate: null,
+    error: null,
     sortOrder: (() => {
         const saved = localStorage.getItem(SORT_ORDER_KEY);
         return saved === "asc" || saved === "desc" ? saved : "asc";
@@ -61,6 +64,7 @@ export const useStockStore = create<StockStore>((set, get) => ({
     setLoading: loading => set({loading}),
     setPulse: pulse => set({pulse}),
     setLastUpdate: lastUpdate => set({lastUpdate}),
+    setError: error => set({error}),
 
     setSortOrder: sortOrder => {
         localStorage.setItem(SORT_ORDER_KEY, sortOrder);
@@ -73,20 +77,50 @@ export const useStockStore = create<StockStore>((set, get) => ({
     },
 
     fetchQuotes: async (symbols, stocksData) => {
-        set({loading: true});
-        const res = await fetch(`${import.meta.env.VITE_QUOTES_API_URL}?symbols=${encodeURIComponent(symbols)}`);
-        const json = (await res.json()) as {quotes: Quote[]};
-        const merged = mergeStocksWithQuotes(stocksData, json.quotes);
-        set({
-            stocks: merged,
-            lastUpdate: moment().format("YYYY-MM-DD HH:mm:ss"),
-            pulse: true,
-            loading: false,
-        });
+        const currentStocks = get().stocks;
+        set({loading: true, error: null});
+        try {
+            const apiUrl = import.meta.env.VITE_QUOTES_API_URL;
 
-        setTimeout(() => {
-            set({pulse: false});
-        }, PULSE_DURATION);
+            if (!apiUrl) {
+                throw new Error("API URL 未設定。請檢查環境變量 VITE_QUOTES_API_URL。");
+            }
+
+            const res = await fetch(`${apiUrl}?symbols=${encodeURIComponent(symbols)}`);
+
+            if (!res.ok) {
+                throw new Error(`API 請求失敗：${res.status} ${res.statusText}`);
+            }
+
+            const json = (await res.json()) as {quotes: Quote[]};
+
+            if (!json.quotes || json.quotes.length === 0) {
+                throw new Error("API 返回空數據。請稍後再試。");
+            }
+
+            const merged = mergeStocksWithQuotes(stocksData, json.quotes);
+            set({
+                stocks: merged,
+                lastUpdate: moment().format("YYYY-MM-DD HH:mm:ss"),
+                pulse: true,
+                loading: false,
+                error: null,
+            });
+
+            setTimeout(() => {
+                set({pulse: false});
+            }, PULSE_DURATION);
+        } catch (e) {
+            const errorMessage = e instanceof Error ? e.message : "無法載入股票數據。請檢查網絡連接。";
+            console.error("fetchQuotes error:", e);
+
+            // Keep existing stocks if this is a refresh, only set error
+            set({
+                error: errorMessage,
+                loading: false,
+                stocks: currentStocks.length > 0 ? currentStocks : [],
+            });
+        }
     },
 
     retryFetch: () => {
@@ -101,11 +135,22 @@ export const useStockStore = create<StockStore>((set, get) => ({
         fetchQuotes(symbols, stocksData);
 
         const interval = setInterval(() => {
-            fetchQuotes(symbols, stocksData);
+            if (!document.hidden) {
+                fetchQuotes(symbols, stocksData);
+            }
         }, POLLING_INTERVAL);
+
+        const handleVisibilityChange = () => {
+            if (!document.hidden) {
+                fetchQuotes(symbols, stocksData);
+            }
+        };
+
+        document.addEventListener("visibilitychange", handleVisibilityChange);
 
         return () => {
             clearInterval(interval);
+            document.removeEventListener("visibilitychange", handleVisibilityChange);
         };
     },
 }));
