@@ -1,81 +1,81 @@
 # Stock Valuation Dashboard
 
-A modern, real-time stock valuation tracking application built with React, TypeScript, and HeroUI. Monitor stocks against custom valuation ranges and identify undervalued or overvalued opportunities in US and Hong Kong markets.
+一個現代化、即時嘅股票估值追蹤應用程式，用 React、TypeScript 同 HeroUI 起嘅。可以監察股票同自訂估值範圍嘅對比，搵出美股同港股市場入面被低估或者高估嘅機會。
 
-🔗 **Live Demo**: [https://valuation.on99.app](https://valuation.on99.app)
+🔗 **線上 Demo**: [https://valuation.on99.app](https://valuation.on99.app)
 
-## Features
+## 功能
 
-- 📊 **Real-time Stock Quotes** - Live price updates every 10 seconds
-- 🎯 **Valuation Ranges** - Set custom valuation ranges for each stock
-- 📈 **Visual Indicators** - Color-coded cards showing undervalued, fair value, and overvalued stocks
-- 🌍 **Multi-Market Support** - Track both US and Hong Kong stocks
-- 🔄 **Auto-Refresh** - Automatic polling with visual pulse indicators
-- 📱 **Responsive Design** - Beautiful UI that works on all devices
-- 🎨 **Modern UI** - Built with HeroUI React v3 and Tailwind CSS
-- 💾 **Persistent Settings** - Sort order and market filter preferences saved locally
+- 📊 **即時股票報價** - 每 10 秒更新一次即時價格
+- 🎯 **估值範圍** - 為每隻股票設定自訂估值範圍
+- 📈 **視覺指標** - 用顏色區分嘅卡片顯示低估、合理估值同高估嘅股票
+- 🌍 **多市場支援** - 同時追蹤美股同港股
+- 🔄 **自動更新** - 自動輪詢加上視覺脈衝指示
+- 📱 **響應式設計** - 靚仔嘅 UI，喺所有裝置都用得
+- 🎨 **現代化 UI** - 用 HeroUI React v3 同 Tailwind CSS 起嘅
+- 💾 **持久化設定** - 排序同市場篩選偏好會儲存喺本地
 
-## Tech Stack
+## 技術棧
 
-- **Frontend Framework**: React 19
-- **Language**: TypeScript
-- **UI Library**: HeroUI React v3
-- **Styling**: Tailwind CSS 4
-- **State Management**: Zustand
-- **Build Tool**: Vite
-- **Routing**: React Router v7
-- **Deployment**: GitHub Pages
+- **前端框架**: React 19
+- **語言**: TypeScript
+- **UI 庫**: HeroUI React v3
+- **樣式**: Tailwind CSS 4
+- **狀態管理**: Zustand
+- **建置工具**: Vite
+- **路由**: React Router v7
+- **部署**: GitHub Pages
 
-## Getting Started
+## 開始使用
 
-### Prerequisites
+### 前置條件
 
 - Node.js 22+
 - pnpm 10+
 
-### Installation
+### 安裝
 
-1. Clone the repository:
+1. Clone 個 repo：
 ```bash
 git clone https://github.com/yourusername/stock-valuation.git
 cd stock-valuation
 ```
 
-2. Install dependencies:
+2. 安裝依賴：
 ```bash
 pnpm install
 ```
 
-3. Create a `.env` file in the root directory:
+3. 喺根目錄建立一個 `.env` 檔案：
 ```env
 VITE_QUOTES_API_URL=your_quotes_api_url
 ```
 
-4. Start the development server:
+4. 啟動開發伺服器：
 ```bash
 pnpm dev
 ```
 
-The application will be available at `http://localhost:5173`
+個應用程式會喺 `http://localhost:5173` 用得到
 
-## Available Scripts
+## 可用嘅指令
 
-- `pnpm dev` - Start development server
-- `pnpm build` - Build for production
-- `pnpm preview` - Preview production build
-- `pnpm lint` - Run ESLint
-- `pnpm format` - Format code with Prettier
+- `pnpm dev` - 啟動開發伺服器
+- `pnpm build` - 建置生產版本
+- `pnpm preview` - 預覽生產版本
+- `pnpm lint` - 跑 ESLint
+- `pnpm format` - 用 Prettier 格式化程式碼
 
-## Project Structure
+## 專案結構
 
 ```
 stock-valuation/
 ├── src/
-│   ├── components/          # React components
-│   │   ├── Header.tsx       # App header with title and refresh info
+│   ├── components/          # React 元件
+│   │   ├── Header.tsx       # App 標題同更新資訊
 │   │   ├── LoadingSpinner.tsx
 │   │   ├── SortButtonGroup.tsx
-│   │   ├── StockCard/       # Stock card component and subcomponents
+│   │   ├── StockCard/       # 股票卡片元件同子元件
 │   │   │   ├── index.tsx
 │   │   │   ├── PriceCard/
 │   │   │   ├── ValuationBar.tsx
@@ -84,35 +84,35 @@ stock-valuation/
 │   │   └── StockGrid.tsx
 │   ├── store/              # Zustand store
 │   │   └── useStockStore.ts
-│   ├── utils/              # Utility functions
+│   ├── utils/              # 工具函式
 │   │   └── sortStocks.ts
-│   ├── types.ts            # TypeScript type definitions
-│   ├── valuation.ts        # Valuation logic
-│   ├── app.tsx             # Main app component
-│   └── main.tsx            # App entry point
-├── public/                 # Static assets
+│   ├── types.ts            # TypeScript 型別定義
+│   ├── valuation.ts        # 估值邏輯
+│   ├── app.tsx             # 主 App 元件
+│   └── main.tsx            # App 入口
+├── public/                 # 靜態資源
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml      # GitHub Pages deployment
+│       └── deploy.yml      # GitHub Pages 部署
 └── package.json
 ```
 
-## How It Works
+## 點樣運作
 
-1. **Valuation Data**: Define stocks with custom valuation ranges (low and high targets)
-2. **Real-time Quotes**: Fetches current prices and metrics from a quotes API
-3. **Status Calculation**: Determines if stocks are undervalued, fairly valued, or overvalued
-4. **Visual Feedback**: Color-coded cards with visual indicators:
-   - 🟢 Green: Undervalued (below valuation low)
-   - 🟡 Yellow: Fair value (within range)
-   - 🔴 Red: Overvalued (above valuation high)
-5. **Upside Potential**: Shows percentage upside to valuation high
+1. **估值資料**: 定義股票同自訂估值範圍（低同高目標價）
+2. **即時報價**: 從報價 API 攞當前價格同指標
+3. **狀態計算**: 判斷股票係被低估、合理估值定係被高估
+4. **視覺回饋**: 用顏色區分嘅卡片加上視覺指示：
+   - 🟢 綠色：低估（低過估值下限）
+   - 🟡 黃色：合理估值（喺範圍之內）
+   - 🔴 紅色：高估（高過估值上限）
+5. **上升潛力**: 顯示到估值上限嘅百分比上升空間
 
-## Configuration
+## 設定
 
-### Adding Stocks
+### 加入股票
 
-Edit the valuation data in your source code to add or modify stocks:
+喺源碼入面編輯估值資料嚟加入或修改股票：
 
 ```typescript
 {
@@ -123,72 +123,72 @@ Edit the valuation data in your source code to add or modify stocks:
 }
 ```
 
-### Market Codes
+### 市場代碼
 
-- **US Stocks**: Standard ticker symbols (e.g., `AAPL`, `MSFT`)
-- **Hong Kong Stocks**: Use `.HK` suffix (e.g., `0700.HK`, `9988.HK`)
+- **美股**: 標準股票代號（例如 `AAPL`、`MSFT`）
+- **港股**: 用 `.HK` 後綴（例如 `0700.HK`、`9988.HK`）
 
-## Deployment
+## 部署
 
-The app automatically deploys to GitHub Pages on every push to the `main` branch via GitHub Actions.
+個 App 會喺每次 push 去 `main` branch 嗰陣透過 GitHub Actions 自動部署去 GitHub Pages。
 
-### Manual Deployment
+### 手動部署
 
 ```bash
 pnpm run build
 ```
 
-The built files will be in the `dist/` directory.
+Build 完嘅檔案會放喺 `dist/` 目錄入面。
 
-### Environment Variables
+### 環境變數
 
-Set the following in your GitHub repository settings under **Settings > Secrets and variables > Actions > Variables**:
+喺你 GitHub repo 嘅設定入面 **Settings > Secrets and variables > Actions > Variables** 設定以下變數：
 
-- `VITE_QUOTES_API_URL`: Your quotes API endpoint
+- `VITE_QUOTES_API_URL`: 你嘅報價 API 端點
 
-## Features in Detail
+## 功能詳情
 
-### Real-time Updates
-- Polls quotes API every 10 seconds
-- Visual pulse animation on updates
-- Displays last update timestamp
+### 即時更新
+- 每 10 秒輪詢報價 API
+- 更新時有視覺脈衝動畫
+- 顯示上次更新嘅時間
 
-### Sorting
-- Sort by upside potential (ascending/descending)
-- Preference persisted to localStorage
+### 排序
+- 按上升潛力排序（升序／降序）
+- 偏好設定會儲存喺 localStorage
 
-### Market Filtering
-- Toggle between US and Hong Kong markets
-- Filter preference saved locally
+### 市場篩選
+- 喺美股同港股之間切換
+- 篩選偏好會儲存喺本地
 
-### Stock Metrics
-- Current price with change indicator
-- Pre/post market prices (when available)
-- Forward P/E ratio
-- Price-to-Book ratio
-- Dividend yield
+### 股票指標
+- 當前價格同升跌指示
+- 盤前／盤後價格（有嘅話）
+- 預期市盈率（Forward P/E）
+- 市帳率（Price-to-Book）
+- 股息率
 
-## Browser Support
+## 瀏覽器支援
 
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
+- Chrome（最新版）
+- Firefox（最新版）
+- Safari（最新版）
+- Edge（最新版）
 
-## Contributing
+## 貢獻
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+歡迎貢獻！隨時提交 Pull Request 啦。
 
-## License
+## 授權
 
-This project is open source and available under the [MIT License](LICENSE).
+呢個專案係開源嘅，採用 [MIT License](LICENSE)。
 
-## Acknowledgments
+## 鳴謝
 
-- Built with [HeroUI React](https://heroui.com/)
-- Powered by [Vite](https://vitejs.dev/)
-- Styled with [Tailwind CSS](https://tailwindcss.com/)
+- 用 [HeroUI React](https://heroui.com/) 起嘅
+- 由 [Vite](https://vitejs.dev/) 驅動
+- 用 [Tailwind CSS](https://tailwindcss.com/) 做樣式
 
 ---
 
-Made with ❤️ for smarter investing
+用 ❤️ 整嘅，為咗更聰明嘅投資
