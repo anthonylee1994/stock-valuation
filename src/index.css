@@ -10,6 +10,11 @@
 }
 
 /* Custom theme adjustments */
+.light,
+[data-theme="light"] {
+    --background: oklch(0.98 0.005 240);
+}
+
 .dark,
 [data-theme="dark"] {
     --background: oklch(0.08 0.01 240);
