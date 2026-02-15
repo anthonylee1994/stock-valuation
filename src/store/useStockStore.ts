@@ -2,15 +2,11 @@ import {create} from "zustand";
 import type {StockWithQuote, Quote, ValuationData} from "../types";
 import {valuationData} from "../valuation";
 import {validateAndDeduplicateStocks, getUniqueSymbols} from "../utils/stockHelpers";
-import {showNotification, isAtNetNetValue, formatCurrency, requestNotificationPermission} from "../utils/notificationHelper";
-import {sendConfigToServiceWorker, updateNotifiedStocksInServiceWorker, disableNotificationsInServiceWorker} from "../utils/serviceWorkerHelper";
 import moment from "moment";
 
 // LocalStorage keys
 const SORT_ORDER_KEY = "stock-valuation-sort-order";
 const MARKET_FILTER_KEY = "stock-valuation-market-filter";
-const NOTIFICATIONS_ENABLED_KEY = "stock-valuation-notifications-enabled";
-const NOTIFIED_STOCKS_KEY = "stock-valuation-notified-stocks";
 
 // Timing constants
 const PULSE_DURATION = 1500; // ms - duration of pulse animation
@@ -25,8 +21,6 @@ interface StockStore {
     sortOrder: "asc" | "desc";
     marketFilter: "hk" | "us";
     cardsFlipped: boolean;
-    notificationsEnabled: boolean;
-    notifiedStocks: Set<string>;
     setStocks: (stocks: StockWithQuote[]) => void;
     setLoading: (loading: boolean) => void;
     setPulse: (pulse: boolean) => void;
@@ -35,10 +29,6 @@ interface StockStore {
     setSortOrder: (sortOrder: "asc" | "desc") => void;
     setMarketFilter: (marketFilter: "hk" | "us") => void;
     toggleCardsFlip: () => void;
-    setNotificationsEnabled: (enabled: boolean) => void;
-    requestNotificationPermission: () => Promise<void>;
-    checkAndNotifyNetNetStocks: (stocks: StockWithQuote[]) => void;
-    resetNotifiedStocks: () => void;
     fetchQuotes: (symbols: string, stocksData: ValuationData["stocks"]) => Promise<void>;
     startPolling: (symbols: string, stocksData: ValuationData["stocks"]) => () => void;
     retryFetch: () => void;
@@ -95,14 +85,6 @@ export const useStockStore = create<StockStore>((set, get) => ({
         const saved = localStorage.getItem(MARKET_FILTER_KEY);
         return saved === "hk" || saved === "us" ? saved : "us";
     })(),
-    notificationsEnabled: (() => {
-        const saved = localStorage.getItem(NOTIFICATIONS_ENABLED_KEY);
-        return saved === "true";
-    })(),
-    notifiedStocks: (() => {
-        const saved = localStorage.getItem(NOTIFIED_STOCKS_KEY);
-        return saved ? new Set(JSON.parse(saved)) : new Set();
-    })(),
 
     setStocks: stocks => set({stocks}),
     setLoading: loading => set({loading}),
@@ -119,88 +101,6 @@ export const useStockStore = create<StockStore>((set, get) => ({
     setMarketFilter: marketFilter => {
         localStorage.setItem(MARKET_FILTER_KEY, marketFilter);
         set({marketFilter});
-    },
-
-    setNotificationsEnabled: enabled => {
-        localStorage.setItem(NOTIFICATIONS_ENABLED_KEY, String(enabled));
-        set({notificationsEnabled: enabled});
-        if (!enabled) {
-            // Clear notified stocks when disabling notifications
-            localStorage.removeItem(NOTIFIED_STOCKS_KEY);
-            set({notifiedStocks: new Set()});
-            disableNotificationsInServiceWorker();
-        } else {
-            // Send config to service worker when enabling
-            const apiUrl = import.meta.env.VITE_QUOTES_API_URL;
-            if (apiUrl) {
-                sendConfigToServiceWorker({
-                    apiUrl,
-                    valuationData: valuationData.stocks,
-                    notifiedStocks: Array.from(get().notifiedStocks),
-                });
-            }
-        }
-    },
-
-    requestNotificationPermission: async () => {
-        const permission = await requestNotificationPermission();
-        if (permission === "granted") {
-            get().setNotificationsEnabled(true);
-            
-            // Send initial config to service worker
-            const apiUrl = import.meta.env.VITE_QUOTES_API_URL;
-            if (apiUrl) {
-                sendConfigToServiceWorker({
-                    apiUrl,
-                    valuationData: valuationData.stocks,
-                    notifiedStocks: Array.from(get().notifiedStocks),
-                });
-            }
-        } else {
-            get().setNotificationsEnabled(false);
-        }
-    },
-
-    checkAndNotifyNetNetStocks: stocks => {
-        const {notificationsEnabled, notifiedStocks} = get();
-
-        if (!notificationsEnabled) return;
-
-        const newNotifiedStocks = new Set(notifiedStocks);
-        let hasNewNotifications = false;
-
-        stocks.forEach(stock => {
-            if (isAtNetNetValue(stock.currentPrice, stock.valuationLow) && !notifiedStocks.has(stock.symbol)) {
-                // Stock has reached net net value and hasn't been notified yet
-                showNotification({
-                    title: `💎 ${stock.name} (${stock.symbol}) 已達殘值！`,
-                    body: `當前價格 ${formatCurrency(stock.currentPrice, stock.market)} 已跌至殘值 ${formatCurrency(stock.valuationLow, stock.market)}`,
-                    tag: `netnet-${stock.symbol}`,
-                    requireInteraction: true,
-                });
-
-                newNotifiedStocks.add(stock.symbol);
-                hasNewNotifications = true;
-            } else if (!isAtNetNetValue(stock.currentPrice, stock.valuationLow) && notifiedStocks.has(stock.symbol)) {
-                // Stock has recovered above net net value, remove from notified list
-                newNotifiedStocks.delete(stock.symbol);
-                hasNewNotifications = true;
-            }
-        });
-
-        if (hasNewNotifications) {
-            localStorage.setItem(NOTIFIED_STOCKS_KEY, JSON.stringify(Array.from(newNotifiedStocks)));
-            set({notifiedStocks: newNotifiedStocks});
-            
-            // Update service worker with new notified stocks
-            updateNotifiedStocksInServiceWorker(Array.from(newNotifiedStocks));
-        }
-    },
-
-    resetNotifiedStocks: () => {
-        localStorage.removeItem(NOTIFIED_STOCKS_KEY);
-        set({notifiedStocks: new Set()});
-        updateNotifiedStocksInServiceWorker([]);
     },
 
     fetchQuotes: async (symbols, stocksData) => {
@@ -233,9 +133,6 @@ export const useStockStore = create<StockStore>((set, get) => ({
                 loading: false,
                 error: null,
             });
-
-            // Check and notify for stocks at net net value
-            get().checkAndNotifyNetNetStocks(merged);
 
             setTimeout(() => {
                 set({pulse: false});
