@@ -36,7 +36,7 @@ jobs:
 
             - name: Build
               env:
-                  VITE_QUOTES_API_URL: https://stock-prices.on99.app/quotes
+                  VITE_QUOTES_API_URL: "${{ vars.VITE_QUOTES_API_URL }}"
               run: pnpm run build
 
             - name: Setup Pages
