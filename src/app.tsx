@@ -3,12 +3,12 @@ import {Header} from "./components/Header";
 import {SortButtonGroup} from "./components/SortButtonGroup";
 import {StockGrid} from "./components/StockGrid";
 import {LoadingSpinner} from "./components/LoadingSpinner";
-import {useStockStore} from "./store/useStockStore";
-import {sortStocks} from "./utils/sortStocks";
-import {valuationData} from "./valuation";
 import {ErrorDisplay} from "./components/ErrorDisplay";
+import {useStockStore} from "./store/useStockStore";
+import {getUniqueSymbols, sortStocks} from "./utils/stockHelpers";
+import {valuationData} from "./valuation";
 
-const SYMBOLS = valuationData.stocks.map(s => s.symbol).join(",");
+const SYMBOLS = getUniqueSymbols(valuationData.stocks);
 const STOCKS_DATA = valuationData.stocks;
 
 export const App = () => {

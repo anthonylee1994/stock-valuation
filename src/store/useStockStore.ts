@@ -1,6 +1,7 @@
 import {create} from "zustand";
 import type {StockWithQuote, Quote, ValuationData} from "../types";
 import {valuationData} from "../valuation";
+import {validateAndDeduplicateStocks, getUniqueSymbols} from "../utils/stockHelpers";
 import moment from "moment";
 
 // LocalStorage keys
@@ -32,11 +33,33 @@ interface StockStore {
 }
 
 const mergeStocksWithQuotes = (stocks: ValuationData["stocks"], quotes: Quote[]): StockWithQuote[] => {
-    const quoteMap = new Map(quotes.map(q => [q.symbol, q]));
-    return stocks
+    // Build quote map, warn if quotes have duplicates
+    const quoteMap = new Map<string, Quote>();
+    const quoteDuplicates: string[] = [];
+
+    quotes.forEach(quote => {
+        if (quoteMap.has(quote.symbol)) {
+            quoteDuplicates.push(quote.symbol);
+            console.warn(`Duplicate quote received for symbol: "${quote.symbol}". Using latest.`);
+        }
+        quoteMap.set(quote.symbol, quote);
+    });
+
+    if (quoteDuplicates.length > 0) {
+        console.warn(`API returned ${quoteDuplicates.length} duplicate quote(s): ${[...new Set(quoteDuplicates)].join(", ")}`);
+    }
+
+    // Deduplicate stocks before merging
+    const dedupedStocks = validateAndDeduplicateStocks(stocks);
+
+    // Merge stocks with quotes
+    return dedupedStocks
         .map(stock => {
             const quote = quoteMap.get(stock.symbol);
-            if (!quote) return null;
+            if (!quote) {
+                console.warn(`No quote found for symbol: "${stock.symbol}"`);
+                return null;
+            }
             return {
                 ...stock,
                 ...quote,
@@ -125,7 +148,7 @@ export const useStockStore = create<StockStore>((set, get) => ({
 
     retryFetch: () => {
         const {fetchQuotes} = get();
-        const symbols = valuationData.stocks.map(s => s.symbol).join(",");
+        const symbols = getUniqueSymbols(valuationData.stocks);
         fetchQuotes(symbols, valuationData.stocks);
     },
 
