@@ -68,7 +68,7 @@ export const useStockStore = create<StockStore>((set, get) => ({
     fetchQuotes: async (symbols, stocksData) => {
         set({loading: true});
         try {
-            const apiUrl = import.meta.env.VITE_QUOTES_API_URL || "https://stock-prices.on99.app/quotes";
+            const apiUrl = import.meta.env.VITE_QUOTES_API_URL;
             const res = await fetch(`${apiUrl}?symbols=${encodeURIComponent(symbols)}`);
             const json = (await res.json()) as {quotes: Quote[]};
             const merged = mergeStocksWithQuotes(stocksData, json.quotes);
