@@ -1,5 +1,6 @@
 export interface ValuationStock {
     symbol: string;
+    name: string;
     market: "US" | "HK";
     valuationLow: number;
     valuationHigh: number;

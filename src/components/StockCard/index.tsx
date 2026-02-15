@@ -18,7 +18,7 @@ const getActivePrice = (stock: StockWithQuote) => ({
 
 export const StockCard = ({stock}: Props) => {
     const {price, change, percentChange} = getActivePrice(stock);
-    const {symbol, currentPrice, valuationLow, valuationHigh, forwardPE, priceToBook, dividendYield} = stock;
+    const {symbol, name, currentPrice, valuationLow, valuationHigh, forwardPE, priceToBook, dividendYield} = stock;
 
     const status = getStatus(price, valuationLow, valuationHigh);
     const config = STATUS_CONFIG[status];
@@ -37,7 +37,7 @@ export const StockCard = ({stock}: Props) => {
 
             <Card.Content>
                 <div className="grid grid-cols-2 gap-3 mb-5">
-                    <PriceCard price={price} change={change} percentChange={percentChange} forwardPE={forwardPE} priceToBook={priceToBook} dividendYield={dividendYield} />
+                    <PriceCard name={name} price={price} change={change} percentChange={percentChange} forwardPE={forwardPE} priceToBook={priceToBook} dividendYield={dividendYield} />
                     <ValuationRangeDisplay valuationLow={valuationLow} valuationHigh={valuationHigh} />
                 </div>
 

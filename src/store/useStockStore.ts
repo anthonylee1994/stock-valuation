@@ -20,6 +20,7 @@ interface StockStore {
     error: string | null;
     sortOrder: "asc" | "desc";
     marketFilter: "hk" | "us";
+    cardsFlipped: boolean;
     setStocks: (stocks: StockWithQuote[]) => void;
     setLoading: (loading: boolean) => void;
     setPulse: (pulse: boolean) => void;
@@ -27,6 +28,7 @@ interface StockStore {
     setError: (error: string | null) => void;
     setSortOrder: (sortOrder: "asc" | "desc") => void;
     setMarketFilter: (marketFilter: "hk" | "us") => void;
+    toggleCardsFlip: () => void;
     fetchQuotes: (symbols: string, stocksData: ValuationData["stocks"]) => Promise<void>;
     startPolling: (symbols: string, stocksData: ValuationData["stocks"]) => () => void;
     retryFetch: () => void;
@@ -74,6 +76,7 @@ export const useStockStore = create<StockStore>((set, get) => ({
     pulse: false,
     lastUpdate: null,
     error: null,
+    cardsFlipped: false,
     sortOrder: (() => {
         const saved = localStorage.getItem(SORT_ORDER_KEY);
         return saved === "asc" || saved === "desc" ? saved : "asc";
@@ -88,6 +91,7 @@ export const useStockStore = create<StockStore>((set, get) => ({
     setPulse: pulse => set({pulse}),
     setLastUpdate: lastUpdate => set({lastUpdate}),
     setError: error => set({error}),
+    toggleCardsFlip: () => set(state => ({cardsFlipped: !state.cardsFlipped})),
 
     setSortOrder: sortOrder => {
         localStorage.setItem(SORT_ORDER_KEY, sortOrder);
