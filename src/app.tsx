@@ -6,12 +6,13 @@ import {LoadingSpinner} from "./components/LoadingSpinner";
 import {useStockStore} from "./store/useStockStore";
 import {sortStocks} from "./utils/sortStocks";
 import {valuationData} from "./valuation";
+import {ErrorDisplay} from "./components/ErrorDisplay";
 
 const SYMBOLS = valuationData.stocks.map(s => s.symbol).join(",");
 const STOCKS_DATA = valuationData.stocks;
 
 export const App = () => {
-    const {stocks, loading, pulse, lastUpdate, sortOrder, marketFilter, setSortOrder, setMarketFilter, startPolling} = useStockStore();
+    const {stocks, error, retryFetch, loading, pulse, lastUpdate, sortOrder, marketFilter, setSortOrder, setMarketFilter, startPolling} = useStockStore();
 
     useEffect(() => {
         const cleanup = startPolling(SYMBOLS, STOCKS_DATA);
@@ -29,6 +30,10 @@ export const App = () => {
     const sortedStocks = useMemo(() => {
         return sortStocks(filteredStocks, sortOrder);
     }, [filteredStocks, sortOrder]);
+
+    if (error) {
+        return <ErrorDisplay error={error} onRetry={retryFetch} />;
+    }
 
     return (
         <div className="min-h-screen text-slate-200 p-6 max-[640px]:p-4">
