@@ -9,6 +9,10 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+body {
+    transition: all 500ms;
+}
+
 /* Custom theme adjustments */
 .light,
 [data-theme="light"] {
