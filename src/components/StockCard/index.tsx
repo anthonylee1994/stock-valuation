@@ -1,3 +1,4 @@
+import {memo} from "react";
 import {Card, Chip} from "@heroui/react";
 import type {StockWithQuote} from "../../types";
 import {STATUS_CONFIG, getStatus, calculatePotential} from "./constants";
@@ -11,12 +12,14 @@ interface Props {
 }
 
 const getActivePrice = (stock: StockWithQuote) => ({
-    price: stock.preMarketPrice ?? stock.postMarketPrice ?? stock.currentPrice,
-    change: stock.preMarketChange ?? stock.postMarketChange ?? stock.change,
-    percentChange: stock.preMarketChangePercent ?? stock.postMarketChangePercent ?? stock.percentChange,
+    // 加 fallback 避免 undefined 導致 NaN
+    price: stock.preMarketPrice ?? stock.postMarketPrice ?? stock.currentPrice ?? 0,
+    change: stock.preMarketChange ?? stock.postMarketChange ?? stock.change ?? 0,
+    percentChange: stock.preMarketChangePercent ?? stock.postMarketChangePercent ?? stock.percentChange ?? 0,
 });
 
-export const StockCard = ({stock}: Props) => {
+// 用 memo 避免 stocks array reference 變咗但內容冇變時都 re-render
+export const StockCard = memo(({stock}: Props) => {
     const {price, change, percentChange} = getActivePrice(stock);
     const {symbol, currentPrice, valuationLow, valuationHigh, forwardPE, priceToBook, dividendYield} = stock;
 
