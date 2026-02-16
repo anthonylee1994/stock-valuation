@@ -32,8 +32,9 @@ export const StockCard = ({stock}: Props) => {
                 <Card.Title id={`card-title-${symbol}`} className="m-0 text-2xl font-bold tracking-wide max-[480px]:text-xl">
                     {symbol}
                 </Card.Title>
-                <Chip color={config.color} variant="soft" size="sm">
-                    {config.emoji} {config.label}
+                <Chip color={config.color} variant="soft" size="md">
+                    <config.icon className="mr-1" aria-hidden />
+                    {config.label}
                 </Chip>
             </Card.Header>
 
