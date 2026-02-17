@@ -21,7 +21,7 @@ interface StockStore {
     lastUpdate: string | null;
     error: string | null;
     sortOrder: "asc" | "desc";
-    marketFilter: "hk" | "us";
+    marketFilter: string;
     cardsFlipped: boolean;
     setStocks: (stocks: StockWithQuote[]) => void;
     setLoading: (loading: boolean) => void;
@@ -29,7 +29,7 @@ interface StockStore {
     setLastUpdate: (lastUpdate: string | null) => void;
     setError: (error: string | null) => void;
     setSortOrder: (sortOrder: "asc" | "desc") => void;
-    setMarketFilter: (marketFilter: "hk" | "us") => void;
+    setMarketFilter: (marketFilter: string) => void;
     toggleCardsFlip: () => void;
     fetchQuotes: (symbols: string, stocksData: ValuationData["stocks"]) => Promise<void>;
     startPolling: (symbols: string, stocksData: ValuationData["stocks"]) => () => void;
@@ -85,7 +85,7 @@ export const useStockStore = create<StockStore>((set, get) => ({
     })(),
     marketFilter: (() => {
         const saved = localStorage.getItem(MARKET_FILTER_KEY);
-        return saved === "hk" || saved === "us" ? saved : "us";
+        return saved === "hk_market" || saved === "us_market" ? saved : "us_market";
     })(),
 
     setStocks: stocks => set({stocks}),

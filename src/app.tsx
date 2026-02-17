@@ -19,17 +19,8 @@ export const App = () => {
         return cleanup;
     }, []);
 
-    const filteredStocks = useMemo(() => {
-        return stocks.filter(stock => {
-            if (marketFilter === "hk") return stock.market === "HK";
-            if (marketFilter === "us") return stock.market === "US";
-            return false;
-        });
-    }, [stocks, marketFilter]);
-
-    const sortedStocks = useMemo(() => {
-        return sortStocks(filteredStocks, sortOrder);
-    }, [filteredStocks, sortOrder]);
+    const filteredStocks = useMemo(() => stocks.filter(stock => stock.market === marketFilter), [stocks, marketFilter]);
+    const sortedStocks = useMemo(() => sortStocks(filteredStocks, sortOrder), [filteredStocks, sortOrder]);
 
     if (error) {
         return <ErrorDisplay error={error} onRetry={retryFetch} />;

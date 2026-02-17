@@ -4,8 +4,8 @@ import {Tabs} from "@heroui/react";
 interface Props {
     sortOrder: "asc" | "desc";
     onSortOrderChange: (order: "asc" | "desc") => void;
-    marketFilter: "hk" | "us";
-    onMarketFilterChange: (market: "hk" | "us") => void;
+    marketFilter: string;
+    onMarketFilterChange: (market: string) => void;
 }
 
 export const SortButtonGroup = React.memo<Props>(({sortOrder, onSortOrderChange, marketFilter, onMarketFilterChange}) => {
@@ -44,10 +44,10 @@ export const SortButtonGroup = React.memo<Props>(({sortOrder, onSortOrderChange,
                 </Tabs.Panel>
             </Tabs>
 
-            <Tabs selectedKey={marketFilter} onSelectionChange={key => onMarketFilterChange(key as "hk" | "us")} className="w-fit">
+            <Tabs selectedKey={marketFilter} onSelectionChange={key => onMarketFilterChange(key as string)} className="w-fit">
                 <Tabs.ListContainer>
                     <Tabs.List aria-label="市場" className="transition-all duration-100">
-                        <Tabs.Tab id="us">
+                        <Tabs.Tab id="us_market">
                             美股
                             <Tabs.Indicator
                                 style={{
@@ -57,7 +57,7 @@ export const SortButtonGroup = React.memo<Props>(({sortOrder, onSortOrderChange,
                                 }}
                             />
                         </Tabs.Tab>
-                        <Tabs.Tab id="hk">
+                        <Tabs.Tab id="hk_market">
                             港股
                             <Tabs.Indicator
                                 style={{

@@ -1,7 +1,5 @@
 export interface ValuationStock {
     symbol: string;
-    name: string;
-    market: "US" | "HK";
     valuationLow: number;
     valuationHigh: number;
 }
@@ -12,6 +10,8 @@ export interface ValuationData {
 
 export interface Quote {
     symbol: string;
+    name: string;
+    market: string;
     currentPrice: number;
     change: number;
     percentChange: number;
