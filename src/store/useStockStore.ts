@@ -3,6 +3,7 @@ import type {StockWithQuote, Quote, ValuationData} from "../types";
 import {valuationData} from "../valuation";
 import {validateAndDeduplicateStocks, getUniqueSymbols} from "../utils/stockHelpers";
 import moment from "moment";
+import {decode} from "@toon-format/toon";
 
 // LocalStorage keys
 const SORT_ORDER_KEY = "stock-valuation-sort-order";
@@ -119,7 +120,8 @@ export const useStockStore = create<StockStore>((set, get) => ({
                 throw new Error(`API 請求失敗：${res.status} ${res.statusText}`);
             }
 
-            const json = (await res.json()) as {quotes: Quote[]};
+            const toon = await res.text();
+            const json = decode(toon) as any as {quotes: Quote[]};
 
             if (!json.quotes || json.quotes.length === 0) {
                 throw new Error("API 返回空數據。請稍後再試。");
