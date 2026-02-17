@@ -17,6 +17,7 @@
         "@heroui/styles": "3.0.0-beta.6",
         "@tailwindcss/vite": "^4.1.18",
         "@toon-format/toon": "^2.1.0",
+        "axios": "^1.13.5",
         "moment": "^2.30.1",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",

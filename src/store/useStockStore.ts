@@ -4,6 +4,8 @@ import {valuationData} from "../valuation";
 import {validateAndDeduplicateStocks, getUniqueSymbols} from "../utils/stockHelpers";
 import moment from "moment";
 import {decode} from "@toon-format/toon";
+import axios from "axios";
+import {api} from "../utils/api";
 
 // LocalStorage keys
 const SORT_ORDER_KEY = "stock-valuation-sort-order";
@@ -108,20 +110,8 @@ export const useStockStore = create<StockStore>((set, get) => ({
         const currentStocks = get().stocks;
         set({loading: true, error: null});
         try {
-            const apiUrl = import.meta.env.VITE_QUOTES_API_URL;
-
-            if (!apiUrl) {
-                throw new Error("API URL 未設定。請檢查環境變量 VITE_QUOTES_API_URL。");
-            }
-
-            const res = await fetch(`${apiUrl}?symbols=${encodeURIComponent(symbols)}`);
-
-            if (!res.ok) {
-                throw new Error(`API 請求失敗：${res.status} ${res.statusText}`);
-            }
-
-            const toon = await res.text();
-            const json = decode(toon) as any as {quotes: Quote[]};
+            const res = await api.get(`?symbols=${encodeURIComponent(symbols)}`);
+            const json = decode(res.data) as any as {quotes: Quote[]};
 
             if (!json.quotes || json.quotes.length === 0) {
                 throw new Error("API 返回空數據。請稍後再試。");
