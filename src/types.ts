@@ -17,17 +17,17 @@ export interface Quote {
     percentChange: number;
     previousClosePrice: number;
     regularMarketTime: string;
-    preMarketPrice?: number;
-    preMarketChange?: number;
-    preMarketTime?: string;
-    preMarketChangePercent?: number;
-    postMarketPrice?: number;
-    postMarketChange?: number;
-    postMarketChangePercent?: number;
-    postMarketTime?: string;
-    forwardPE?: number;
-    priceToBook?: number;
-    dividendYield?: number;
+    preMarketPrice: number | null;
+    preMarketChange: number | null;
+    preMarketTime: string | null;
+    preMarketChangePercent: number | null;
+    postMarketPrice: number | null;
+    postMarketChange: number | null;
+    postMarketChangePercent: number | null;
+    postMarketTime: string | null;
+    forwardPE: number | null;
+    priceToBook: number | null;
+    dividendYield: number | null;
 }
 
 export type StockWithQuote = ValuationStock & Quote;

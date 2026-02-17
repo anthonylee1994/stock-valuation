@@ -9,9 +9,9 @@ interface Props {
     price: number;
     change: number;
     percentChange: number;
-    forwardPE?: number;
-    priceToBook?: number;
-    dividendYield?: number;
+    forwardPE: number | null;
+    priceToBook: number | null;
+    dividendYield: number | null;
 }
 
 interface AnimationState {
