@@ -4,7 +4,6 @@ import {valuationData} from "../valuation";
 import {validateAndDeduplicateStocks, getUniqueSymbols} from "../utils/stockHelpers";
 import moment from "moment";
 import {decode} from "@toon-format/toon";
-import axios from "axios";
 import {api} from "../utils/api";
 
 // LocalStorage keys
