@@ -1,3 +1,4 @@
+import React from "react";
 import {Tabs} from "@heroui/react";
 
 interface Props {
@@ -7,7 +8,7 @@ interface Props {
     onMarketFilterChange: (market: "hk" | "us") => void;
 }
 
-export const SortButtonGroup = ({sortOrder, onSortOrderChange, marketFilter, onMarketFilterChange}: Props) => {
+export const SortButtonGroup = React.memo<Props>(({sortOrder, onSortOrderChange, marketFilter, onMarketFilterChange}) => {
     return (
         <div className="max-w-[1400px] mx-auto mb-6 flex items-center justify-between gap-4 flex-wrap">
             <Tabs selectedKey={sortOrder} onSelectionChange={key => onSortOrderChange(key as "asc" | "desc")} className="w-fit">
@@ -77,4 +78,4 @@ export const SortButtonGroup = ({sortOrder, onSortOrderChange, marketFilter, onM
             </Tabs>
         </div>
     );
-};
+});

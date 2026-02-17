@@ -1,3 +1,4 @@
+import React from "react";
 import {Button, Alert} from "@heroui/react";
 
 interface Props {
@@ -5,7 +6,7 @@ interface Props {
     onRetry: () => void;
 }
 
-export const ErrorDisplay = ({error, onRetry}: Props) => {
+export const ErrorDisplay = React.memo<Props>(({error, onRetry}) => {
     return (
         <div className="min-h-screen flex items-center justify-center p-6">
             <div className="max-w-md w-full text-center">
@@ -27,4 +28,4 @@ export const ErrorDisplay = ({error, onRetry}: Props) => {
             </div>
         </div>
     );
-};
+});

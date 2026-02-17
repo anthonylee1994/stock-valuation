@@ -3,6 +3,7 @@ import {formatPercent, formatPrice, getPriceColor} from "../constants";
 import {useStockStore} from "../../../store/useStockStore";
 import {PriceArrow} from "./PriceArrow";
 import {MetricRow} from "./MetricRow";
+import React from "react";
 
 interface Props {
     name: string;
@@ -20,7 +21,7 @@ interface AnimationState {
     arrowDirection: "up" | "down" | null;
 }
 
-export const PriceCard = ({name, price, change, percentChange, forwardPE, priceToBook, dividendYield}: Props) => {
+export const PriceCard = React.memo<Props>(({name, price, change, percentChange, forwardPE, priceToBook, dividendYield}) => {
     const prevPriceRef = useRef(price);
     const [animation, setAnimation] = useState<AnimationState>({
         flashClass: "",
@@ -95,4 +96,4 @@ export const PriceCard = ({name, price, change, percentChange, forwardPE, priceT
             </div>
         </div>
     );
-};
+});

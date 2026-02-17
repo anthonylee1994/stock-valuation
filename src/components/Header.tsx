@@ -1,3 +1,4 @@
+import React from "react";
 import {Button} from "@heroui/react";
 import {FiMoon, FiSun} from "react-icons/fi";
 import {useThemeStore} from "../store/useThemeStore";
@@ -7,7 +8,7 @@ interface Props {
     pulse: boolean;
 }
 
-export const Header = ({lastUpdate, pulse}: Props) => {
+export const Header = React.memo<Props>(({lastUpdate, pulse}) => {
     const {theme, toggleTheme} = useThemeStore();
 
     return (
@@ -22,4 +23,4 @@ export const Header = ({lastUpdate, pulse}: Props) => {
             </div>
         </header>
     );
-};
+});

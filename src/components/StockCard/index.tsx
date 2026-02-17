@@ -1,3 +1,4 @@
+import React from "react";
 import {Card, Chip} from "@heroui/react";
 import type {StockWithQuote} from "../../types";
 import {STATUS_CONFIG, getStatus, calculatePotential} from "./constants";
@@ -16,7 +17,7 @@ const getActivePrice = (stock: StockWithQuote) => ({
     percentChange: stock.preMarketChangePercent ?? stock.postMarketChangePercent ?? stock.percentChange,
 });
 
-export const StockCard = ({stock}: Props) => {
+export const StockCard = React.memo<Props>(({stock}: Props) => {
     const {price, change, percentChange} = getActivePrice(stock);
     const {symbol, name, currentPrice, valuationLow, valuationHigh, forwardPE, priceToBook, dividendYield} = stock;
 
@@ -50,4 +51,4 @@ export const StockCard = ({stock}: Props) => {
             </Card.Content>
         </Card>
     );
-};
+});

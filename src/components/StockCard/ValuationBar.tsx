@@ -1,3 +1,4 @@
+import React from "react";
 import {formatPrice} from "./constants";
 
 interface Props {
@@ -7,7 +8,7 @@ interface Props {
     valuationHigh: number;
 }
 
-export const ValuationBar = ({currentPrice, price, valuationLow, valuationHigh}: Props) => {
+export const ValuationBar = React.memo<Props>(({currentPrice, price, valuationLow, valuationHigh}) => {
     const barMin = Math.min(valuationLow, price) * 0.9;
     const barMax = Math.max(valuationHigh, price) * 1.1;
     const barRange = barMax - barMin;
@@ -39,4 +40,4 @@ export const ValuationBar = ({currentPrice, price, valuationLow, valuationHigh}:
             </div>
         </div>
     );
-};
+});

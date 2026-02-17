@@ -6,7 +6,7 @@ interface Props {
     valuationHigh: number;
 }
 
-export const ValuationRangeDisplay = ({valuationLow, valuationHigh}: Props) => {
+export const ValuationRangeDisplay = React.memo<Props>(({valuationLow, valuationHigh}) => {
     return (
         <React.Fragment>
             <div className="bg-surface-secondary transition-all duration-100 rounded-lg px-3 py-2 text-center">
@@ -19,4 +19,4 @@ export const ValuationRangeDisplay = ({valuationLow, valuationHigh}: Props) => {
             </div>
         </React.Fragment>
     );
-};
+});
