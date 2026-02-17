@@ -12,7 +12,7 @@ export const SortButtonGroup = ({sortOrder, onSortOrderChange, marketFilter, onM
         <div className="max-w-[1400px] mx-auto mb-6 flex items-center justify-between gap-4 flex-wrap">
             <Tabs selectedKey={sortOrder} onSelectionChange={key => onSortOrderChange(key as "asc" | "desc")} className="w-fit">
                 <Tabs.ListContainer>
-                    <Tabs.List aria-label="排序" className="transition-all duration-500">
+                    <Tabs.List aria-label="排序" className="transition-all duration-100">
                         <Tabs.Tab id="asc">
                             由殘到貴
                             <Tabs.Indicator
@@ -45,7 +45,7 @@ export const SortButtonGroup = ({sortOrder, onSortOrderChange, marketFilter, onM
 
             <Tabs selectedKey={marketFilter} onSelectionChange={key => onMarketFilterChange(key as "hk" | "us")} className="w-fit">
                 <Tabs.ListContainer>
-                    <Tabs.List aria-label="市場" className="transition-all duration-500">
+                    <Tabs.List aria-label="市場" className="transition-all duration-100">
                         <Tabs.Tab id="us">
                             美股
                             <Tabs.Indicator

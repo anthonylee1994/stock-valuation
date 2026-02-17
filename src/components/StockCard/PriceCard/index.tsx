@@ -62,10 +62,11 @@ export const PriceCard = ({name, price, change, percentChange, forwardPE, priceT
     return (
         <div className="col-span-2" onClick={toggleCardsFlip} style={{perspective: "1000px"}}>
             <div
-                className={`relative transition-all duration-500 bg-surface-secondary rounded-lg px-3 py-2 text-center transition-all border-2 border-transparent cursor-pointer ${isFlipped ? "" : animation.flashClass}`}
+                className={`relative bg-surface-secondary rounded-lg px-3 py-2 text-center border-2 border-transparent cursor-pointer ${isFlipped ? "" : animation.flashClass}`}
                 style={{
                     transformStyle: "preserve-3d",
                     transform: `rotateY(${isFlipped ? 180 : 0}deg)`,
+                    transition: "transform 500ms, background-color 100ms",
                 }}
             >
                 {/* Front Face */}
