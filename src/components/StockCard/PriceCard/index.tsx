@@ -63,11 +63,11 @@ export const PriceCard = React.memo<Props>(({name, price, change, percentChange,
     return (
         <div className="col-span-2" onClick={toggleCardsFlip} style={{perspective: "1000px"}}>
             <div
-                className={`relative bg-surface-secondary rounded-lg px-3 py-2 text-center border-2 border-transparent cursor-pointer ${isFlipped ? "" : animation.flashClass}`}
+                className={`relative bg-surface-secondary rounded-xl px-3 py-2.5 text-center border-2 border-transparent cursor-pointer shadow-sm ring-1 ring-black/5 ${isFlipped ? "" : animation.flashClass}`}
                 style={{
                     transformStyle: "preserve-3d",
                     transform: `rotateY(${isFlipped ? 180 : 0}deg)`,
-                    transition: "transform 500ms, background-color 100ms",
+                    transition: "transform 500ms",
                 }}
             >
                 {/* Front Face */}

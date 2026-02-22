@@ -8,9 +8,13 @@ interface Props {
 
 export const PotentialDisplay = React.memo<Props>(({potentialDownside, potentialUpside}) => {
     return (
-        <div className="flex justify-between items-center text-[0.8rem] gap-2 flex-wrap">
-            <span className={`transition-colors duration-300 ${potentialDownside > 0 ? "text-success" : "text-danger"}`}>距離殘值 {formatPercent(potentialDownside, true)}</span>
-            <span className={`transition-colors duration-300 ${potentialUpside > 0 ? "text-success" : "text-danger"}`}>距離極值 {formatPercent(potentialUpside, true)}</span>
+        <div className="flex justify-between items-center text-[0.8rem] gap-3 flex-wrap">
+            <span className={potentialDownside > 0 ? "text-success font-medium" : "text-danger font-medium"}>
+                距離殘值 <span className="tabular-nums">{formatPercent(potentialDownside, true)}</span>
+            </span>
+            <span className={potentialUpside > 0 ? "text-success font-medium" : "text-danger font-medium"}>
+                距離極值 <span className="tabular-nums">{formatPercent(potentialUpside, true)}</span>
+            </span>
         </div>
     );
 });

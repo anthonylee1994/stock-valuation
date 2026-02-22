@@ -28,19 +28,19 @@ export const StockCard = React.memo<Props>(({stock}: Props) => {
     const potentialUpside = calculatePotential(price, valuationHigh);
 
     return (
-        <Card role="article" aria-labelledby={`card-title-${symbol}`} className={`bg-surface transition-all duration-100 border-3 select-none ${config.borderClass}`}>
-            <Card.Header className="flex flex-row items-center justify-between">
-                <Card.Title id={`card-title-${symbol}`} className="m-0 text-2xl font-bold tracking-wide max-[480px]:text-xl">
+        <Card role="article" aria-labelledby={`card-title-${symbol}`} className={`p-0 bg-surface border-3 select-none shadow-sm rounded-3xl overflow-hidden ${config.borderClass}`}>
+            <Card.Header className="flex flex-row items-center justify-between gap-3 px-5 pt-5 pb-2">
+                <Card.Title id={`card-title-${symbol}`} className="m-0 text-2xl font-bold tracking-tight text-foreground max-[480px]:text-xl">
                     {symbol}
                 </Card.Title>
-                <Chip color={config.color} variant="soft" size="md">
-                    <config.icon className="mr-1" aria-hidden />
+                <Chip color={config.color} variant="soft" size="md" className="font-medium shrink-0">
+                    <config.icon className="mr-1.5 size-4" aria-hidden />
                     {config.label}
                 </Chip>
             </Card.Header>
 
-            <Card.Content>
-                <div className="grid grid-cols-2 gap-3 mb-5">
+            <Card.Content className="px-5 pb-5 pt-1">
+                <div className="grid grid-cols-2 gap-4 mb-6">
                     <PriceCard name={name} price={price} change={change} percentChange={percentChange} forwardPE={forwardPE} priceToBook={priceToBook} dividendYield={dividendYield} />
                     <ValuationRangeDisplay valuationLow={valuationLow} valuationHigh={valuationHigh} />
                 </div>
