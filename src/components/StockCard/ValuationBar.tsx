@@ -28,11 +28,11 @@ export const ValuationBar = React.memo<Props>(({price, valuationLow, valuationHi
             </div>
             {/* White marker line */}
             <div
-                className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-1 h-9 bg-foreground z-[2]"
+                className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-1 h-9 bg-foreground z-2"
                 style={{left: `${markerPosition}%`, transition: "left 500ms, color 100ms"}}
                 title={formatPrice(price)}
             >
-                <div className="absolute left-1/2 top-full translate-y-[-6px] -translate-x-1/2 flex flex-col items-center gap-0 transition-all duration-500 z-[3]">
+                <div className="absolute left-1/2 top-full translate-y-[-6px] -translate-x-1/2 flex flex-col items-center gap-0 transition-all duration-500 z-3">
                     <span className="text-[0.8rem] text-foreground">▼</span>
                     <span className="text-xs font-semibold text-foreground whitespace-nowrap mt-[-2px]">{formatPrice(price)}</span>
                 </div>
