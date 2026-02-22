@@ -1,4 +1,4 @@
-import type {ValuationData} from "./types";
+import type {ValuationData} from "@/types";
 
 export const valuationData: ValuationData = {
     stocks: [

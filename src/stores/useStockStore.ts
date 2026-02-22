@@ -1,10 +1,10 @@
 import {create} from "zustand";
-import type {StockWithQuote, Quote, ValuationData} from "../types";
-import {valuationData} from "../valuation";
-import {validateAndDeduplicateStocks, getUniqueSymbols} from "../utils/stockHelpers";
+import type {StockWithQuote, Quote, ValuationData} from "@/types";
+import {valuationData} from "@/valuation";
+import {validateAndDeduplicateStocks, getUniqueSymbols} from "@/utils/stockHelpers";
 import moment from "moment";
 import {decode} from "@toon-format/toon";
-import {api} from "../utils/api";
+import {api} from "@/utils/api";
 
 // LocalStorage keys
 const SORT_ORDER_KEY = "stock-valuation-sort-order";

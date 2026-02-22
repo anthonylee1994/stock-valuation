@@ -1,6 +1,6 @@
 import React from "react";
 import {StockCard} from "./StockCard";
-import type {StockWithQuote} from "../types";
+import type {StockWithQuote} from "@/types";
 
 interface Props {
     stocks: StockWithQuote[];

@@ -1,6 +1,6 @@
 import React from "react";
 import {Card} from "@heroui/react";
-import type {StockWithQuote} from "../../types";
+import type {StockWithQuote} from "@/types";
 import {STATUS_CONFIG, getStatus, calculatePotential} from "./constants";
 import {CardHeader} from "./CardHeader";
 import {PriceCard} from "./PriceCard";

@@ -1,6 +1,6 @@
 import React from "react";
 import {formatPrice} from "./constants";
-import {calculateBarPositions} from "../../utils/valuationBar";
+import {calculateBarPositions} from "@/utils/valuationBar";
 
 interface Props {
     price: number;

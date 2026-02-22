@@ -1,7 +1,7 @@
 import React from "react";
 import {Button} from "@heroui/react";
 import {FiMoon, FiSun} from "react-icons/fi";
-import {useThemeStore} from "../store/useThemeStore";
+import {useThemeStore} from "@/stores/useThemeStore";
 
 interface Props {
     lastUpdate: string | null;

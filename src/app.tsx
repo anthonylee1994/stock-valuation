@@ -4,7 +4,7 @@ import {SortButtonGroup} from "./components/SortButtonGroup";
 import {StockGrid} from "./components/StockGrid";
 import {LoadingSpinner} from "./components/LoadingSpinner";
 import {ErrorDisplay} from "./components/ErrorDisplay";
-import {useStockStore} from "./store/useStockStore";
+import {useStockStore} from "./stores/useStockStore";
 import {getUniqueSymbols, sortStocks} from "./utils/stockHelpers";
 import {valuationData} from "./valuation";
 
