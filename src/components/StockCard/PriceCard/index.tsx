@@ -1,7 +1,7 @@
 import React from "react";
 import {formatPercent, formatPrice, getPriceColor} from "../constants";
 import {useStockStore} from "../../../store/useStockStore";
-import {usePriceAnimation} from "../hooks/usePriceAnimation";
+import {usePriceAnimation} from "../../../hooks/usePriceAnimation";
 import {PriceArrow} from "./PriceArrow";
 import {MetricRow} from "./MetricRow";
 
