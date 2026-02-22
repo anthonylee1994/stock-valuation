@@ -29,9 +29,10 @@ export const StockCard = React.memo<Props>(({stock}: Props) => {
 
     return (
         <Card role="article" aria-labelledby={`card-title-${symbol}`} className={`p-0 bg-surface border-3 select-none shadow-sm rounded-3xl overflow-hidden ${config.borderClass}`}>
-            <Card.Header className="flex flex-row items-center justify-between gap-3 px-5 pt-5 pb-2">
-                <Card.Title id={`card-title-${symbol}`} className="m-0 text-2xl font-bold tracking-tight text-foreground max-[480px]:text-xl">
-                    {symbol}
+            <Card.Header className="flex flex-row items-start justify-between gap-3 px-5 pt-5 pb-0">
+                <Card.Title id={`card-title-${symbol}`} className="m-0 min-w-0">
+                    <span className="block text-2xl font-bold tracking-tight text-foreground max-[480px]:text-xl">{symbol}</span>
+                    <span className="block text-sm text-muted truncate mt-0.5">{name}</span>
                 </Card.Title>
                 <Chip color={config.color} variant="soft" size="md" className="font-medium shrink-0">
                     <config.icon className="mr-1.5 size-4" aria-hidden />
@@ -39,15 +40,14 @@ export const StockCard = React.memo<Props>(({stock}: Props) => {
                 </Chip>
             </Card.Header>
 
-            <Card.Content className="px-5 pb-5 pt-1">
-                <div className="grid grid-cols-2 gap-4 mb-6">
+            <Card.Content className="px-5 pb-0">
+                <div className="grid grid-cols-2 gap-4 mb-2">
                     <PriceCard name={name} price={price} change={change} percentChange={percentChange} forwardPE={forwardPE} priceToBook={priceToBook} dividendYield={dividendYield} />
                     <ValuationRangeDisplay valuationLow={valuationLow} valuationHigh={valuationHigh} />
                 </div>
+                <PotentialDisplay potentialDownside={potentialDownside} potentialUpside={potentialUpside} />
 
                 <ValuationBar price={price} valuationLow={valuationLow} valuationHigh={valuationHigh} />
-
-                <PotentialDisplay potentialDownside={potentialDownside} potentialUpside={potentialUpside} />
             </Card.Content>
         </Card>
     );

@@ -21,7 +21,7 @@ interface AnimationState {
     arrowDirection: "up" | "down" | null;
 }
 
-export const PriceCard = React.memo<Props>(({name, price, change, percentChange, forwardPE, priceToBook, dividendYield}) => {
+export const PriceCard = React.memo<Props>(({price, change, percentChange, forwardPE, priceToBook, dividendYield}) => {
     const prevPriceRef = useRef(price);
     const [animation, setAnimation] = useState<AnimationState>({
         flashClass: "",
@@ -86,8 +86,7 @@ export const PriceCard = React.memo<Props>(({name, price, change, percentChange,
 
                 {/* Back Face */}
                 <div className="absolute inset-0 w-full flex flex-col justify-center" style={{...cardFaceStyle, transform: "rotateY(180deg)"}}>
-                    <div className="flex flex-col gap-1 p-2 leading-[18px]">
-                        <MetricRow label="公司名稱" value={name} />
+                    <div className="flex flex-col gap-2 p-2 leading-[18px]">
                         <MetricRow label="預測市盈率" value={forwardPE ? forwardPE.toFixed(2) : "-"} />
                         <MetricRow label="市淨率" value={priceToBook ? priceToBook.toFixed(2) : "-"} />
                         <MetricRow label="股息率" value={dividendYield ? formatPercent(dividendYield, false) : "-"} />
