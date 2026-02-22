@@ -1,9 +1,9 @@
-import {useEffect, useRef, useState} from "react";
+import React from "react";
 import {formatPercent, formatPrice, getPriceColor} from "../constants";
 import {useStockStore} from "../../../store/useStockStore";
+import {usePriceAnimation} from "../hooks/usePriceAnimation";
 import {PriceArrow} from "./PriceArrow";
 import {MetricRow} from "./MetricRow";
-import React from "react";
 
 interface Props {
     name: string;
@@ -15,46 +15,12 @@ interface Props {
     dividendYield: number | null;
 }
 
-interface AnimationState {
-    flashClass: string;
-    showArrow: boolean;
-    arrowDirection: "up" | "down" | null;
-}
-
 export const PriceCard = React.memo<Props>(({price, change, percentChange, forwardPE, priceToBook, dividendYield}) => {
-    const prevPriceRef = useRef(price);
-    const [animation, setAnimation] = useState<AnimationState>({
-        flashClass: "",
-        showArrow: false,
-        arrowDirection: null,
-    });
+    const animation = usePriceAnimation(price);
 
     // Use global flip state from store
     const isFlipped = useStockStore(state => state.cardsFlipped);
     const toggleCardsFlip = useStockStore(state => state.toggleCardsFlip);
-
-    useEffect(() => {
-        if (prevPriceRef.current === price) return;
-
-        const isIncrease = price > prevPriceRef.current;
-        const direction = isIncrease ? "up" : "down";
-
-        setAnimation({
-            flashClass: isIncrease ? "flash-green" : "flash-red",
-            showArrow: true,
-            arrowDirection: direction,
-        });
-
-        const flashTimer = setTimeout(() => setAnimation(prev => ({...prev, flashClass: ""})), 600);
-        const arrowTimer = setTimeout(() => setAnimation(prev => ({...prev, showArrow: false, arrowDirection: null})), 2000);
-
-        prevPriceRef.current = price;
-
-        return () => {
-            clearTimeout(flashTimer);
-            clearTimeout(arrowTimer);
-        };
-    }, [price]);
 
     const priceColor = getPriceColor(change);
 

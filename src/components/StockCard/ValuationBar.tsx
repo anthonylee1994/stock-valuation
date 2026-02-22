@@ -1,5 +1,6 @@
 import React from "react";
 import {formatPrice} from "./constants";
+import {calculateBarPositions} from "./utils/valuationBar";
 
 interface Props {
     price: number;
@@ -8,12 +9,7 @@ interface Props {
 }
 
 export const ValuationBar = React.memo<Props>(({price, valuationLow, valuationHigh}) => {
-    const barMin = Math.min(valuationLow, price) * 0.9;
-    const barMax = Math.max(valuationHigh, price) * 1.1;
-    const barRange = barMax - barMin;
-    const markerPosition = barRange > 0 ? ((price - barMin) / barRange) * 100 : 50;
-    const lowPosition = barRange > 0 ? ((valuationLow - barMin) / barRange) * 100 : 0;
-    const highPosition = barRange > 0 ? ((valuationHigh - barMin) / barRange) * 100 : 100;
+    const {markerPosition, lowPosition, highPosition} = calculateBarPositions(price, valuationLow, valuationHigh);
 
     return (
         <div className="relative h-8 mb-10 rounded-full overflow-visible">
