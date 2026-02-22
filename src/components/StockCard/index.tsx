@@ -19,7 +19,7 @@ const getActivePrice = (stock: StockWithQuote) => ({
 
 export const StockCard = React.memo<Props>(({stock}: Props) => {
     const {price, change, percentChange} = getActivePrice(stock);
-    const {symbol, name, currentPrice, valuationLow, valuationHigh, forwardPE, priceToBook, dividendYield} = stock;
+    const {symbol, name, valuationLow, valuationHigh, forwardPE, priceToBook, dividendYield} = stock;
 
     const status = getStatus(price, valuationLow, valuationHigh);
     const config = STATUS_CONFIG[status];
@@ -45,7 +45,7 @@ export const StockCard = React.memo<Props>(({stock}: Props) => {
                     <ValuationRangeDisplay valuationLow={valuationLow} valuationHigh={valuationHigh} />
                 </div>
 
-                <ValuationBar currentPrice={currentPrice} price={price} valuationLow={valuationLow} valuationHigh={valuationHigh} />
+                <ValuationBar price={price} valuationLow={valuationLow} valuationHigh={valuationHigh} />
 
                 <PotentialDisplay potentialDownside={potentialDownside} potentialUpside={potentialUpside} />
             </Card.Content>

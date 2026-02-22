@@ -2,13 +2,12 @@ import React from "react";
 import {formatPrice} from "./constants";
 
 interface Props {
-    currentPrice: number;
     price: number;
     valuationLow: number;
     valuationHigh: number;
 }
 
-export const ValuationBar = React.memo<Props>(({currentPrice, price, valuationLow, valuationHigh}) => {
+export const ValuationBar = React.memo<Props>(({price, valuationLow, valuationHigh}) => {
     const barMin = Math.min(valuationLow, price) * 0.9;
     const barMax = Math.max(valuationHigh, price) * 1.1;
     const barRange = barMax - barMin;
@@ -17,7 +16,7 @@ export const ValuationBar = React.memo<Props>(({currentPrice, price, valuationLo
     const highPosition = barRange > 0 ? ((valuationHigh - barMin) / barRange) * 100 : 100;
 
     return (
-        <div className="relative h-7 mb-10 rounded-full overflow-visible">
+        <div className="relative h-7 mb-9 rounded-full overflow-visible">
             {/* Three colored sections that transition their widths */}
             <div className="absolute inset-0 flex rounded-full overflow-hidden">
                 {/* Green section (undervalued) */}
@@ -29,14 +28,14 @@ export const ValuationBar = React.memo<Props>(({currentPrice, price, valuationLo
             </div>
             {/* White marker line */}
             <div
-                className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-1 h-9 bg-foreground rounded-sm shadow-[0_0_12px_rgba(255,255,255,0.8)] z-[2]"
+                className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-1 h-9 bg-foreground rounded-sm z-[2]"
                 style={{left: `${markerPosition}%`, transition: "left 500ms, color 100ms"}}
-                title={formatPrice(currentPrice)}
-            />
-            {/* Arrow and price label */}
-            <div className="absolute top-full translate-y-1 -translate-x-1/2 flex flex-col items-center gap-0 transition-all duration-500 z-[3]" style={{left: `${markerPosition}%`}}>
-                <span className="text-[0.65rem] text-foreground [text-shadow:0_0_8px_var(--foreground)]">▼</span>
-                <span className="text-xs font-semibold text-foreground whitespace-nowrap">{formatPrice(price)}</span>
+                title={formatPrice(price)}
+            >
+                <div className="absolute left-1/2 top-full translate-y-[-6px] -translate-x-1/2 flex flex-col items-center gap-0 transition-all duration-500 z-[3]">
+                    <span className="text-[0.8rem] text-foreground">▼</span>
+                    <span className="text-xs font-semibold text-foreground whitespace-nowrap mt-[-2px]">{formatPrice(price)}</span>
+                </div>
             </div>
         </div>
     );
