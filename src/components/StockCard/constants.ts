@@ -23,7 +23,7 @@ export const getStatus = (currentPrice: number, low: number, high: number): Valu
 };
 
 export const formatPrice = (value: number): string => {
-    return "$" + value.toFixed(2);
+    return value.toFixed(2);
 };
 
 export const formatPercent = (value: number, showSign: boolean): string => {

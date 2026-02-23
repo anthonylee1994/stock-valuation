@@ -1,5 +1,4 @@
 import React from "react";
-import {Card, Chip} from "@heroui/react";
 import {STATUS_CONFIG, getStatus} from "./constants";
 
 interface Props {
@@ -15,15 +14,21 @@ export const CardHeader = React.memo<Props>(({symbol, name, price, valuationLow,
     const config = STATUS_CONFIG[status];
 
     return (
-        <Card.Header className="flex flex-row items-start justify-between gap-3 px-5 pt-5 pb-0">
-            <Card.Title id={`card-title-${symbol}`} className="m-0 min-w-0">
-                <span className="block text-2xl font-bold tracking-tight text-foreground max-[480px]:text-xl">{symbol}</span>
-                <span className="block text-sm text-muted truncate mt-0.5">{name}</span>
-            </Card.Title>
-            <Chip color={config.color} variant="soft" size="md" className="font-medium shrink-0">
-                <config.icon className="mr-1.5 size-4" aria-hidden />
-                {config.label}
-            </Chip>
-        </Card.Header>
+        <div className="flex flex-col gap-1">
+            <div className="flex items-center justify-between gap-3">
+                <h3 id={`card-title-${symbol}`} className="text-xl font-bold tracking-tight text-foreground truncate min-w-0">
+                    {symbol}
+                </h3>
+                <div
+                    className={`px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 shrink-0 ${
+                        config.color === "success" ? "bg-success/10 text-success" : config.color === "warning" ? "bg-warning/10 text-warning" : "bg-danger/10 text-danger"
+                    }`}
+                >
+                    <config.icon className="size-3.5" aria-hidden />
+                    {config.label}
+                </div>
+            </div>
+            <p className="text-sm text-muted truncate">{name}</p>
+        </div>
     );
 });
