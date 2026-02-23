@@ -18,11 +18,10 @@ export const PriceDisplay = React.memo<Props>(({price, change, percentChange}) =
         <div className={`flex flex-col gap-0.5 px-2 py-1 -mx-2 -my-1 rounded-lg border-2 border-transparent ${flashClass}`}>
             <div className="flex items-center gap-1">
                 <span className={`text-3xl font-bold tracking-tight tabular-nums ${priceColor}`}>{formatPrice(price)}</span>
-                {arrowDirection && (
-                    <span className={`text-lg shrink-0 ${arrowDirection === "up" ? "text-success" : arrowDirection === "down" ? "text-danger" : "text-muted"}`}>
-                        {arrowDirection === "up" ? <ImArrowUp aria-hidden /> : arrowDirection === "down" ? <ImArrowDown aria-hidden /> : <ImMinus aria-hidden />}
-                    </span>
-                )}
+
+                <span className={`text-lg shrink-0 ${arrowDirection === "up" ? "text-success" : arrowDirection === "down" ? "text-danger" : "text-muted"}`}>
+                    {arrowDirection === "up" ? <ImArrowUp aria-hidden /> : arrowDirection === "down" ? <ImArrowDown aria-hidden /> : <ImMinus aria-hidden />}
+                </span>
             </div>
             <span className={`text-sm font-medium ${priceColor} tabular-nums`}>
                 {change > 0 ? "+" : ""}

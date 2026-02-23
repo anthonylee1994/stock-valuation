@@ -1,6 +1,7 @@
 import React from "react";
 import {formatPrice} from "./constants";
 import {calculateBarPositions} from "@/utils/valuationBar";
+import {Tooltip} from "@heroui/react";
 
 interface Props {
     price: number;
@@ -19,13 +20,18 @@ export const CompactValuationBar = React.memo<Props>(({price, valuationLow, valu
                     <div className="h-full bg-warning transition-[width] duration-500 ease-in-out" style={{width: `${highPosition - lowPosition}%`}} />
                     <div className="h-full bg-danger flex-1 transition-[width] duration-500 ease-in-out" />
                 </div>
-                <div
-                    className="absolute -top-0.5 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-none"
-                    style={{left: `${markerPosition}%`, transition: "left 500ms ease-in-out"}}
-                >
-                    <div className="w-3 h-3 rounded-full bg-foreground shrink-0" />
-                    <div className="w-0.5 h-5 bg-foreground -mt-1.5" />
-                </div>
+                <Tooltip delay={0}>
+                    <div className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center" style={{left: `${markerPosition}%`, transition: "left 500ms ease-in-out"}}>
+                        <Tooltip.Trigger className="absolute -top-0.5 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+                            <div className="w-3 h-3 rounded-full bg-foreground shrink-0" />
+                            <div className="w-0.5 h-5 bg-foreground -mt-1.5" />
+                        </Tooltip.Trigger>
+                    </div>
+                    <Tooltip.Content placement="bottom">
+                        <Tooltip.Arrow />
+                        {formatPrice(price)}
+                    </Tooltip.Content>
+                </Tooltip>
             </div>
             <div className="flex justify-between mt-5 text-xs text-muted">
                 <span>殘值: {formatPrice(valuationLow)}</span>
