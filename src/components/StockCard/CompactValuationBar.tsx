@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {formatPrice} from "./constants";
 import {calculateBarPositions} from "@/utils/valuationBar";
 import {Tooltip} from "@heroui/react";
@@ -11,6 +11,7 @@ interface Props {
 
 export const CompactValuationBar = React.memo<Props>(({price, valuationLow, valuationHigh}) => {
     const {markerPosition, lowPosition, highPosition} = calculateBarPositions(price, valuationLow, valuationHigh);
+    const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
     return (
         <div>
@@ -20,9 +21,9 @@ export const CompactValuationBar = React.memo<Props>(({price, valuationLow, valu
                     <div className="h-full bg-warning transition-[width] duration-500 ease-in-out" style={{width: `${highPosition - lowPosition}%`}} />
                     <div className="h-full bg-danger flex-1 transition-[width] duration-500 ease-in-out" />
                 </div>
-                <Tooltip delay={0}>
+                <Tooltip delay={0} isOpen={isTooltipOpen} onOpenChange={setIsTooltipOpen}>
                     <div className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center" style={{left: `${markerPosition}%`, transition: "left 500ms ease-in-out"}}>
-                        <Tooltip.Trigger className="absolute -top-0.5 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+                        <Tooltip.Trigger onClick={() => setIsTooltipOpen(!isTooltipOpen)} className="absolute -top-0.5 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
                             <div className="w-3 h-3 rounded-full bg-foreground shrink-0" />
                             <div className="w-0.5 h-5 bg-foreground -mt-1.5" />
                         </Tooltip.Trigger>
