@@ -1,6 +1,6 @@
 import React from "react";
 import {formatPercent, formatPrice, getPriceColor} from "../constants";
-import {useStockStore} from "@/stores/useStockStore";
+import {useCardsStore} from "@/stores/useCardsStore";
 import {usePriceAnimation} from "@/hooks/usePriceAnimation";
 import {PriceArrow} from "./PriceArrow";
 import {MetricRow} from "./MetricRow";
@@ -19,8 +19,8 @@ export const PriceCard = React.memo<Props>(({price, change, percentChange, forwa
     const animation = usePriceAnimation(price);
 
     // Use global flip state from store
-    const isFlipped = useStockStore(state => state.cardsFlipped);
-    const toggleCardsFlip = useStockStore(state => state.toggleCardsFlip);
+    const isFlipped = useCardsStore(state => state.cardsFlipped);
+    const toggleCardsFlip = useCardsStore(state => state.toggleCardsFlip);
 
     const priceColor = getPriceColor(change);
 

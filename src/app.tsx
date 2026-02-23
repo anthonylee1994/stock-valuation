@@ -4,7 +4,8 @@ import {SortButtonGroup} from "./components/SortButtonGroup";
 import {StockGrid} from "./components/StockGrid";
 import {LoadingSpinner} from "./components/LoadingSpinner";
 import {ErrorDisplay} from "./components/ErrorDisplay";
-import {useStockStore} from "./stores/useStockStore";
+import {useStockDataStore} from "./stores/useStockDataStore";
+import {useStockPreferencesStore} from "./stores/useStockPreferencesStore";
 import {getUniqueSymbols, sortStocks} from "./utils/stockHelpers";
 import {valuationData} from "./valuation";
 
@@ -12,7 +13,8 @@ const SYMBOLS = getUniqueSymbols(valuationData.stocks);
 const STOCKS_DATA = valuationData.stocks;
 
 export const App = () => {
-    const {stocks, error, retryFetch, loading, pulse, lastUpdate, sortOrder, marketFilter, setSortOrder, setMarketFilter, startPolling} = useStockStore();
+    const {stocks, error, retryFetch, loading, pulse, lastUpdate, startPolling} = useStockDataStore();
+    const {sortOrder, marketFilter, setSortOrder, setMarketFilter} = useStockPreferencesStore();
 
     useEffect(() => {
         const cleanup = startPolling(SYMBOLS, STOCKS_DATA);

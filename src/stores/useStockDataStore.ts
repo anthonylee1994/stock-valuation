@@ -6,38 +6,10 @@ import moment from "moment";
 import {decode} from "@toon-format/toon";
 import {api} from "@/utils/api";
 
-// LocalStorage keys
-const SORT_ORDER_KEY = "stock-valuation-sort-order";
-const MARKET_FILTER_KEY = "stock-valuation-market-filter";
-
-// Timing constants
 const PULSE_DURATION = 1500; // ms - duration of pulse animation
 const POLLING_INTERVAL = 10_000; // ms - interval between API calls (10 seconds)
 
-interface StockStore {
-    stocks: StockWithQuote[];
-    loading: boolean;
-    pulse: boolean;
-    lastUpdate: string | null;
-    error: string | null;
-    sortOrder: "asc" | "desc";
-    marketFilter: string;
-    cardsFlipped: boolean;
-    setStocks: (stocks: StockWithQuote[]) => void;
-    setLoading: (loading: boolean) => void;
-    setPulse: (pulse: boolean) => void;
-    setLastUpdate: (lastUpdate: string | null) => void;
-    setError: (error: string | null) => void;
-    setSortOrder: (sortOrder: "asc" | "desc") => void;
-    setMarketFilter: (marketFilter: string) => void;
-    toggleCardsFlip: () => void;
-    fetchQuotes: (symbols: string, stocksData: ValuationData["stocks"]) => Promise<void>;
-    startPolling: (symbols: string, stocksData: ValuationData["stocks"]) => () => void;
-    retryFetch: () => void;
-}
-
 const mergeStocksWithQuotes = (stocks: ValuationData["stocks"], quotes: Quote[]): StockWithQuote[] => {
-    // Build quote map, warn if quotes have duplicates
     const quoteMap = new Map<string, Quote>();
     const quoteDuplicates: string[] = [];
 
@@ -53,10 +25,8 @@ const mergeStocksWithQuotes = (stocks: ValuationData["stocks"], quotes: Quote[])
         console.warn(`API returned ${quoteDuplicates.length} duplicate quote(s): ${[...new Set(quoteDuplicates)].join(", ")}`);
     }
 
-    // Deduplicate stocks before merging
     const dedupedStocks = validateAndDeduplicateStocks(stocks);
 
-    // Merge stocks with quotes
     return dedupedStocks
         .map(stock => {
             const quote = quoteMap.get(stock.symbol);
@@ -72,38 +42,34 @@ const mergeStocksWithQuotes = (stocks: ValuationData["stocks"], quotes: Quote[])
         .filter((s): s is StockWithQuote => s !== null);
 };
 
-export const useStockStore = create<StockStore>((set, get) => ({
+interface StockDataStore {
+    stocks: StockWithQuote[];
+    loading: boolean;
+    pulse: boolean;
+    lastUpdate: string | null;
+    error: string | null;
+    setStocks: (stocks: StockWithQuote[]) => void;
+    setLoading: (loading: boolean) => void;
+    setPulse: (pulse: boolean) => void;
+    setLastUpdate: (lastUpdate: string | null) => void;
+    setError: (error: string | null) => void;
+    fetchQuotes: (symbols: string, stocksData: ValuationData["stocks"]) => Promise<void>;
+    startPolling: (symbols: string, stocksData: ValuationData["stocks"]) => () => void;
+    retryFetch: () => void;
+}
+
+export const useStockDataStore = create<StockDataStore>((set, get) => ({
     stocks: [],
     loading: true,
     pulse: false,
     lastUpdate: null,
     error: null,
-    cardsFlipped: false,
-    sortOrder: (() => {
-        const saved = localStorage.getItem(SORT_ORDER_KEY);
-        return saved === "asc" || saved === "desc" ? saved : "asc";
-    })(),
-    marketFilter: (() => {
-        const saved = localStorage.getItem(MARKET_FILTER_KEY);
-        return saved === "hk_market" || saved === "us_market" ? saved : "us_market";
-    })(),
 
     setStocks: stocks => set({stocks}),
     setLoading: loading => set({loading}),
     setPulse: pulse => set({pulse}),
     setLastUpdate: lastUpdate => set({lastUpdate}),
     setError: error => set({error}),
-    toggleCardsFlip: () => set(state => ({cardsFlipped: !state.cardsFlipped})),
-
-    setSortOrder: sortOrder => {
-        localStorage.setItem(SORT_ORDER_KEY, sortOrder);
-        set({sortOrder});
-    },
-
-    setMarketFilter: marketFilter => {
-        localStorage.setItem(MARKET_FILTER_KEY, marketFilter);
-        set({marketFilter});
-    },
 
     fetchQuotes: async (symbols, stocksData) => {
         const currentStocks = get().stocks;
@@ -132,7 +98,6 @@ export const useStockStore = create<StockStore>((set, get) => ({
             const errorMessage = e instanceof Error ? e.message : "無法載入股票數據。請檢查網絡連接。";
             console.error("fetchQuotes error:", e);
 
-            // Keep existing stocks if this is a refresh, only set error
             set({
                 error: errorMessage,
                 loading: false,

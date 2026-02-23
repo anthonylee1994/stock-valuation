@@ -82,8 +82,11 @@ stock-valuation/
 │   │   │   ├── ValuationRangeDisplay.tsx
 │   │   │   └── PotentialDisplay.tsx
 │   │   └── StockGrid.tsx
-│   ├── store/              # Zustand store
-│   │   └── useStockStore.ts
+│   ├── stores/             # Zustand stores
+│   │   ├── useStockDataStore.ts   # Stock data, fetch, polling
+│   │   ├── useStockPrefsStore.ts # Sort order, market filter
+│   │   ├── useCardsStore.ts      # Card flip state
+│   │   └── useThemeStore.ts
 │   ├── utils/              # 工具函式
 │   │   └── sortStocks.ts
 │   ├── types.ts            # TypeScript 型別定義
