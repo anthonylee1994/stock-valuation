@@ -23,7 +23,7 @@ export const CompactValuationBar = React.memo<Props>(({price, valuationLow, valu
                 </div>
                 <Tooltip delay={0} isOpen={isTooltipOpen} onOpenChange={setIsTooltipOpen}>
                     <div className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center" style={{left: `${markerPosition}%`, transition: "left 500ms ease-in-out"}}>
-                        <Tooltip.Trigger onClick={() => setIsTooltipOpen(!isTooltipOpen)} className="absolute -top-0.5 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
+                        <Tooltip.Trigger onClick={() => setIsTooltipOpen(!isTooltipOpen)} className="absolute -top-0.5 -translate-y-1/2 flex flex-col items-center">
                             <div className="w-3 h-3 rounded-full bg-foreground shrink-0" />
                             <div className="w-0.5 h-5 bg-foreground -mt-1.5" />
                         </Tooltip.Trigger>
