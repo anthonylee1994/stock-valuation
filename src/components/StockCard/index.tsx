@@ -1,7 +1,7 @@
 import React from "react";
 import {Card} from "@heroui/react";
 import type {StockWithQuote} from "@/types";
-import {getStatus} from "./constants";
+import {getStatus, STATUS_CONFIG} from "./constants";
 import {CardHeader} from "./CardHeader";
 import {PriceDisplay} from "./PriceDisplay";
 import {ValuationMetrics} from "./ValuationMetrics";
@@ -22,16 +22,15 @@ export const StockCard = React.memo<Props>(({stock}: Props) => {
     const {symbol, name, valuationLow, valuationHigh, forwardPE, priceToBook, dividendYield} = stock;
 
     const status = getStatus(price, valuationLow, valuationHigh);
+    const statusConfig = STATUS_CONFIG[status];
 
     return (
         <Card
             role="article"
             aria-labelledby={`card-title-${symbol}`}
-            className={`p-5 bg-surface border-2 select-none shadow-sm rounded-2xl transition-all ${
-                status === "undervalued" ? "border-success/50" : status === "overvalued" ? "border-danger/50" : "border-warning/50"
-            }`}
+            className={`p-5 bg-surface border-2 select-none shadow-sm rounded-2xl transition-all ${statusConfig.borderClass}`}
         >
-            <CardHeader symbol={symbol} name={name} price={price} valuationLow={valuationLow} valuationHigh={valuationHigh} />
+            <CardHeader symbol={symbol} name={name} status={status} />
             <PriceDisplay price={price} change={change} percentChange={percentChange} />
             <ValuationMetrics valuationLow={valuationLow} valuationHigh={valuationHigh} forwardPE={forwardPE} priceToBook={priceToBook} dividendYield={dividendYield} price={price} />
             <CompactValuationBar price={price} valuationLow={valuationLow} valuationHigh={valuationHigh} />

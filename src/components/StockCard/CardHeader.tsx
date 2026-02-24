@@ -1,16 +1,14 @@
 import React from "react";
-import {STATUS_CONFIG, getStatus} from "./constants";
+import {STATUS_CONFIG} from "./constants";
+import type {ValuationStatus} from "@/types";
 
 interface Props {
     symbol: string;
     name: string;
-    price: number;
-    valuationLow: number;
-    valuationHigh: number;
+    status: ValuationStatus;
 }
 
-export const CardHeader = React.memo<Props>(({symbol, name, price, valuationLow, valuationHigh}) => {
-    const status = getStatus(price, valuationLow, valuationHigh);
+export const CardHeader = React.memo<Props>(({symbol, name, status}) => {
     const config = STATUS_CONFIG[status];
 
     return (
@@ -19,11 +17,7 @@ export const CardHeader = React.memo<Props>(({symbol, name, price, valuationLow,
                 <h3 id={`card-title-${symbol}`} className="text-xl font-bold tracking-tight text-foreground truncate min-w-0">
                     {symbol}
                 </h3>
-                <div
-                    className={`px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 shrink-0 ${
-                        config.color === "success" ? "bg-success/10 text-success" : config.color === "warning" ? "bg-warning/10 text-warning" : "bg-danger/10 text-danger"
-                    }`}
-                >
+                <div className={`px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 shrink-0 ${config.bgClass} ${config.textClass}`}>
                     <config.icon className="size-3.5" aria-hidden />
                     {config.label}
                 </div>
