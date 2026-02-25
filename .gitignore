@@ -28,3 +28,4 @@ dist-ssr
 .env*.local
 # heroui-agents-md
 .heroui-docs/
+.claude/
