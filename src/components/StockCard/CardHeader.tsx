@@ -1,6 +1,6 @@
+import type {ValuationStatus} from "@/types";
 import React from "react";
 import {STATUS_CONFIG} from "./constants";
-import type {ValuationStatus} from "@/types";
 
 interface Props {
     symbol: string;

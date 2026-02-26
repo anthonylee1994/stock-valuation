@@ -1,6 +1,6 @@
-import type {IconType} from "react-icons";
-import {FiTrendingDown, FiTrendingUp, FiMinus} from "react-icons/fi";
 import type {ValuationStatus} from "@/types";
+import type {IconType} from "react-icons";
+import {FiMinus, FiTrendingDown, FiTrendingUp} from "react-icons/fi";
 
 export const STATUS_CONFIG: Record<
     ValuationStatus,

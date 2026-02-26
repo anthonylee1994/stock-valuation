@@ -1,5 +1,5 @@
-import React from "react";
 import {Tabs} from "@heroui/react";
+import React from "react";
 
 interface Props {
     sortOrder: "asc" | "desc";

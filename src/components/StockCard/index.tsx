@@ -1,11 +1,11 @@
-import React from "react";
-import {Card} from "@heroui/react";
 import type {StockWithQuote} from "@/types";
-import {getStatus, STATUS_CONFIG} from "./constants";
+import {Card} from "@heroui/react";
+import React from "react";
 import {CardHeader} from "./CardHeader";
+import {CompactValuationBar} from "./CompactValuationBar";
+import {getStatus, STATUS_CONFIG} from "./constants";
 import {PriceDisplay} from "./PriceDisplay";
 import {ValuationMetrics} from "./ValuationMetrics";
-import {CompactValuationBar} from "./CompactValuationBar";
 
 interface Props {
     stock: StockWithQuote;

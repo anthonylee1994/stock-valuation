@@ -1,5 +1,5 @@
-import React, {Component} from "react";
 import {Button} from "@heroui/react";
+import React, {Component} from "react";
 
 interface Props {
     children: React.ReactNode;

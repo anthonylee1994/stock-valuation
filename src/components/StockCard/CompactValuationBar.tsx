@@ -1,7 +1,7 @@
-import React, {useState} from "react";
-import {formatPrice} from "./constants";
 import {calculateBarPositions} from "@/utils/valuationBar";
 import {Tooltip} from "@heroui/react";
+import React, {useState} from "react";
+import {formatPrice} from "./constants";
 
 interface Props {
     price: number;
