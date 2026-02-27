@@ -1,11 +1,11 @@
-import React from "react";
-import {Card} from "@heroui/react";
 import type {StockWithQuote} from "@/types";
-import {getStatus, STATUS_CONFIG} from "./constants";
+import {Card} from "@heroui/react";
+import React from "react";
 import {CardHeader} from "./CardHeader";
+import {CompactValuationBar} from "./CompactValuationBar";
+import {getStatus, STATUS_CONFIG} from "./constants";
 import {PriceDisplay} from "./PriceDisplay";
 import {ValuationMetrics} from "./ValuationMetrics";
-import {CompactValuationBar} from "./CompactValuationBar";
 
 interface Props {
     stock: StockWithQuote;
@@ -25,11 +25,7 @@ export const StockCard = React.memo<Props>(({stock}: Props) => {
     const statusConfig = STATUS_CONFIG[status];
 
     return (
-        <Card
-            role="article"
-            aria-labelledby={`card-title-${symbol}`}
-            className={`p-5 bg-surface border-2 select-none shadow-sm rounded-2xl transition-all ${statusConfig.borderClass}`}
-        >
+        <Card role="article" aria-labelledby={`card-title-${symbol}`} className={`p-5 bg-surface border-2 select-none shadow-sm rounded-2xl transition-all ${statusConfig.borderClass}`}>
             <CardHeader symbol={symbol} name={name} status={status} />
             <PriceDisplay price={price} change={change} percentChange={percentChange} />
             <ValuationMetrics valuationLow={valuationLow} valuationHigh={valuationHigh} forwardPE={forwardPE} priceToBook={priceToBook} dividendYield={dividendYield} price={price} />

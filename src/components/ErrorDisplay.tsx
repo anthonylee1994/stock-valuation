@@ -1,5 +1,5 @@
+import {Alert, Button} from "@heroui/react";
 import React from "react";
-import {Button, Alert} from "@heroui/react";
 
 interface Props {
     error: string;

@@ -1,7 +1,7 @@
-import React from "react";
-import {formatPrice, formatPercent, getPriceColor} from "./constants";
 import {usePriceAnimation} from "@/hooks/usePriceAnimation";
-import {ImArrowUp, ImArrowDown, ImMinus} from "react-icons/im";
+import React from "react";
+import {ImArrowDown, ImArrowUp, ImMinus} from "react-icons/im";
+import {formatPercent, formatPrice, getPriceColor} from "./constants";
 
 interface Props {
     price: number;

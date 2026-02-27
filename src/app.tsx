@@ -1,13 +1,13 @@
+import {usePolling} from "@/hooks/usePolling";
 import React from "react";
+import {ErrorDisplay} from "./components/ErrorDisplay";
 import {Header} from "./components/Header";
+import {LoadingSpinner} from "./components/LoadingSpinner";
 import {SortButtonGroup} from "./components/SortButtonGroup";
 import {StockGrid} from "./components/StockGrid";
-import {LoadingSpinner} from "./components/LoadingSpinner";
-import {ErrorDisplay} from "./components/ErrorDisplay";
+import {useFilteredAndSortedStocks} from "./hooks/useFilteredAndSortedStocks";
 import {useStockDataStore} from "./stores/useStockDataStore";
 import {useStockPreferencesStore} from "./stores/useStockPreferencesStore";
-import {useFilteredAndSortedStocks} from "./hooks/useFilteredAndSortedStocks";
-import {usePolling} from "@/hooks/usePolling";
 
 export const App = React.memo(() => {
     const {error, retryFetch, loading, pulse, lastUpdate} = useStockDataStore();

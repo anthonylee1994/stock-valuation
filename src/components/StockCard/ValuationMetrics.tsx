@@ -1,5 +1,5 @@
 import React from "react";
-import {formatPrice, formatPercent, calculatePotential} from "./constants";
+import {calculatePotential, formatPercent, formatPrice} from "./constants";
 
 interface Props {
     valuationLow: number;

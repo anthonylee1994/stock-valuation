@@ -1,10 +1,10 @@
-import {create} from "zustand";
-import type {StockWithQuote, Quote, ValuationData} from "@/types";
-import {valuationData} from "@/valuation";
-import {validateAndDeduplicateStocks, getUniqueSymbols} from "@/utils/stockHelpers";
-import moment from "moment";
-import {decode} from "@toon-format/toon";
+import type {Quote, StockWithQuote, ValuationData} from "@/types";
 import {api} from "@/utils/api";
+import {getUniqueSymbols, validateAndDeduplicateStocks} from "@/utils/stockHelpers";
+import {valuationData} from "@/valuation";
+import {decode} from "@toon-format/toon";
+import moment from "moment";
+import {create} from "zustand";
 
 const PULSE_DURATION = 1500; // ms - duration of pulse animation
 const POLLING_INTERVAL = 10_000; // ms - interval between API calls (10 seconds)

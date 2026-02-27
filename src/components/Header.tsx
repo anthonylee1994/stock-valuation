@@ -1,7 +1,7 @@
-import React from "react";
-import {Button} from "@heroui/react";
-import {FiMoon, FiSun} from "react-icons/fi";
 import {useThemeStore} from "@/stores/useThemeStore";
+import {Button} from "@heroui/react";
+import React from "react";
+import {FiMoon, FiSun} from "react-icons/fi";
 
 interface Props {
     lastUpdate: string | null;
@@ -12,7 +12,7 @@ export const Header = React.memo<Props>(({lastUpdate, pulse}) => {
     const {theme, toggleTheme} = useThemeStore();
 
     return (
-        <header className="flex flex-wrap items-center justify-between gap-3 max-w-[1400px] mx-auto mb-6 max-[640px]:justify-center max-[640px]:flex-col">
+        <header className="flex flex-wrap items-center justify-between gap-3 max-w-350 mx-auto mb-6 max-[640px]:justify-center max-[640px]:flex-col">
             <h1 className="m-0 text-[1.75rem] font-bold text-foreground tracking-wide max-[640px]:text-[1.35rem]">估值參考</h1>
             <div className="flex items-center gap-2">
                 <Button isIconOnly variant="tertiary" size="sm" onPress={toggleTheme} aria-label={theme === "dark" ? "切換至淺色模式" : "切換至深色模式"}>
