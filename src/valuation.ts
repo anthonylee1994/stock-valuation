@@ -64,6 +64,11 @@ export const valuationData: ValuationData = {
             valuationHigh: 309.2,
         },
         {
+            symbol: "XLV",
+            valuationLow: 127.6,
+            valuationHigh: 174,
+        },
+        {
             symbol: "TSM",
             valuationLow: 254.4,
             valuationHigh: 381.6,
