@@ -30,6 +30,10 @@ export interface Quote {
     dividendYield: number | null;
 }
 
+export interface ApiQuotesResponse {
+    quotes: Quote[];
+}
+
 export type StockWithQuote = ValuationStock & Quote;
 
 export type ValuationStatus = "undervalued" | "fair" | "overvalued";

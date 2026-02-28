@@ -1,19 +1,9 @@
-import type {Quote, StockWithQuote, ValuationData} from "@/types";
+import type {ApiQuotesResponse, Quote, StockWithQuote, ValuationData} from "@/types";
 import {api} from "@/utils/api";
-import {getUniqueSymbols, validateAndDeduplicateStocks} from "@/utils/stockHelpers";
-import {valuationData} from "@/valuation";
+import {getUniqueSymbols} from "@/utils/stockHelpers";
+import {DEDUPED_STOCKS, PULSE_DURATION, POLLING_INTERVAL} from "@/constants/stockConstants";
 import {decode} from "@toon-format/toon";
 import {create} from "zustand";
-
-const PULSE_DURATION = 1500; // ms - duration of pulse animation
-const POLLING_INTERVAL = 10_000; // ms - interval between API calls (10 seconds)
-
-// Pre-compute deduplicated stocks at module load time
-const DEDUPED_STOCKS = validateAndDeduplicateStocks(valuationData.stocks);
-
-interface ApiQuotesResponse {
-    quotes: Quote[];
-}
 
 const mergeStocksWithQuotes = (stocks: ValuationData["stocks"], quotes: Quote[]): StockWithQuote[] => {
     const quoteMap = new Map<string, Quote>();

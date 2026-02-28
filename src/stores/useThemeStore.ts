@@ -1,14 +1,14 @@
 import {create} from "zustand";
+import {getStorageValue, setStorageValue, createStringValidator} from "@/utils/storage";
 
 const THEME_KEY = "stock-valuation-theme";
 
 export type Theme = "light" | "dark";
 
+const themeValidator = createStringValidator(["light", "dark"]);
+
 function getStoredTheme(): Theme {
-    if (typeof document === "undefined") return "dark";
-    const stored = localStorage.getItem(THEME_KEY);
-    if (stored === "light" || stored === "dark") return stored;
-    return "dark";
+    return getStorageValue(THEME_KEY, "dark", themeValidator);
 }
 
 function applyTheme(theme: Theme) {
@@ -30,14 +30,14 @@ interface ThemeStore {
 export const useThemeStore = create<ThemeStore>(set => ({
     theme: getStoredTheme(),
     setTheme: (theme: Theme) => {
-        localStorage.setItem(THEME_KEY, theme);
+        setStorageValue(THEME_KEY, theme);
         applyTheme(theme);
         set({theme});
     },
     toggleTheme: () => {
         set(state => {
             const next: Theme = state.theme === "dark" ? "light" : "dark";
-            localStorage.setItem(THEME_KEY, next);
+            setStorageValue(THEME_KEY, next);
             applyTheme(next);
             return {theme: next};
         });
