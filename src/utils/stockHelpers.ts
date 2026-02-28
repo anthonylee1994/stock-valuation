@@ -1,4 +1,4 @@
-import type {StockWithQuote, ValuationData} from "../types";
+import type {StockWithQuote, ValuationData} from "@/types";
 
 /**
  * Validate and deduplicate stocks array
