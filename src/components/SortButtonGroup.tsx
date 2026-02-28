@@ -36,12 +36,6 @@ export const SortButtonGroup = React.memo<Props>(({sortOrder, onSortOrderChange,
                         </Tabs.Tab>
                     </Tabs.List>
                 </Tabs.ListContainer>
-                <Tabs.Panel id="asc" className="hidden">
-                    {null}
-                </Tabs.Panel>
-                <Tabs.Panel id="desc" className="hidden">
-                    {null}
-                </Tabs.Panel>
             </Tabs>
 
             <Tabs selectedKey={marketFilter} onSelectionChange={key => onMarketFilterChange(key as string)} className="w-fit">
@@ -69,12 +63,6 @@ export const SortButtonGroup = React.memo<Props>(({sortOrder, onSortOrderChange,
                         </Tabs.Tab>
                     </Tabs.List>
                 </Tabs.ListContainer>
-                <Tabs.Panel id="us" className="hidden">
-                    {null}
-                </Tabs.Panel>
-                <Tabs.Panel id="hk" className="hidden">
-                    {null}
-                </Tabs.Panel>
             </Tabs>
         </div>
     );

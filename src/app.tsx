@@ -27,10 +27,10 @@ export const App = React.memo(() => {
             {isInitialLoading ? (
                 <LoadingSpinner />
             ) : (
-                <>
+                <React.Fragment>
                     <SortButtonGroup sortOrder={sortOrder} onSortOrderChange={setSortOrder} marketFilter={marketFilter} onMarketFilterChange={setMarketFilter} />
                     <StockGrid stocks={sortedStocks} />
-                </>
+                </React.Fragment>
             )}
         </div>
     );
