@@ -31,7 +31,7 @@ export const CompactValuationBar = React.memo<Props>(({price, valuationLow, valu
                             onClick={() => setIsTooltipOpen(!isTooltipOpen)}
                             className="relative flex flex-col items-center cursor-pointer hover:scale-140 active:scale-140 transition-transform"
                         >
-                            <div className="relative w-3 h-3 rounded-full bg-foreground z-10" />
+                            <div className="relative w-3 h-3 rounded-full bg-foreground z-10 scale-120" />
                         </Tooltip.Trigger>
                     </div>
                     <Tooltip.Content placement="bottom" className="px-3 py-1.5 text-sm font-semibold bg-foreground text-surface shadow-xl">
