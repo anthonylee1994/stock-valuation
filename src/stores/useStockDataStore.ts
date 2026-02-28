@@ -3,31 +3,26 @@ import {api} from "@/utils/api";
 import {getUniqueSymbols, validateAndDeduplicateStocks} from "@/utils/stockHelpers";
 import {valuationData} from "@/valuation";
 import {decode} from "@toon-format/toon";
-import moment from "moment";
 import {create} from "zustand";
 
 const PULSE_DURATION = 1500; // ms - duration of pulse animation
 const POLLING_INTERVAL = 10_000; // ms - interval between API calls (10 seconds)
 
+// Pre-compute deduplicated stocks at module load time
+const DEDUPED_STOCKS = validateAndDeduplicateStocks(valuationData.stocks);
+
+interface ApiQuotesResponse {
+    quotes: Quote[];
+}
+
 const mergeStocksWithQuotes = (stocks: ValuationData["stocks"], quotes: Quote[]): StockWithQuote[] => {
     const quoteMap = new Map<string, Quote>();
-    const quoteDuplicates: string[] = [];
 
     quotes.forEach(quote => {
-        if (quoteMap.has(quote.symbol)) {
-            quoteDuplicates.push(quote.symbol);
-            console.warn(`Duplicate quote received for symbol: "${quote.symbol}". Using latest.`);
-        }
         quoteMap.set(quote.symbol, quote);
     });
 
-    if (quoteDuplicates.length > 0) {
-        console.warn(`API returned ${quoteDuplicates.length} duplicate quote(s): ${[...new Set(quoteDuplicates)].join(", ")}`);
-    }
-
-    const dedupedStocks = validateAndDeduplicateStocks(stocks);
-
-    return dedupedStocks
+    return stocks
         .map(stock => {
             const quote = quoteMap.get(stock.symbol);
             if (!quote) {
@@ -76,16 +71,26 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
         set({loading: true, error: null});
         try {
             const res = await api.get(`?symbols=${encodeURIComponent(symbols)}`);
-            const json = decode(res.data) as any as {quotes: Quote[]};
+            const decoded = decode(res.data) as unknown as ApiQuotesResponse;
+            const json = decoded;
 
             if (!json.quotes || json.quotes.length === 0) {
                 throw new Error("API 返回空數據。請稍後再試。");
             }
 
             const merged = mergeStocksWithQuotes(stocksData, json.quotes);
+            const now = new Date();
+            const formattedDate = new Intl.DateTimeFormat("zh-HK", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+            }).format(now);
             set({
                 stocks: merged,
-                lastUpdate: moment().format("YYYY-MM-DD HH:mm:ss"),
+                lastUpdate: formattedDate,
                 pulse: true,
                 loading: false,
                 error: null,
@@ -105,8 +110,8 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
 
     retryFetch: () => {
         const {fetchQuotes} = get();
-        const symbols = getUniqueSymbols(valuationData.stocks);
-        fetchQuotes(symbols, valuationData.stocks);
+        const symbols = getUniqueSymbols(DEDUPED_STOCKS);
+        fetchQuotes(symbols, DEDUPED_STOCKS);
     },
 
     startPolling: (symbols, stocksData) => {

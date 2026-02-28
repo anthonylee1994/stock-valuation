@@ -17,6 +17,14 @@ const getActivePrice = (stock: StockWithQuote) => ({
     percentChange: stock.preMarketChangePercent ?? stock.postMarketChangePercent ?? stock.percentChange,
 });
 
+const areEqual = (prev: Props, next: Props) => {
+    return (
+        prev.stock.symbol === next.stock.symbol &&
+        prev.stock.currentPrice === next.stock.currentPrice &&
+        prev.stock.change === next.stock.change
+    );
+};
+
 export const StockCard = React.memo<Props>(({stock}: Props) => {
     const {price, change, percentChange} = getActivePrice(stock);
     const {symbol, name, valuationLow, valuationHigh, forwardPE, priceToBook, dividendYield} = stock;
@@ -32,4 +40,4 @@ export const StockCard = React.memo<Props>(({stock}: Props) => {
             <CompactValuationBar price={price} valuationLow={valuationLow} valuationHigh={valuationHigh} />
         </Card>
     );
-});
+}, areEqual);
