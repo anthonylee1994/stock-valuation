@@ -1,7 +1,6 @@
+import {DEDUPED_STOCKS, POLLING_INTERVAL, PULSE_DURATION, SYMBOLS} from "@/constants/stockConstants";
 import type {ApiQuotesResponse, Quote, StockWithQuote, ValuationData} from "@/types";
 import {api} from "@/utils/api";
-import {getUniqueSymbols} from "@/utils/stockHelpers";
-import {DEDUPED_STOCKS, PULSE_DURATION, POLLING_INTERVAL} from "@/constants/stockConstants";
 import {decode} from "@toon-format/toon";
 import {create} from "zustand";
 
@@ -100,8 +99,7 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
 
     retryFetch: () => {
         const {fetchQuotes} = get();
-        const symbols = getUniqueSymbols(DEDUPED_STOCKS);
-        fetchQuotes(symbols, DEDUPED_STOCKS);
+        fetchQuotes(SYMBOLS, DEDUPED_STOCKS);
     },
 
     startPolling: (symbols, stocksData) => {

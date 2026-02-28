@@ -3,7 +3,7 @@ import {sortStocks} from "@/utils/stockHelpers";
 import {useMemo} from "react";
 
 export const useFilteredAndSortedStocks = (marketFilter: string, sortOrder: "asc" | "desc") => {
-    const {stocks} = useStockDataStore();
+    const stocks = useStockDataStore(state => state.stocks);
 
     return useMemo(() => {
         const filtered = stocks.filter(stock => stock.market === marketFilter);

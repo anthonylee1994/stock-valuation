@@ -10,8 +10,16 @@ import {useStockDataStore} from "./stores/useStockDataStore";
 import {useStockPreferencesStore} from "./stores/useStockPreferencesStore";
 
 export const App = React.memo(() => {
-    const {error, retryFetch, loading, pulse, lastUpdate} = useStockDataStore();
-    const {sortOrder, marketFilter, setSortOrder, setMarketFilter} = useStockPreferencesStore();
+    const error = useStockDataStore(state => state.error);
+    const retryFetch = useStockDataStore(state => state.retryFetch);
+    const loading = useStockDataStore(state => state.loading);
+    const pulse = useStockDataStore(state => state.pulse);
+    const lastUpdate = useStockDataStore(state => state.lastUpdate);
+
+    const sortOrder = useStockPreferencesStore(state => state.sortOrder);
+    const marketFilter = useStockPreferencesStore(state => state.marketFilter);
+    const setSortOrder = useStockPreferencesStore(state => state.setSortOrder);
+    const setMarketFilter = useStockPreferencesStore(state => state.setMarketFilter);
     const sortedStocks = useFilteredAndSortedStocks(marketFilter, sortOrder);
     const isInitialLoading = loading && sortedStocks.length === 0;
 
