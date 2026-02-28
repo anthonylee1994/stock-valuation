@@ -18,9 +18,11 @@ export const App = React.memo(() => {
 
     const sortOrder = useStockPreferencesStore(state => state.sortOrder);
     const marketFilter = useStockPreferencesStore(state => state.marketFilter);
+    const searchQuery = useStockPreferencesStore(state => state.searchQuery);
     const setSortOrder = useStockPreferencesStore(state => state.setSortOrder);
     const setMarketFilter = useStockPreferencesStore(state => state.setMarketFilter);
-    const sortedStocks = useFilteredAndSortedStocks(marketFilter, sortOrder);
+    const setSearchQuery = useStockPreferencesStore(state => state.setSearchQuery);
+    const sortedStocks = useFilteredAndSortedStocks(marketFilter, sortOrder, searchQuery);
     const isInitialLoading = loading && sortedStocks.length === 0;
 
     usePolling();
@@ -36,7 +38,14 @@ export const App = React.memo(() => {
                 <LoadingSpinner />
             ) : (
                 <React.Fragment>
-                    <SortButtonGroup sortOrder={sortOrder} onSortOrderChange={setSortOrder} marketFilter={marketFilter} onMarketFilterChange={setMarketFilter} />
+                    <SortButtonGroup
+                        sortOrder={sortOrder}
+                        onSortOrderChange={setSortOrder}
+                        marketFilter={marketFilter}
+                        onMarketFilterChange={setMarketFilter}
+                        searchQuery={searchQuery}
+                        onSearchQueryChange={setSearchQuery}
+                    />
                     <StockGrid stocks={sortedStocks} />
                 </React.Fragment>
             )}

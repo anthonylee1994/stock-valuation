@@ -2,6 +2,9 @@ import {DEDUPED_STOCKS, POLLING_INTERVAL, PULSE_DURATION, SYMBOLS} from "@/const
 import type {ApiQuotesResponse, Quote, StockWithQuote, ValuationData} from "@/types";
 import {api} from "@/utils/api";
 import {decode} from "@toon-format/toon";
+import moment from "moment";
+// @ts-ignore:
+import "moment/dist/locale/zh-hk";
 import {create} from "zustand";
 
 const mergeStocksWithQuotes = (stocks: ValuationData["stocks"], quotes: Quote[]): StockWithQuote[] => {
@@ -69,14 +72,7 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
 
             const merged = mergeStocksWithQuotes(stocksData, json.quotes);
             const now = new Date();
-            const formattedDate = new Intl.DateTimeFormat("zh-HK", {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-            }).format(now);
+            const formattedDate = moment(now).fromNow();
             set({
                 stocks: merged,
                 lastUpdate: formattedDate,
