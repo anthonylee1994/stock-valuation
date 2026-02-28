@@ -44,7 +44,6 @@ export const valuationData: ValuationData = {
         },
         {
             symbol: "ETN",
-
             valuationLow: 267.2,
             valuationHigh: 427.6,
             // EPS: 13.36,
