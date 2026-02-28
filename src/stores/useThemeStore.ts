@@ -1,15 +1,7 @@
 import {create} from "zustand";
-import {getStorageValue, setStorageValue, createStringValidator} from "@/utils/storage";
-
-const THEME_KEY = "stock-valuation-theme";
+import {persist} from "zustand/middleware";
 
 export type Theme = "light" | "dark";
-
-const themeValidator = createStringValidator(["light", "dark"]);
-
-function getStoredTheme(): Theme {
-    return getStorageValue(THEME_KEY, "dark", themeValidator);
-}
 
 function applyTheme(theme: Theme) {
     if (typeof document === "undefined") return;
@@ -21,28 +13,55 @@ function applyTheme(theme: Theme) {
     if (meta) meta.setAttribute("content", theme === "dark" ? "#010203" : "#f5f5f7");
 }
 
-interface ThemeStore {
+interface ThemeState {
     theme: Theme;
+}
+
+interface ThemeActions {
     setTheme: (theme: Theme) => void;
     toggleTheme: () => void;
 }
 
-export const useThemeStore = create<ThemeStore>(set => ({
-    theme: getStoredTheme(),
-    setTheme: (theme: Theme) => {
-        setStorageValue(THEME_KEY, theme);
-        applyTheme(theme);
-        set({theme});
-    },
-    toggleTheme: () => {
-        set(state => {
-            const next: Theme = state.theme === "dark" ? "light" : "dark";
-            setStorageValue(THEME_KEY, next);
-            applyTheme(next);
-            return {theme: next};
-        });
-    },
-}));
+type ThemeStore = ThemeState & ThemeActions;
 
-// Apply stored theme on load (for React hydration; first paint handled by index.html script)
-applyTheme(getStoredTheme());
+export const useThemeStore = create<ThemeStore>()(
+    persist(
+        (set, get) => ({
+            theme: "dark",
+            setTheme: (theme: Theme) => {
+                applyTheme(theme);
+                set({theme});
+            },
+            toggleTheme: () => {
+                const next: Theme = get().theme === "dark" ? "light" : "dark";
+                applyTheme(next);
+                set({theme: next});
+            },
+        }),
+        {
+            name: "stock-valuation-theme",
+            onRehydrateStorage: () => state => {
+                if (state) {
+                    applyTheme(state.theme);
+                }
+            },
+        }
+    )
+);
+
+// 初次載入時嘗試從 localStorage 獲取並應用
+if (typeof window !== "undefined") {
+    try {
+        const stored = localStorage.getItem("stock-valuation-theme");
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed.state?.theme) {
+                applyTheme(parsed.state.theme);
+            }
+        } else {
+            applyTheme("dark");
+        }
+    } catch {
+        applyTheme("dark");
+    }
+}

@@ -1,38 +1,26 @@
 import {create} from "zustand";
-import {getStorageValue, setStorageValue, createStringValidator} from "@/utils/storage";
+import {persist} from "zustand/middleware";
 
-const SORT_ORDER_KEY = "stock-valuation-sort-order";
-const MARKET_FILTER_KEY = "stock-valuation-market-filter";
-
-const sortOrderValidator = createStringValidator(["asc", "desc"]);
-const marketFilterValidator = createStringValidator(["hk_market", "us_market"]);
-
-function getStoredSortOrder(): "asc" | "desc" {
-    return getStorageValue(SORT_ORDER_KEY, "asc", sortOrderValidator);
-}
-
-function getStoredMarketFilter(): string {
-    return getStorageValue(MARKET_FILTER_KEY, "us_market", marketFilterValidator);
-}
-
-interface StockPreferencesStore {
+interface StockPreferencesState {
     sortOrder: "asc" | "desc";
     marketFilter: string;
+}
+
+interface StockPreferencesActions {
     setSortOrder: (sortOrder: "asc" | "desc") => void;
     setMarketFilter: (marketFilter: string) => void;
 }
 
-export const useStockPreferencesStore = create<StockPreferencesStore>(set => ({
-    sortOrder: getStoredSortOrder(),
-    marketFilter: getStoredMarketFilter(),
+type StockPreferencesStore = StockPreferencesState & StockPreferencesActions;
 
-    setSortOrder: sortOrder => {
-        setStorageValue(SORT_ORDER_KEY, sortOrder);
-        set({sortOrder});
-    },
-
-    setMarketFilter: marketFilter => {
-        setStorageValue(MARKET_FILTER_KEY, marketFilter);
-        set({marketFilter});
-    },
-}));
+export const useStockPreferencesStore = create<StockPreferencesStore>()(
+    persist(
+        set => ({
+            sortOrder: "asc",
+            marketFilter: "us_market",
+            setSortOrder: sortOrder => set({sortOrder}),
+            setMarketFilter: marketFilter => set({marketFilter}),
+        }),
+        {name: "stock-valuation-preferences"}
+    )
+);

@@ -8,10 +8,18 @@ export const usePriceAnimation = (price: number) => {
         if (prevPriceRef.current === price) return;
 
         const isIncrease = price > prevPriceRef.current;
-        setFlashClass(isIncrease ? "flash-green" : "flash-red");
+        const className = isIncrease ? "flash-green" : "flash-red";
+
+        // 更新價格引用，以便下一次比較
         prevPriceRef.current = price;
 
-        const timer = setTimeout(() => setFlashClass(""), 600);
+        // 設置閃爍類名並在 600ms 後清除
+        setFlashClass(className);
+
+        const timer = setTimeout(() => {
+            setFlashClass("");
+        }, 600);
+
         return () => clearTimeout(timer);
     }, [price]);
 
