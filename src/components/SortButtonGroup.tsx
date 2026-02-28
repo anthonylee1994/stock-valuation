@@ -10,6 +10,12 @@ interface Props {
     onSearchQueryChange: (query: string) => void;
 }
 
+const INDICATOR_STYLE: React.CSSProperties = {
+    transitionDuration: "500ms",
+    transitionProperty: "translate, width, height, background-color",
+    transitionTimingFunction: "var(--ease-out-fluid)",
+};
+
 export const SortButtonGroup = React.memo<Props>(({sortOrder, onSortOrderChange, marketFilter, onMarketFilterChange, searchQuery, onSearchQueryChange}) => {
     return (
         <div className="max-w-350 mx-auto mb-6 flex items-center justify-between gap-4 flex-wrap">
@@ -19,23 +25,11 @@ export const SortButtonGroup = React.memo<Props>(({sortOrder, onSortOrderChange,
                         <Tabs.List aria-label="排序" className="transition-all duration-100">
                             <Tabs.Tab id="asc">
                                 由殘到貴
-                                <Tabs.Indicator
-                                    style={{
-                                        transitionDuration: "500ms",
-                                        transitionProperty: "translate, width, height, background-color",
-                                        transitionTimingFunction: "var(--ease-out-fluid)",
-                                    }}
-                                />
+                                <Tabs.Indicator style={INDICATOR_STYLE} />
                             </Tabs.Tab>
                             <Tabs.Tab id="desc">
                                 由貴到殘
-                                <Tabs.Indicator
-                                    style={{
-                                        transitionDuration: "500ms",
-                                        transitionProperty: "translate, width, height, background-color",
-                                        transitionTimingFunction: "var(--ease-out-fluid)",
-                                    }}
-                                />
+                                <Tabs.Indicator style={INDICATOR_STYLE} />
                             </Tabs.Tab>
                         </Tabs.List>
                     </Tabs.ListContainer>
@@ -46,23 +40,11 @@ export const SortButtonGroup = React.memo<Props>(({sortOrder, onSortOrderChange,
                         <Tabs.List aria-label="市場" className="transition-all duration-100">
                             <Tabs.Tab id="us_market">
                                 美股
-                                <Tabs.Indicator
-                                    style={{
-                                        transitionDuration: "500ms",
-                                        transitionProperty: "translate, width, height, background-color",
-                                        transitionTimingFunction: "var(--ease-out-fluid)",
-                                    }}
-                                />
+                                <Tabs.Indicator style={INDICATOR_STYLE} />
                             </Tabs.Tab>
                             <Tabs.Tab id="hk_market">
                                 港股
-                                <Tabs.Indicator
-                                    style={{
-                                        transitionDuration: "500ms",
-                                        transitionProperty: "translate, width, height, background-color",
-                                        transitionTimingFunction: "var(--ease-out-fluid)",
-                                    }}
-                                />
+                                <Tabs.Indicator style={INDICATOR_STYLE} />
                             </Tabs.Tab>
                         </Tabs.List>
                     </Tabs.ListContainer>
