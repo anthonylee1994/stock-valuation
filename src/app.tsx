@@ -18,7 +18,7 @@ export const App = React.memo(() => {
     usePolling();
 
     if (error) {
-        return <ErrorDisplay error={error} onRetry={retryFetch} />;
+        return <ErrorDisplay error={error} resetErrorBoundary={retryFetch} />;
     }
 
     return (

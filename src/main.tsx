@@ -1,11 +1,12 @@
 import {App} from "@/app.tsx";
-import {ErrorBoundary} from "@/components/ErrorBoundary.tsx";
 import "@/index.css";
 import {createRoot} from "react-dom/client";
+import {ErrorBoundary} from "react-error-boundary";
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
+import {ErrorDisplay} from "./components/ErrorDisplay";
 
 createRoot(document.getElementById("root")!).render(
-    <ErrorBoundary>
+    <ErrorBoundary FallbackComponent={ErrorDisplay}>
         <BrowserRouter>
             <Routes>
                 <Route path="/" element={<App />} />

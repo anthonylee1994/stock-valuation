@@ -47,12 +47,12 @@ interface StockDataStore {
     loading: boolean;
     pulse: boolean;
     lastUpdate: string | null;
-    error: string | null;
+    error: Error | null;
     setStocks: (stocks: StockWithQuote[]) => void;
     setLoading: (loading: boolean) => void;
     setPulse: (pulse: boolean) => void;
     setLastUpdate: (lastUpdate: string | null) => void;
-    setError: (error: string | null) => void;
+    setError: (error: Error | null) => void;
     fetchQuotes: (symbols: string, stocksData: ValuationData["stocks"]) => Promise<void>;
     startPolling: (symbols: string, stocksData: ValuationData["stocks"]) => () => void;
     retryFetch: () => void;
@@ -95,11 +95,8 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
                 set({pulse: false});
             }, PULSE_DURATION);
         } catch (e) {
-            const errorMessage = e instanceof Error ? e.message : "無法載入股票數據。請檢查網絡連接。";
-            console.error("fetchQuotes error:", e);
-
             set({
-                error: errorMessage,
+                error: e instanceof Error ? e : new Error("無法載入股票數據。請檢查網絡連接。"),
                 loading: false,
                 stocks: currentStocks.length > 0 ? currentStocks : [],
             });
