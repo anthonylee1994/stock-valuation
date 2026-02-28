@@ -70,7 +70,7 @@ export const SortButtonGroup = React.memo<Props>(({sortOrder, onSortOrderChange,
             </div>
 
             <SearchField value={searchQuery} onChange={onSearchQueryChange} className="w-full sm:w-55">
-                <SearchField.Group>
+                <SearchField.Group className="rounded-full h-10">
                     <SearchField.SearchIcon />
                     <SearchField.Input placeholder="尋找股票代號" className="text-sm" />
                     <SearchField.ClearButton />
