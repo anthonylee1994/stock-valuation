@@ -13,7 +13,7 @@ interface Props {
 export const SortButtonGroup = React.memo<Props>(({sortOrder, onSortOrderChange, marketFilter, onMarketFilterChange, searchQuery, onSearchQueryChange}) => {
     return (
         <div className="max-w-350 mx-auto mb-6 flex items-center justify-between gap-4 flex-wrap">
-            <div className="flex w-full items-center justify-between md:w-auto md:justify-start gap-4 flex-wrap">
+            <div className="flex w-full items-center justify-between sm:w-auto md:justify-start gap-4 flex-wrap">
                 <Tabs selectedKey={sortOrder} onSelectionChange={key => onSortOrderChange(key as "asc" | "desc")} className="w-fit">
                     <Tabs.ListContainer>
                         <Tabs.List aria-label="排序" className="transition-all duration-100">
@@ -69,7 +69,7 @@ export const SortButtonGroup = React.memo<Props>(({sortOrder, onSortOrderChange,
                 </Tabs>
             </div>
 
-            <SearchField value={searchQuery} onChange={onSearchQueryChange} className="w-full md:w-60">
+            <SearchField value={searchQuery} onChange={onSearchQueryChange} className="w-full sm:w-55">
                 <SearchField.Group>
                     <SearchField.SearchIcon />
                     <SearchField.Input placeholder="尋找股票代號" className="text-sm" />
