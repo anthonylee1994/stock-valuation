@@ -20,9 +20,9 @@ export const CompactValuationBar = React.memo<Props>(({price, valuationLow, valu
         <div className="px-1 py-1">
             <div className="relative h-3 rounded-full overflow-visible shadow-inner bg-surface/50">
                 <div className="absolute inset-0 flex rounded-full overflow-hidden">
-                    <div className={`h-full bg-linear-to-r from-success/90 to-emerald-500 ${barTransition}`} style={{width: `${lowPosition}%`}} />
-                    <div className={`h-full bg-linear-to-r from-warning/90 to-orange-500 ${barTransition}`} style={{width: `${highPosition - lowPosition}%`}} />
-                    <div className={`h-full bg-linear-to-r from-danger/90 to-red-500 flex-1 ${barTransition}`} />
+                    <div className={`h-full bg-emerald-500 ${barTransition}`} style={{width: `${lowPosition}%`}} />
+                    <div className={`h-full bg-yellow-500 ${barTransition}`} style={{width: `${highPosition - lowPosition}%`}} />
+                    <div className={`h-full bg-red-500 flex-1 ${barTransition}`} />
                 </div>
 
                 <Tooltip delay={0} isOpen={isTooltipOpen} onOpenChange={setIsTooltipOpen}>
