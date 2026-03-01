@@ -32,6 +32,7 @@ const mergeStocksWithQuotes = (stocks: ValuationData["stocks"], quotes: Quote[])
 interface StockDataStore {
     stocks: StockWithQuote[];
     loading: boolean;
+    initialLoading: boolean;
     lastUpdate: string | null;
     error: Error | null;
     setStocks: (stocks: StockWithQuote[]) => void;
@@ -46,6 +47,7 @@ interface StockDataStore {
 export const useStockDataStore = create<StockDataStore>((set, get) => ({
     stocks: [],
     loading: true,
+    initialLoading: true,
     pulse: false,
     lastUpdate: null,
     error: null,
@@ -74,12 +76,14 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
                 stocks: merged,
                 lastUpdate: formattedDate,
                 loading: false,
+                initialLoading: false,
                 error: null,
             });
         } catch (e) {
             set({
                 error: e instanceof Error ? e : new Error("無法載入股票數據。請檢查網絡連接。"),
                 loading: false,
+                initialLoading: false,
                 stocks: currentStocks.length > 0 ? currentStocks : [],
             });
         }

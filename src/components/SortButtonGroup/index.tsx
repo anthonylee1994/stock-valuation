@@ -21,7 +21,7 @@ export const SortButtonGroup = React.memo<Props>(({sortOrder, onSortOrderChange,
             <SearchField autoFocus value={searchQuery} onChange={onSearchQueryChange} className="gap-4 w-full md:w-auto">
                 <SearchField.Group className="h-10 rounded-full">
                     <SearchField.SearchIcon />
-                    <SearchField.Input placeholder="尋找股票代號" className="text-sm" />
+                    <SearchField.Input placeholder="尋找股票代號或名稱" className="text-sm" />
                     <SearchField.ClearButton className="right-1" />
                 </SearchField.Group>
             </SearchField>

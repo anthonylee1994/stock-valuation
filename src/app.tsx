@@ -12,7 +12,7 @@ import {useStockPreferencesStore} from "./stores/useStockPreferencesStore";
 export const App = React.memo(() => {
     const error = useStockDataStore(state => state.error);
     const retryFetch = useStockDataStore(state => state.retryFetch);
-    const loading = useStockDataStore(state => state.loading);
+    const initialLoading = useStockDataStore(state => state.initialLoading);
 
     const sortOrder = useStockPreferencesStore(state => state.sortOrder);
     const marketFilter = useStockPreferencesStore(state => state.marketFilter);
@@ -21,7 +21,6 @@ export const App = React.memo(() => {
     const setMarketFilter = useStockPreferencesStore(state => state.setMarketFilter);
     const setSearchQuery = useStockPreferencesStore(state => state.setSearchQuery);
     const sortedStocks = useFilteredAndSortedStocks(marketFilter, sortOrder, searchQuery);
-    const isInitialLoading = loading && sortedStocks.length === 0;
 
     usePolling();
 
@@ -32,7 +31,7 @@ export const App = React.memo(() => {
     return (
         <div className="min-h-screen p-6 max-[640px]:p-4 mb-[env(safe-area-inset-bottom)]">
             <Header />
-            {isInitialLoading ? (
+            {initialLoading ? (
                 <LoadingSpinner />
             ) : (
                 <React.Fragment>
