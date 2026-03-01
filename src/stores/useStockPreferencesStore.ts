@@ -3,13 +3,13 @@ import {persist} from "zustand/middleware";
 
 interface StockPreferencesState {
     sortOrder: "asc" | "desc";
-    marketFilter: string;
+    marketFilter: "us_market" | "hk_market";
     searchQuery: string;
 }
 
 interface StockPreferencesActions {
     setSortOrder: (sortOrder: "asc" | "desc") => void;
-    setMarketFilter: (marketFilter: string) => void;
+    setMarketFilter: (marketFilter: "us_market" | "hk_market") => void;
     setSearchQuery: (searchQuery: string) => void;
 }
 

@@ -24,23 +24,6 @@ body {
     --background: oklch(0.08 0.01 240);
 }
 
-/* Pulse glow animation */
-@keyframes pulse-glow {
-    0%,
-    100% {
-        opacity: 1;
-        box-shadow: 0 0 0 0 var(--color-success);
-    }
-    50% {
-        opacity: 0.6;
-        box-shadow: 0 0 12px 4px var(--color-success);
-    }
-}
-
-.pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite;
-}
-
 /* Price flash animations */
 @keyframes flash-border-up {
     0%,

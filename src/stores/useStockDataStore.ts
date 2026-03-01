@@ -1,4 +1,4 @@
-import {DEDUPED_STOCKS, POLLING_INTERVAL, PULSE_DURATION, SYMBOLS} from "@/constants/stockConstants";
+import {DEDUPED_STOCKS, POLLING_INTERVAL, SYMBOLS} from "@/constants/stockConstants";
 import type {ApiQuotesResponse, Quote, StockWithQuote, ValuationData} from "@/types";
 import {api} from "@/utils/api";
 import {decode} from "@toon-format/toon";
@@ -32,12 +32,10 @@ const mergeStocksWithQuotes = (stocks: ValuationData["stocks"], quotes: Quote[])
 interface StockDataStore {
     stocks: StockWithQuote[];
     loading: boolean;
-    pulse: boolean;
     lastUpdate: string | null;
     error: Error | null;
     setStocks: (stocks: StockWithQuote[]) => void;
     setLoading: (loading: boolean) => void;
-    setPulse: (pulse: boolean) => void;
     setLastUpdate: (lastUpdate: string | null) => void;
     setError: (error: Error | null) => void;
     fetchQuotes: (symbols: string, stocksData: ValuationData["stocks"]) => Promise<void>;
@@ -54,7 +52,6 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
 
     setStocks: stocks => set({stocks}),
     setLoading: loading => set({loading}),
-    setPulse: pulse => set({pulse}),
     setLastUpdate: lastUpdate => set({lastUpdate}),
     setError: error => set({error}),
 
@@ -76,14 +73,9 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
             set({
                 stocks: merged,
                 lastUpdate: formattedDate,
-                pulse: true,
                 loading: false,
                 error: null,
             });
-
-            setTimeout(() => {
-                set({pulse: false});
-            }, PULSE_DURATION);
         } catch (e) {
             set({
                 error: e instanceof Error ? e : new Error("無法載入股票數據。請檢查網絡連接。"),

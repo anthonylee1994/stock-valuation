@@ -13,8 +13,6 @@ export const App = React.memo(() => {
     const error = useStockDataStore(state => state.error);
     const retryFetch = useStockDataStore(state => state.retryFetch);
     const loading = useStockDataStore(state => state.loading);
-    const pulse = useStockDataStore(state => state.pulse);
-    const lastUpdate = useStockDataStore(state => state.lastUpdate);
 
     const sortOrder = useStockPreferencesStore(state => state.sortOrder);
     const marketFilter = useStockPreferencesStore(state => state.marketFilter);
@@ -33,7 +31,7 @@ export const App = React.memo(() => {
 
     return (
         <div className="min-h-screen p-6 max-[640px]:p-4 mb-[env(safe-area-inset-bottom)]">
-            <Header lastUpdate={lastUpdate} pulse={pulse} />
+            <Header />
             {isInitialLoading ? (
                 <LoadingSpinner />
             ) : (

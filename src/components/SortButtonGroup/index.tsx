@@ -11,18 +11,20 @@ interface Props {
     onSearchQueryChange: (query: string) => void;
 }
 
-export const SortButtonGroup = React.memo<Props>(({sortOrder, onSortOrderChange, marketFilter, onMarketFilterChange, searchQuery, onSearchQueryChange}) => (
-    <div className="mx-auto mb-6 flex max-w-350 flex-wrap items-center justify-between gap-4">
-        <div className="flex w-full flex-wrap items-center justify-between gap-4 sm:w-auto md:justify-start">
-            <Tabs value={sortOrder} setValue={onSortOrderChange} items={{asc: "由殘到貴", desc: "由貴到殘"}} />
-            <Tabs value={marketFilter} setValue={onMarketFilterChange} items={{us_market: "美股", hk_market: "港股"}} />
+export const SortButtonGroup = React.memo<Props>(({sortOrder, onSortOrderChange, marketFilter, onMarketFilterChange, searchQuery, onSearchQueryChange}) => {
+    return (
+        <div className="mx-auto mb-6 flex max-w-350 flex-wrap items-center justify-between gap-4">
+            <div className="flex w-full flex-wrap items-center justify-between gap-4 md:w-auto md:justify-start">
+                <Tabs value={sortOrder} setValue={onSortOrderChange} items={{asc: "由殘到貴", desc: "由貴到殘"}} />
+                <Tabs value={marketFilter} setValue={onMarketFilterChange} items={{us_market: "美股", hk_market: "港股"}} />
+            </div>
+            <SearchField autoFocus value={searchQuery} onChange={onSearchQueryChange} className="gap-4 w-full md:w-auto">
+                <SearchField.Group className="h-10 rounded-full">
+                    <SearchField.SearchIcon />
+                    <SearchField.Input placeholder="尋找股票代號" className="text-sm" />
+                    <SearchField.ClearButton className="right-1" />
+                </SearchField.Group>
+            </SearchField>
         </div>
-        <SearchField value={searchQuery} onChange={onSearchQueryChange} className="w-full sm:w-auto">
-            <SearchField.Group className="h-10 rounded-full">
-                <SearchField.SearchIcon />
-                <SearchField.Input placeholder="尋找股票代號" className="text-sm" />
-                <SearchField.ClearButton />
-            </SearchField.Group>
-        </SearchField>
-    </div>
-));
+    );
+});
