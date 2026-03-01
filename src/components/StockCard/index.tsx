@@ -1,24 +1,16 @@
 import type {StockWithQuote} from "@/types";
+import {getActivePrice, getStatus} from "@/utils/stockHelpers";
 import {Card} from "@heroui/react";
 import React from "react";
 import {CardHeader} from "./CardHeader";
 import {CompactValuationBar} from "./CompactValuationBar";
-import {getStatus, STATUS_CONFIG} from "./constants";
+import {STATUS_CONFIG} from "./constants";
 import {PriceDisplay} from "./PriceDisplay";
 import {ValuationMetrics} from "./ValuationMetrics";
 
 interface Props {
     stock: StockWithQuote;
 }
-
-/**
- * 根據市場狀態獲取當前活躍價格數據（盤前、盤中或盤後）
- */
-const getActivePrice = (stock: StockWithQuote) => ({
-    price: stock.preMarketPrice ?? stock.postMarketPrice ?? stock.currentPrice,
-    change: stock.preMarketChange ?? stock.postMarketChange ?? stock.change,
-    percentChange: stock.preMarketChangePercent ?? stock.postMarketChangePercent ?? stock.percentChange,
-});
 
 /**
  * 精確的 memo 比較函數，確保所有關鍵指標變化時都能重新渲染

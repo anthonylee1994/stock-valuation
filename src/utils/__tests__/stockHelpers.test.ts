@@ -1,6 +1,6 @@
-import {describe, it, expect, vi} from "vitest";
-import {validateAndDeduplicateStocks, getUniqueSymbols, sortStocks} from "../stockHelpers";
 import type {ValuationStock} from "@/types";
+import {describe, expect, it, vi} from "vitest";
+import {calculatePotential, formatPercent, formatPrice, getActivePrice, getPriceColor, getStatus, getUniqueSymbols, sortStocks, validateAndDeduplicateStocks} from "../stockHelpers";
 
 describe("validateAndDeduplicateStocks", () => {
     it("should return empty array for empty input", () => {
@@ -68,9 +68,7 @@ describe("getUniqueSymbols", () => {
     });
 
     it("should return single symbol for single stock", () => {
-        const stocks: ValuationStock[] = [
-            {symbol: "AAPL", valuationLow: 100, valuationHigh: 200},
-        ];
+        const stocks: ValuationStock[] = [{symbol: "AAPL", valuationLow: 100, valuationHigh: 200}];
         const result = getUniqueSymbols(stocks);
         expect(result).toBe("AAPL");
     });
@@ -364,5 +362,135 @@ describe("sortStocks", () => {
         const originalOrder = stocks.map(s => s.symbol);
         sortStocks(stocks, "asc");
         expect(stocks.map(s => s.symbol)).toEqual(originalOrder);
+    });
+});
+
+describe("getActivePrice", () => {
+    const baseStock = {
+        symbol: "AAPL",
+        valuationLow: 100,
+        valuationHigh: 200,
+        currentPrice: 150,
+        name: "Apple",
+        market: "US",
+        change: 10,
+        percentChange: 7.14,
+        previousClosePrice: 140,
+        regularMarketTime: "2024-01-01",
+        preMarketPrice: null,
+        preMarketChange: null,
+        preMarketTime: null,
+        preMarketChangePercent: null,
+        postMarketPrice: null,
+        postMarketChange: null,
+        postMarketChangePercent: null,
+        postMarketTime: null,
+        forwardPE: null,
+        priceToBook: null,
+        dividendYield: null,
+    };
+
+    it("should return current price if no pre/post market data", () => {
+        const result = getActivePrice(baseStock);
+        expect(result.price).toBe(150);
+        expect(result.change).toBe(10);
+        expect(result.percentChange).toBe(7.14);
+    });
+
+    it("should prefer post-market price over current", () => {
+        const stock = {
+            ...baseStock,
+            postMarketPrice: 155,
+            postMarketChange: 15,
+            postMarketChangePercent: 10,
+        };
+        const result = getActivePrice(stock);
+        expect(result.price).toBe(155);
+        expect(result.change).toBe(15);
+        expect(result.percentChange).toBe(10);
+    });
+
+    it("should prefer pre-market price over post-market and current", () => {
+        const stock = {
+            ...baseStock,
+            postMarketPrice: 155,
+            preMarketPrice: 160,
+            preMarketChange: 20,
+            preMarketChangePercent: 14,
+        };
+        const result = getActivePrice(stock);
+        expect(result.price).toBe(160);
+        expect(result.change).toBe(20);
+        expect(result.percentChange).toBe(14);
+    });
+});
+
+describe("getStatus", () => {
+    it("should return undervalued when price < low", () => {
+        expect(getStatus(90, 100, 200)).toBe("undervalued");
+    });
+
+    it("should return overvalued when price > high", () => {
+        expect(getStatus(210, 100, 200)).toBe("overvalued");
+    });
+
+    it("should return fair when price is between low and high", () => {
+        expect(getStatus(150, 100, 200)).toBe("fair");
+    });
+
+    it("should return fair when price equals low or high", () => {
+        expect(getStatus(100, 100, 200)).toBe("fair");
+        expect(getStatus(200, 100, 200)).toBe("fair");
+    });
+});
+
+describe("formatPrice", () => {
+    it("should format to 2 decimal places", () => {
+        expect(formatPrice(123.456)).toBe("123.46");
+        expect(formatPrice(123)).toBe("123.00");
+    });
+});
+
+describe("formatPercent", () => {
+    it("should format to 2 decimal places with %", () => {
+        expect(formatPercent(12.345, false)).toBe("12.35%");
+    });
+
+    it("should add + sign for positive values if requested", () => {
+        expect(formatPercent(12.345, true)).toBe("+12.35%");
+    });
+
+    it("should not add + sign for negative values even if requested", () => {
+        expect(formatPercent(-12.345, true)).toBe("-12.35%");
+    });
+
+    it("should handle zero", () => {
+        expect(formatPercent(0, true)).toBe("+0.00%");
+        expect(formatPercent(0, false)).toBe("0.00%");
+    });
+});
+
+describe("calculatePotential", () => {
+    it("should calculate potential percentage", () => {
+        expect(calculatePotential(100, 150)).toBe(50); // (150-100)/100 * 100 = 50%
+        expect(calculatePotential(100, 80)).toBe(-20); // (80-100)/100 * 100 = -20%
+    });
+
+    it("should handle zero price", () => {
+        expect(calculatePotential(0, 100)).toBe(0);
+    });
+});
+
+describe("getPriceColor", () => {
+    it("should return text-success for positive change", () => {
+        expect(getPriceColor(1)).toBe("text-success");
+    });
+
+    it("should return text-danger for negative change", () => {
+        expect(getPriceColor(-1)).toBe("text-danger");
+    });
+
+    it("should return text-muted for zero change", () => {
+        expect(getPriceColor(0)).toBe("text-muted");
     });
 });
