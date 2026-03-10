@@ -114,7 +114,6 @@ export const valuationData: ValuationData = {
             // Lowest P/E: 25,
             // Highest P/E: 40,
         },
-
         {
             symbol: "0700.HK",
             valuationLow: 525,
@@ -171,7 +170,6 @@ export const valuationData: ValuationData = {
             // Lowest P/S: 1,
             // Highest P/S: 1.5,
         },
-
         {
             symbol: "0175.HK",
             valuationLow: 13.3,
