@@ -100,9 +100,9 @@ export const valuationData: ValuationData = {
         },
         {
             symbol: "TSM",
-            valuationLow: 280,
-            valuationHigh: 420,
-            // EPS: 14,
+            valuationLow: 292.2,
+            valuationHigh: 438.3,
+            // EPS: 14.61,
             // Lowest P/E: 20,
             // Highest P/E: 30,
         },
