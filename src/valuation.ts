@@ -37,8 +37,8 @@ export const valuationData: ValuationData = {
         {
             symbol: "CRM",
             valuationLow: 215,
-            valuationHigh: 343.9,
-            // SPS: 13.19
+            valuationHigh: 344,
+            // SPS: 43
             // Lowest P/S: 5
             // Highest P/S: 8
         },
