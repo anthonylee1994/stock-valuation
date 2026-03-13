@@ -1,4 +1,4 @@
-import type {ValuationStock} from "@/types";
+import type {StockWithQuote, ValuationStock} from "@/types";
 import {describe, expect, it, vi} from "vitest";
 import {calculatePotential, formatPercent, formatPrice, getActivePrice, getPriceColor, getStatus, getUniqueSymbols, sortStocks, validateAndDeduplicateStocks} from "../stockHelpers";
 
@@ -10,9 +10,9 @@ describe("validateAndDeduplicateStocks", () => {
 
     it("should return same array when no duplicates", () => {
         const stocks: ValuationStock[] = [
-            {symbol: "AAPL", valuationLow: 100, valuationHigh: 200},
-            {symbol: "GOOGL", valuationLow: 150, valuationHigh: 250},
-            {symbol: "MSFT", valuationLow: 200, valuationHigh: 300},
+            {symbol: "AAPL", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 100, valuationHigh: 200},
+            {symbol: "GOOGL", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 150, valuationHigh: 250},
+            {symbol: "MSFT", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 200, valuationHigh: 300},
         ];
         const result = validateAndDeduplicateStocks(stocks);
         expect(result).toHaveLength(3);
@@ -21,11 +21,11 @@ describe("validateAndDeduplicateStocks", () => {
 
     it("should remove duplicates and keep first occurrence", () => {
         const stocks: ValuationStock[] = [
-            {symbol: "AAPL", valuationLow: 100, valuationHigh: 200},
-            {symbol: "GOOGL", valuationLow: 150, valuationHigh: 250},
-            {symbol: "AAPL", valuationLow: 110, valuationHigh: 210},
-            {symbol: "MSFT", valuationLow: 200, valuationHigh: 300},
-            {symbol: "GOOGL", valuationLow: 160, valuationHigh: 260},
+            {symbol: "AAPL", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 100, valuationHigh: 200},
+            {symbol: "GOOGL", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 150, valuationHigh: 250},
+            {symbol: "AAPL", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 110, valuationHigh: 210},
+            {symbol: "MSFT", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 200, valuationHigh: 300},
+            {symbol: "GOOGL", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 160, valuationHigh: 260},
         ];
         const result = validateAndDeduplicateStocks(stocks);
         expect(result).toHaveLength(3);
@@ -38,8 +38,8 @@ describe("validateAndDeduplicateStocks", () => {
     it("should log warning for duplicates", () => {
         const consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
         const stocks: ValuationStock[] = [
-            {symbol: "AAPL", valuationLow: 100, valuationHigh: 200},
-            {symbol: "AAPL", valuationLow: 110, valuationHigh: 210},
+            {symbol: "AAPL", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 100, valuationHigh: 200},
+            {symbol: "AAPL", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 110, valuationHigh: 210},
         ];
         validateAndDeduplicateStocks(stocks);
         expect(consoleWarnSpy).toHaveBeenCalled();
@@ -49,12 +49,12 @@ describe("validateAndDeduplicateStocks", () => {
 
     it("should handle multiple duplicate pairs", () => {
         const stocks: ValuationStock[] = [
-            {symbol: "AAPL", valuationLow: 100, valuationHigh: 200},
-            {symbol: "GOOGL", valuationLow: 150, valuationHigh: 250},
-            {symbol: "AAPL", valuationLow: 110, valuationHigh: 210},
-            {symbol: "MSFT", valuationLow: 200, valuationHigh: 300},
-            {symbol: "GOOGL", valuationLow: 160, valuationHigh: 260},
-            {symbol: "MSFT", valuationLow: 210, valuationHigh: 310},
+            {symbol: "AAPL", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 100, valuationHigh: 200},
+            {symbol: "GOOGL", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 150, valuationHigh: 250},
+            {symbol: "AAPL", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 110, valuationHigh: 210},
+            {symbol: "MSFT", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 200, valuationHigh: 300},
+            {symbol: "GOOGL", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 160, valuationHigh: 260},
+            {symbol: "MSFT", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 210, valuationHigh: 310},
         ];
         const result = validateAndDeduplicateStocks(stocks);
         expect(result).toHaveLength(3);
@@ -68,16 +68,16 @@ describe("getUniqueSymbols", () => {
     });
 
     it("should return single symbol for single stock", () => {
-        const stocks: ValuationStock[] = [{symbol: "AAPL", valuationLow: 100, valuationHigh: 200}];
+        const stocks: ValuationStock[] = [{symbol: "AAPL", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 100, valuationHigh: 200}];
         const result = getUniqueSymbols(stocks);
         expect(result).toBe("AAPL");
     });
 
     it("should return comma-separated symbols for multiple stocks", () => {
         const stocks: ValuationStock[] = [
-            {symbol: "AAPL", valuationLow: 100, valuationHigh: 200},
-            {symbol: "GOOGL", valuationLow: 150, valuationHigh: 250},
-            {symbol: "MSFT", valuationLow: 200, valuationHigh: 300},
+            {symbol: "AAPL", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 100, valuationHigh: 200},
+            {symbol: "GOOGL", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 150, valuationHigh: 250},
+            {symbol: "MSFT", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 200, valuationHigh: 300},
         ];
         const result = getUniqueSymbols(stocks);
         expect(result).toBe("AAPL,GOOGL,MSFT");
@@ -85,9 +85,9 @@ describe("getUniqueSymbols", () => {
 
     it("should remove duplicate symbols", () => {
         const stocks: ValuationStock[] = [
-            {symbol: "AAPL", valuationLow: 100, valuationHigh: 200},
-            {symbol: "GOOGL", valuationLow: 150, valuationHigh: 250},
-            {symbol: "AAPL", valuationLow: 110, valuationHigh: 210},
+            {symbol: "AAPL", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 100, valuationHigh: 200},
+            {symbol: "GOOGL", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 150, valuationHigh: 250},
+            {symbol: "AAPL", base: 0, lowMultiple: 0, highMultiple: 0, metric: "P/E", valuationLow: 110, valuationHigh: 210},
         ];
         const result = getUniqueSymbols(stocks);
         expect(result).toBe("AAPL,GOOGL");
@@ -101,9 +101,13 @@ describe("sortStocks", () => {
     });
 
     it("should sort ascending by distance from valuation low", () => {
-        const stocks = [
+        const stocks: StockWithQuote[] = [
             {
                 symbol: "AAPL",
+                base: 0,
+                lowMultiple: 0,
+                highMultiple: 0,
+                metric: "P/E",
                 valuationLow: 100,
                 valuationHigh: 200,
                 currentPrice: 150,
@@ -127,6 +131,10 @@ describe("sortStocks", () => {
             },
             {
                 symbol: "GOOGL",
+                base: 0,
+                lowMultiple: 0,
+                highMultiple: 0,
+                metric: "P/E",
                 valuationLow: 100,
                 valuationHigh: 200,
                 currentPrice: 180,
@@ -150,6 +158,10 @@ describe("sortStocks", () => {
             },
             {
                 symbol: "MSFT",
+                base: 0,
+                lowMultiple: 0,
+                highMultiple: 0,
+                metric: "P/E",
                 valuationLow: 100,
                 valuationHigh: 200,
                 currentPrice: 120,
@@ -179,9 +191,13 @@ describe("sortStocks", () => {
     });
 
     it("should sort descending by distance from valuation low", () => {
-        const stocks = [
+        const stocks: StockWithQuote[] = [
             {
                 symbol: "AAPL",
+                base: 0,
+                lowMultiple: 0,
+                highMultiple: 0,
+                metric: "P/E",
                 valuationLow: 100,
                 valuationHigh: 200,
                 currentPrice: 150,
@@ -205,6 +221,10 @@ describe("sortStocks", () => {
             },
             {
                 symbol: "GOOGL",
+                base: 0,
+                lowMultiple: 0,
+                highMultiple: 0,
+                metric: "P/E",
                 valuationLow: 100,
                 valuationHigh: 200,
                 currentPrice: 180,
@@ -228,6 +248,10 @@ describe("sortStocks", () => {
             },
             {
                 symbol: "MSFT",
+                base: 0,
+                lowMultiple: 0,
+                highMultiple: 0,
+                metric: "P/E",
                 valuationLow: 100,
                 valuationHigh: 200,
                 currentPrice: 120,
@@ -257,9 +281,13 @@ describe("sortStocks", () => {
     });
 
     it("should handle zero current price", () => {
-        const stocks = [
+        const stocks: StockWithQuote[] = [
             {
                 symbol: "AAPL",
+                base: 0,
+                lowMultiple: 0,
+                highMultiple: 0,
+                metric: "P/E",
                 valuationLow: 100,
                 valuationHigh: 200,
                 currentPrice: 0,
@@ -283,6 +311,10 @@ describe("sortStocks", () => {
             },
             {
                 symbol: "GOOGL",
+                base: 0,
+                lowMultiple: 0,
+                highMultiple: 0,
+                metric: "P/E",
                 valuationLow: 100,
                 valuationHigh: 200,
                 currentPrice: 150,
@@ -311,9 +343,13 @@ describe("sortStocks", () => {
     });
 
     it("should not mutate original array", () => {
-        const stocks = [
+        const stocks: StockWithQuote[] = [
             {
                 symbol: "AAPL",
+                base: 0,
+                lowMultiple: 0,
+                highMultiple: 0,
+                metric: "P/E",
                 valuationLow: 100,
                 valuationHigh: 200,
                 currentPrice: 150,
@@ -337,6 +373,10 @@ describe("sortStocks", () => {
             },
             {
                 symbol: "GOOGL",
+                base: 0,
+                lowMultiple: 0,
+                highMultiple: 0,
+                metric: "P/E",
                 valuationLow: 100,
                 valuationHigh: 200,
                 currentPrice: 180,
@@ -366,8 +406,12 @@ describe("sortStocks", () => {
 });
 
 describe("getActivePrice", () => {
-    const baseStock = {
+    const baseStock: StockWithQuote = {
         symbol: "AAPL",
+        base: 0,
+        lowMultiple: 0,
+        highMultiple: 0,
+        metric: "P/E",
         valuationLow: 100,
         valuationHigh: 200,
         currentPrice: 150,

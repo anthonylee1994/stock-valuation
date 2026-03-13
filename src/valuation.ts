@@ -1,6 +1,4 @@
-import type {ValuationData, ValuationStock} from "@/types";
-
-type ValuationMetricType = "P/E" | "P/S" | "P/B" | "P/OCF" | "Dividend Yield";
+import type {ValuationData, ValuationMetricType, ValuationStock} from "@/types";
 
 interface BaseValuationConfig {
     symbol: string;
@@ -148,14 +146,14 @@ const baseValuationConfigs: BaseValuationConfig[] = [
     },
     {
         symbol: "0883.HK",
-        metric: "Dividend Yield",
+        metric: "股息率",
         base: 1.23,
         lowMultiple: 0.05,
         highMultiple: 0.08,
     },
     {
         symbol: "1088.HK",
-        metric: "Dividend Yield",
+        metric: "股息率",
         base: 2.2,
         lowMultiple: 0.05,
         highMultiple: 0.08,
@@ -196,7 +194,7 @@ const computeValuationFromBase = (config: BaseValuationConfig): ValuationStock =
     let valuationLow: number;
     let valuationHigh: number;
 
-    if (metric === "Dividend Yield") {
+    if (metric === "股息率") {
         // For yields, price = dividend / yield. Lower yield => higher price.
         valuationLow = base / highMultiple;
         valuationHigh = base / lowMultiple;
@@ -207,6 +205,10 @@ const computeValuationFromBase = (config: BaseValuationConfig): ValuationStock =
 
     return {
         symbol,
+        metric,
+        base,
+        lowMultiple,
+        highMultiple,
         valuationLow: Number(valuationLow.toFixed(2)),
         valuationHigh: Number(valuationHigh.toFixed(2)),
     };

@@ -22,7 +22,7 @@ export const CardHeader = React.memo<Props>(({symbol, name, status}) => {
                     {config.label}
                 </div>
             </div>
-            <p className="text-sm text-muted truncate">{name}</p>
+            <p className="text-sm text-muted truncate">{name || symbol}</p>
         </div>
     );
 });

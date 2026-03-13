@@ -42,7 +42,7 @@ const areEqual = (prev: Props, next: Props) => {
 
 export const StockCard = React.memo<Props>(({stock}: Props) => {
     const {price, change, percentChange} = getActivePrice(stock);
-    const {symbol, name, valuationLow, valuationHigh, forwardPE, priceToBook, dividendYield} = stock;
+    const {symbol, name, valuationLow, valuationHigh, metric, base, lowMultiple, highMultiple, forwardPE, priceToBook, dividendYield} = stock;
 
     const status = getStatus(price, valuationLow, valuationHigh);
     const statusConfig = STATUS_CONFIG[status];
@@ -51,7 +51,18 @@ export const StockCard = React.memo<Props>(({stock}: Props) => {
         <Card role="article" aria-labelledby={`card-title-${symbol}`} className={`p-5 bg-surface border-2 select-none shadow-sm rounded-2xl transition-all ${statusConfig.borderClass}`}>
             <CardHeader symbol={symbol} name={name} status={status} />
             <PriceDisplay price={price} change={change} percentChange={percentChange} />
-            <ValuationMetrics valuationLow={valuationLow} valuationHigh={valuationHigh} forwardPE={forwardPE} priceToBook={priceToBook} dividendYield={dividendYield} price={price} />
+            <ValuationMetrics
+                valuationLow={valuationLow}
+                valuationHigh={valuationHigh}
+                metric={metric}
+                base={base}
+                lowMultiple={lowMultiple}
+                highMultiple={highMultiple}
+                forwardPE={forwardPE}
+                priceToBook={priceToBook}
+                dividendYield={dividendYield}
+                price={price}
+            />
             <CompactValuationBar price={price} valuationLow={valuationLow} valuationHigh={valuationHigh} />
         </Card>
     );
