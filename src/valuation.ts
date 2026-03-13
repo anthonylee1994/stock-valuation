@@ -75,6 +75,15 @@ export const valuationData: ValuationData = {
             // Highest P/E: 45
         },
         {
+            symbol: "JPM",
+            valuationLow: 182.72,
+            valuationHigh: 342.24,
+            // EPS: 22.84
+            // Lowest P/E: 8
+            // Highest P/E: 15
+            // Remark: ROTE 與 PTB 成正比（7–8% ROTE ≈ 1x PTB，22% ≈ 3x PTB）
+        },
+        {
             symbol: "META",
             valuationLow: 531.72,
             valuationHigh: 738.5,
@@ -91,6 +100,14 @@ export const valuationData: ValuationData = {
             // Highest P/E: 35
         },
         {
+            symbol: "NBIS",
+            valuationLow: 79.45,
+            valuationHigh: 158.9,
+            // EPS: 13.24
+            // Lowest P/S: 6
+            // Highest P/S: 12
+        },
+        {
             symbol: "NVDA",
             valuationLow: 262.5,
             valuationHigh: 420,
@@ -105,23 +122,6 @@ export const valuationData: ValuationData = {
             // EPS: 14.61
             // Lowest P/E: 20
             // Highest P/E: 30
-        },
-        {
-            symbol: "JPM",
-            valuationLow: 182.72,
-            valuationHigh: 342.24,
-            // EPS: 22.84
-            // Lowest P/E: 8
-            // Highest P/E: 15
-            // Remark: ROTE 與 PTB 成正比（7–8% ROTE ≈ 1x PTB，22% ≈ 3x PTB）
-        },
-        {
-            symbol: "NBIS",
-            valuationLow: 79.45,
-            valuationHigh: 158.9,
-            // EPS: 13.24
-            // Lowest P/S: 6
-            // Highest P/S: 12
         },
         {
             symbol: "0388.HK",
