@@ -15,7 +15,7 @@ export interface ValuationData {
 
 export interface Quote {
     symbol: string;
-    name: string;
+    name: string | null;
     market: string;
     currentPrice: number;
     change: number;

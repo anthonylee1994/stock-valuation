@@ -4,7 +4,7 @@ import {STATUS_CONFIG} from "./constants";
 
 interface Props {
     symbol: string;
-    name: string;
+    name: string | null;
     status: ValuationStatus;
 }
 

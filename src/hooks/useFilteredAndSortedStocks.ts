@@ -10,7 +10,7 @@ export const useFilteredAndSortedStocks = (marketFilter: string, sortOrder: "asc
 
         if (searchQuery.trim()) {
             const query = searchQuery.toLowerCase().trim();
-            filtered = filtered.filter(stock => stock.symbol.toLowerCase().includes(query) || stock.name.toLowerCase().includes(query));
+            filtered = filtered.filter(stock => stock.symbol.toLowerCase().includes(query) || stock.name?.toLowerCase().includes(query));
         }
 
         return sortStocks(filtered, sortOrder);
