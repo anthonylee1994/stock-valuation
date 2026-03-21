@@ -1,6 +1,7 @@
 export type ValuationMetricType = "P/E" | "P/S" | "P/B" | "P/OCF" | "股息率";
 export interface ValuationStock {
     symbol: string;
+    name?: string;
     base: number;
     lowMultiple: number;
     highMultiple: number;

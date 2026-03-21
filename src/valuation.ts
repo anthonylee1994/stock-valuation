@@ -2,6 +2,7 @@ import type {ValuationData, ValuationMetricType, ValuationStock} from "@/types";
 
 interface BaseValuationConfig {
     symbol: string;
+    name?: string;
     base: number;
     lowMultiple: number;
     highMultiple: number;
@@ -12,6 +13,7 @@ interface BaseValuationConfig {
 const baseValuationConfigs: BaseValuationConfig[] = [
     {
         symbol: "AAPL",
+        name: "蘋果",
         metric: "P/E",
         base: 8.24,
         lowMultiple: 28,
@@ -19,6 +21,7 @@ const baseValuationConfigs: BaseValuationConfig[] = [
     },
     {
         symbol: "AMZN",
+        name: "亞馬遜",
         metric: "P/OCF",
         base: 12.96,
         lowMultiple: 18,
@@ -26,6 +29,7 @@ const baseValuationConfigs: BaseValuationConfig[] = [
     },
     {
         symbol: "AVGO",
+        name: "博通",
         metric: "P/E",
         base: 10.5,
         lowMultiple: 23,
@@ -33,6 +37,7 @@ const baseValuationConfigs: BaseValuationConfig[] = [
     },
     {
         symbol: "COIN",
+        name: "Coinbase",
         metric: "P/S",
         base: 26.81,
         lowMultiple: 6,
@@ -40,6 +45,7 @@ const baseValuationConfigs: BaseValuationConfig[] = [
     },
     {
         symbol: "CRM",
+        name: "賽富時",
         metric: "P/S",
         base: 43,
         lowMultiple: 5,
@@ -47,13 +53,23 @@ const baseValuationConfigs: BaseValuationConfig[] = [
     },
     {
         symbol: "ETN",
+        name: "伊頓",
         metric: "P/E",
         base: 13.36,
         lowMultiple: 20,
         highMultiple: 32,
     },
     {
+        symbol: "GEV",
+        name: "奇異維諾瓦",
+        metric: "P/E",
+        base: 26.58,
+        lowMultiple: 25,
+        highMultiple: 35,
+    },
+    {
         symbol: "GOOG",
+        name: "谷歌",
         metric: "P/E",
         base: 12.85,
         lowMultiple: 20,
@@ -61,6 +77,7 @@ const baseValuationConfigs: BaseValuationConfig[] = [
     },
     {
         symbol: "HON",
+        name: "霍尼韋爾",
         metric: "P/E",
         base: 10.42,
         lowMultiple: 17,
@@ -68,6 +85,7 @@ const baseValuationConfigs: BaseValuationConfig[] = [
     },
     {
         symbol: "HOOD",
+        name: "Robinhood",
         metric: "P/E",
         base: 3.15,
         lowMultiple: 25,
@@ -75,6 +93,7 @@ const baseValuationConfigs: BaseValuationConfig[] = [
     },
     {
         symbol: "JPM",
+        name: "摩根大通",
         metric: "P/E",
         base: 22.84,
         lowMultiple: 8,
@@ -83,6 +102,7 @@ const baseValuationConfigs: BaseValuationConfig[] = [
     },
     {
         symbol: "META",
+        name: "Meta",
         metric: "P/E",
         base: 29.54,
         lowMultiple: 18,
@@ -90,6 +110,7 @@ const baseValuationConfigs: BaseValuationConfig[] = [
     },
     {
         symbol: "MSFT",
+        name: "微軟",
         metric: "P/E",
         base: 20.15,
         lowMultiple: 25,
@@ -97,6 +118,7 @@ const baseValuationConfigs: BaseValuationConfig[] = [
     },
     {
         symbol: "NBIS",
+        name: "Nebius",
         metric: "P/S",
         base: 13.24,
         lowMultiple: 6,
@@ -104,6 +126,7 @@ const baseValuationConfigs: BaseValuationConfig[] = [
     },
     {
         symbol: "NVDA",
+        name: "英偉達",
         metric: "P/E",
         base: 10.5,
         lowMultiple: 25,
@@ -111,6 +134,7 @@ const baseValuationConfigs: BaseValuationConfig[] = [
     },
     {
         symbol: "TSM",
+        name: "台積電",
         metric: "P/E",
         base: 14.61,
         lowMultiple: 20,
@@ -189,7 +213,7 @@ const baseValuationConfigs: BaseValuationConfig[] = [
 ];
 
 const computeValuationFromBase = (config: BaseValuationConfig): ValuationStock => {
-    const {symbol, base, lowMultiple, highMultiple, metric} = config;
+    const {symbol, name, base, lowMultiple, highMultiple, metric} = config;
 
     let valuationLow: number;
     let valuationHigh: number;
@@ -205,6 +229,7 @@ const computeValuationFromBase = (config: BaseValuationConfig): ValuationStock =
 
     return {
         symbol,
+        name,
         metric,
         base,
         lowMultiple,

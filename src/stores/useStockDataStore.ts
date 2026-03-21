@@ -24,6 +24,7 @@ const mergeStocksWithQuotes = (stocks: ValuationData["stocks"], quotes: Quote[])
             return {
                 ...stock,
                 ...quote,
+                ...(stock.name ? {name: stock.name} : {}),
             };
         })
         .filter((s): s is StockWithQuote => s !== null);
