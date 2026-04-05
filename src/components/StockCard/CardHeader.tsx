@@ -17,7 +17,7 @@ export const CardHeader = React.memo<Props>(({symbol, name, status}) => {
                 <h3 id={`card-title-${symbol}`} className="text-xl font-bold tracking-tight text-foreground truncate min-w-0">
                     {symbol}
                 </h3>
-                <div className={`px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 shrink-0 ${config.bgClass} ${config.textClass}`}>
+                <div className={`px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 shrink-0 ${config.chipBorderClass} ${config.chipBgClass} ${config.chipTextClass}`}>
                     <config.icon className="size-3.5" aria-hidden />
                     {config.label}
                 </div>
