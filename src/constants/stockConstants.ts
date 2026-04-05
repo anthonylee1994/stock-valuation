@@ -3,7 +3,6 @@ import {getUniqueSymbols, validateAndDeduplicateStocks} from "@/utils/stockHelpe
 import {valuationData} from "@/valuation";
 
 // Timing constants
-export const PULSE_DURATION = 1500; // ms - duration of pulse animation
 export const POLLING_INTERVAL = 10_000; // ms - interval between API calls (10 seconds)
 
 // Pre-compute deduplicated stocks at module load time

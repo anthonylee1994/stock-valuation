@@ -80,7 +80,7 @@ export const calculatePotential = (price: number, target: number): number => {
 };
 
 export const getPriceColor = (change: number) => {
-    if (change > 0) return "text-success";
-    if (change < 0) return "text-danger";
+    if (change > 0) return "text-emerald-600 dark:text-emerald-400";
+    if (change < 0) return "text-rose-600 dark:text-rose-400";
     return "text-muted";
 };

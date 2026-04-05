@@ -526,12 +526,12 @@ describe("calculatePotential", () => {
 });
 
 describe("getPriceColor", () => {
-    it("should return text-success for positive change", () => {
-        expect(getPriceColor(1)).toBe("text-success");
+    it("should return text-emerald-600 dark:text-emerald-400 for positive change", () => {
+        expect(getPriceColor(1)).toBe("text-emerald-600 dark:text-emerald-400");
     });
 
-    it("should return text-danger for negative change", () => {
-        expect(getPriceColor(-1)).toBe("text-danger");
+    it("should return text-rose-600 dark:text-rose-400 for negative change", () => {
+        expect(getPriceColor(-1)).toBe("text-rose-600 dark:text-rose-400");
     });
 
     it("should return text-muted for zero change", () => {

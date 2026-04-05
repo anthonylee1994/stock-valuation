@@ -18,8 +18,8 @@ interface Props {
 export const ValuationMetrics = React.memo<Props>(({valuationLow, valuationHigh, metric, base, lowMultiple, highMultiple, forwardPE, priceToBook, dividendYield, price}) => {
     const potentialDownside = calculatePotential(price, valuationLow);
     const potentialUpside = calculatePotential(price, valuationHigh);
-    const downClass = potentialDownside > 0 ? "text-success" : "text-danger";
-    const upClass = potentialUpside > 0 ? "text-success" : "text-danger";
+    const downClass = potentialDownside > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400";
+    const upClass = potentialUpside > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400";
 
     return (
         <React.Fragment>
