@@ -13,13 +13,14 @@ export const PriceDisplay = React.memo<Props>(({price, change, percentChange}) =
     const {flashClass} = usePriceAnimation(price);
     const priceColor = getPriceColor(change);
     const arrowDirection = change > 0 ? "up" : change < 0 ? "down" : null;
+    const ariaLabel = change > 0 ? "價格上升" : change < 0 ? "價格下跌" : "價格不變";
 
     return (
         <div className={`flex flex-col gap-0.5 px-2 py-1 -mx-2 -my-1 rounded-lg border-2 border-transparent ${flashClass}`}>
             <div className="flex items-center gap-1">
                 <span className={`text-3xl font-bold tracking-tight tabular-nums ${priceColor}`}>{formatPrice(price)}</span>
 
-                <span className={`text-lg shrink-0 ${arrowDirection === "up" ? "text-success" : arrowDirection === "down" ? "text-danger" : "text-muted"}`}>
+                <span className={`text-lg shrink-0 ${arrowDirection === "up" ? "text-success" : arrowDirection === "down" ? "text-danger" : "text-muted"}`} aria-label={ariaLabel}>
                     {arrowDirection === "up" ? <ImArrowUp aria-hidden /> : arrowDirection === "down" ? <ImArrowDown aria-hidden /> : <ImMinus aria-hidden />}
                 </span>
             </div>

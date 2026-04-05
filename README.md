@@ -67,8 +67,13 @@ pnpm dev
 - `pnpm dev` - 啟動開發伺服器
 - `pnpm build` - 建置生產版本
 - `pnpm preview` - 預覽生產版本
-- `pnpm lint` - 跑 ESLint
+- `pnpm lint` - 跑 ESLint 檢查程式碼
+- `pnpm lint:fix` - 自動修復 ESLint 問題
 - `pnpm format` - 用 Prettier 格式化程式碼
+- `pnpm type-check` - 檢查 TypeScript 型別
+- `pnpm test` - 執行測試
+- `pnpm test:ui` - 用 UI 介面執行測試
+- `pnpm test:coverage` - 執行測試並產生覆蓋率報告
 
 ## 專案結構
 

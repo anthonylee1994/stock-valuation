@@ -3,7 +3,7 @@ import type {ApiQuotesResponse, Quote, StockWithQuote, ValuationData} from "@/ty
 import {api} from "@/utils/api";
 import {decode} from "@toon-format/toon";
 import moment from "moment";
-// @ts-ignore:
+// @ts-expect-error - moment locale files don't have type definitions
 import "moment/dist/locale/zh-hk";
 import {create} from "zustand";
 
@@ -49,7 +49,6 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
     stocks: [],
     loading: true,
     initialLoading: true,
-    pulse: false,
     lastUpdate: null,
     error: null,
 

@@ -13,14 +13,16 @@ export const usePriceAnimation = (price: number) => {
         // 更新價格引用，以便下一次比較
         prevPriceRef.current = price;
 
-        // 設置閃爍類名並在 600ms 後清除
-        setFlashClass(className);
+        // 使用 requestAnimationFrame 避免同步 setState
+        requestAnimationFrame(() => {
+            setFlashClass(className);
 
-        const timer = setTimeout(() => {
-            setFlashClass("");
-        }, 600);
+            const timer = setTimeout(() => {
+                setFlashClass("");
+            }, 600);
 
-        return () => clearTimeout(timer);
+            return () => clearTimeout(timer);
+        });
     }, [price]);
 
     return {flashClass};
