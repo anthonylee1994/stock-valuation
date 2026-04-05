@@ -37,6 +37,8 @@ jobs:
             - name: Build
               env:
                   VITE_QUOTES_API_URL: "${{ vars.VITE_QUOTES_API_URL }}"
+                  VITE_GOOGLE_SHEETS_API_KEY: "${{ vars.VITE_GOOGLE_SHEETS_API_KEY }}"
+                  VITE_GOOGLE_SHEETS_SPREADSHEET_ID: "${{ vars.VITE_GOOGLE_SHEETS_SPREADSHEET_ID }}"
               run: pnpm run build
 
             - name: Setup Pages
