@@ -19,7 +19,7 @@ export const SortButtonGroup = React.memo<Props>(({sortOrder, onSortOrderChange,
                 <Tabs value={marketFilter} setValue={onMarketFilterChange} items={{us_market: "美股", hk_market: "港股"}} />
             </div>
             <SearchField autoFocus value={searchQuery} onChange={onSearchQueryChange} className="gap-4 w-full md:w-auto">
-                <SearchField.Group className="h-10 rounded-full">
+                <SearchField.Group className="h-10 rounded-full focus-within:ring-0 focus-within:ring-offset-0">
                     <SearchField.SearchIcon />
                     <SearchField.Input placeholder="尋找股票代號或名稱" className="text-sm" />
                     <SearchField.ClearButton className="right-1" />
