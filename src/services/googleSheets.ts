@@ -15,8 +15,6 @@ interface SheetRow {
 }
 
 interface GoogleSheetsResponse {
-    range: string;
-    majorDimension: string;
     values: string[][];
 }
 
@@ -48,25 +46,13 @@ export const fetchValuationDataFromSheets = async (): Promise<SheetRow[]> => {
         // Combine all rows from both sheets
         const allRows: SheetRow[] = [];
 
-        data.valueRanges.forEach((valueRange) => {
+        data.valueRanges.forEach(valueRange => {
             if (!valueRange.values || valueRange.values.length === 0) {
                 return;
             }
 
-            const rows = valueRange.values.map((row) => {
-                const [
-                    symbol,
-                    name,
-                    metricType,
-                    metricBase,
-                    lowMultiple,
-                    highMultiple,
-                    valuationLow,
-                    valuationHigh,
-                    currentPrice,
-                    potentialDownSide,
-                    potentialUpSide,
-                ] = row;
+            const rows = valueRange.values.map(row => {
+                const [symbol, name, metricType, metricBase, lowMultiple, highMultiple, valuationLow, valuationHigh, currentPrice, potentialDownSide, potentialUpSide] = row;
 
                 return {
                     symbol: symbol || "",
