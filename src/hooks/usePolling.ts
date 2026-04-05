@@ -1,11 +1,15 @@
 import {useStockDataStore} from "@/stores/useStockDataStore";
-import {DEDUPED_STOCKS, SYMBOLS} from "@/constants/stockConstants";
 import {useEffect} from "react";
 
 export const usePolling = () => {
     useEffect(() => {
-        const {startPolling} = useStockDataStore.getState();
-        const cleanup = startPolling(SYMBOLS, DEDUPED_STOCKS);
-        return cleanup;
+        const {fetchValuationData, startPolling} = useStockDataStore.getState();
+
+        // First fetch valuation data from Google Sheets
+        fetchValuationData().then(() => {
+            // Then start polling for quotes
+            const cleanup = startPolling();
+            return cleanup;
+        });
     }, []);
 };
