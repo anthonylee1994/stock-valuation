@@ -4,12 +4,20 @@ import {useEffect} from "react";
 export const usePolling = () => {
     useEffect(() => {
         const {fetchValuationData, startPolling} = useStockDataStore.getState();
+        let cancelled = false;
+        let cleanup: (() => void) | undefined;
 
-        // First fetch valuation data from Google Sheets
-        fetchValuationData().then(() => {
-            // Then start polling for quotes
-            const cleanup = startPolling();
-            return cleanup;
+        void fetchValuationData().then(() => {
+            if (cancelled) {
+                return;
+            }
+
+            cleanup = startPolling();
         });
+
+        return () => {
+            cancelled = true;
+            cleanup?.();
+        };
     }, []);
 };

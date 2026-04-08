@@ -5,11 +5,22 @@ import {StockCard} from "./StockCard";
 
 interface Props {
     stocks: StockWithQuote[];
+    hasConfiguredStocks: boolean;
+    isFiltered: boolean;
+    marketFilter: "us_market" | "hk_market";
 }
 
-export const StockGrid = React.memo<Props>(({stocks}) => {
+export const StockGrid = React.memo<Props>(({stocks, hasConfiguredStocks, isFiltered, marketFilter}) => {
     if (stocks.length === 0) {
-        return <EmptyPlaceholder />;
+        if (!hasConfiguredStocks) {
+            return <EmptyPlaceholder title="未有追蹤股票" description="請先喺 Google Sheets 加入估值資料，之後畫面先會顯示追蹤清單。" />;
+        }
+
+        if (isFiltered) {
+            return <EmptyPlaceholder />;
+        }
+
+        return <EmptyPlaceholder title={`目前冇 ${marketFilter === "us_market" ? "美股" : "港股"} 追蹤項目`} description="請切換市場，或者去 Google Sheets 更新追蹤清單。" />;
     }
 
     return (

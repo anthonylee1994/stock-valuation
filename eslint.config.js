@@ -7,7 +7,7 @@ import tsparser from "@typescript-eslint/parser";
 
 export default [
     {
-        ignores: ["dist", "node_modules", "*.config.js", "*.config.ts"],
+        ignores: ["dist", "node_modules", ".heroui-docs", "*.config.js", "*.config.ts"],
     },
     {
         files: ["**/*.{ts,tsx}"],

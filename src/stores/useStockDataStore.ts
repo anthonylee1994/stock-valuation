@@ -32,7 +32,7 @@ const mergeStocksWithQuotes = (stocks: ValuationStock[], quotes: Quote[]): Stock
         .filter((s): s is StockWithQuote => s !== null);
 };
 
-interface StockDataStore {
+export interface StockDataStore {
     stocks: StockWithQuote[];
     loading: boolean;
     initialLoading: boolean;
@@ -120,8 +120,19 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
     },
 
     retryFetch: () => {
-        const {fetchQuotes} = get();
-        fetchQuotes();
+        const {fetchValuationData, fetchQuotes, valuationStocks} = get();
+
+        if (valuationStocks.length === 0) {
+            void fetchValuationData().then(() => {
+                const {valuationStocks: latestValuationStocks} = get();
+                if (latestValuationStocks.length > 0) {
+                    void fetchQuotes();
+                }
+            });
+            return;
+        }
+
+        void fetchQuotes();
     },
 
     startPolling: () => {

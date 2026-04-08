@@ -2,6 +2,8 @@
 
 一個現代化、即時嘅股票估值追蹤應用程式，用 React、TypeScript 同 HeroUI 起嘅。可以監察股票同自訂估值範圍嘅對比，搵出美股同港股市場入面被低估或者高估嘅機會。
 
+呢個專案目前定位係一個 read-only valuation dashboard: 前端負責展示同篩選，追蹤清單同估值資料由 Google Sheets 管理。
+
 🔗 **線上 Demo**: [https://valuation.on99.app](https://valuation.on99.app)
 
 ## 功能
@@ -52,6 +54,8 @@ pnpm install
 
 ```env
 VITE_QUOTES_API_URL=your_quotes_api_url
+VITE_GOOGLE_SHEETS_API_KEY=your_google_sheets_api_key
+VITE_GOOGLE_SHEETS_SPREADSHEET_ID=your_google_sheets_spreadsheet_id
 ```
 
 4. 啟動開發伺服器：
@@ -124,12 +128,18 @@ stock-valuation/
 
 ### 加入股票
 
-喺源碼入面編輯估值資料嚟加入或修改股票：
+追蹤股票同估值範圍唔係喺前端源碼管理，而係喺 Google Sheets 更新。每一列會對應一隻股票，前端載入後再去 quotes API 攞即時價格。
+
+Google Sheets 至少需要以下欄位：
 
 ```typescript
 {
   symbol: "AAPL",
-  market: "US",
+  name: "Apple",
+  metricType: "P/E",
+  metricBase: 10,
+  lowMultiple: 12,
+  highMultiple: 18,
   valuationLow: 150,
   valuationHigh: 180
 }
@@ -157,6 +167,8 @@ Build 完嘅檔案會放喺 `dist/` 目錄入面。
 喺你 GitHub repo 嘅設定入面 **Settings > Secrets and variables > Actions > Variables** 設定以下變數：
 
 - `VITE_QUOTES_API_URL`: 你嘅報價 API 端點
+- `VITE_GOOGLE_SHEETS_API_KEY`: Google Sheets API key
+- `VITE_GOOGLE_SHEETS_SPREADSHEET_ID`: spreadsheet ID
 
 ## 功能詳情
 
@@ -175,6 +187,7 @@ Build 完嘅檔案會放喺 `dist/` 目錄入面。
 
 - 喺美股同港股之間切換
 - 篩選偏好會儲存喺本地
+- 如果某個市場未有配置追蹤股票，畫面會明確提示去 Google Sheets 更新
 
 ### 股票指標
 

@@ -1,5 +1,11 @@
 import axios, {AxiosError} from "axios";
 
+const MAX_RETRIES = 2;
+
+type RetryableConfig = {
+    __retryCount?: number;
+};
+
 // Validate environment variables
 const API_URL = import.meta.env.VITE_QUOTES_API_URL;
 if (!API_URL) {
@@ -30,21 +36,23 @@ api.interceptors.response.use(
     async (error: AxiosError) => {
         const config = error.config;
 
-        // Retry logic for network errors or 5xx errors
-        if (config && !config.headers?.["x-retry-count"]) {
-            const retryCount = 0;
-            const maxRetries = 2;
+        if (!config) {
+            return Promise.reject(error);
+        }
 
-            if (retryCount < maxRetries && (error.code === "ECONNABORTED" || error.code === "ERR_NETWORK" || (error.response && error.response.status >= 500))) {
-                config.headers = config.headers || {};
-                config.headers["x-retry-count"] = String(retryCount + 1);
+        const retryConfig = config as typeof config & RetryableConfig;
+        const retryCount = retryConfig.__retryCount ?? 0;
+        const shouldRetry =
+            error.code === "ECONNABORTED" || error.code === "ERR_NETWORK" || (error.response ? error.response.status >= 500 : false);
 
-                // Exponential backoff: 1s, 2s
-                const delay = Math.pow(2, retryCount) * 1000;
-                await new Promise(resolve => setTimeout(resolve, delay));
+        // Retry network and 5xx failures with exponential backoff: 1s, 2s
+        if (shouldRetry && retryCount < MAX_RETRIES) {
+            retryConfig.__retryCount = retryCount + 1;
 
-                return api(config);
-            }
+            const delay = Math.pow(2, retryCount) * 1000;
+            await new Promise(resolve => setTimeout(resolve, delay));
+
+            return api(retryConfig);
         }
 
         return Promise.reject(error);
