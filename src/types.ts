@@ -1,4 +1,6 @@
 export type ValuationMetricType = "P/E" | "P/S" | "P/B" | "P/OCF" | "股息率";
+export type MarketFilter = "us_market" | "hk_market";
+
 export interface ValuationStock {
     symbol: string;
     name?: string;
@@ -12,12 +14,13 @@ export interface ValuationStock {
 
 export interface ValuationData {
     stocks: ValuationStock[];
+    warnings: string[];
 }
 
 export interface Quote {
     symbol: string;
     name: string | null;
-    market: string;
+    market: MarketFilter;
     currentPrice: number;
     change: number;
     percentChange: number;

@@ -13,7 +13,7 @@ export const App = React.memo(() => {
     const error = useStockDataStore(state => state.error);
     const retryFetch = useStockDataStore(state => state.retryFetch);
     const initialLoading = useStockDataStore(state => state.initialLoading);
-    const valuationStocks = useStockDataStore(state => state.valuationStocks);
+    const warnings = useStockDataStore(state => state.warnings);
 
     const sortOrder = useStockPreferencesStore(state => state.sortOrder);
     const marketFilter = useStockPreferencesStore(state => state.marketFilter);
@@ -31,7 +31,7 @@ export const App = React.memo(() => {
 
     return (
         <div className="min-h-screen p-6 max-[640px]:p-4 mb-[env(safe-area-inset-bottom)]">
-            <Header />
+            <Header warnings={warnings} />
             {initialLoading ? (
                 <LoadingSpinner />
             ) : (
@@ -44,7 +44,7 @@ export const App = React.memo(() => {
                         searchQuery={searchQuery}
                         onSearchQueryChange={setSearchQuery}
                     />
-                    <StockGrid stocks={sortedStocks} hasConfiguredStocks={valuationStocks.length > 0} isFiltered={searchQuery.trim().length > 0} marketFilter={marketFilter} />
+                    <StockGrid stocks={sortedStocks} />
                 </React.Fragment>
             )}
         </div>

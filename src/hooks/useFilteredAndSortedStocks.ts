@@ -1,9 +1,10 @@
+import type {MarketFilter} from "@/types";
 import {useStockDataStore} from "@/stores/useStockDataStore";
 import {sortStocks} from "@/utils/stockHelpers";
 import {useMemo} from "react";
 import {useDebounce} from "./useDebounce";
 
-export const useFilteredAndSortedStocks = (marketFilter: string, sortOrder: "asc" | "desc", searchQuery: string = "") => {
+export const useFilteredAndSortedStocks = (marketFilter: MarketFilter, sortOrder: "asc" | "desc", searchQuery: string = "") => {
     const stocks = useStockDataStore(state => state.stocks);
     const debouncedSearchQuery = useDebounce(searchQuery, 300);
 

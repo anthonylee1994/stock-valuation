@@ -1,15 +1,16 @@
+import type {MarketFilter} from "@/types";
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
 
 interface StockPreferencesState {
     sortOrder: "asc" | "desc";
-    marketFilter: "us_market" | "hk_market";
+    marketFilter: MarketFilter;
     searchQuery: string;
 }
 
 interface StockPreferencesActions {
     setSortOrder: (sortOrder: "asc" | "desc") => void;
-    setMarketFilter: (marketFilter: "us_market" | "hk_market") => void;
+    setMarketFilter: (marketFilter: MarketFilter) => void;
     setSearchQuery: (searchQuery: string) => void;
 }
 

@@ -13,16 +13,21 @@ export const usePriceAnimation = (price: number) => {
         // 更新價格引用，以便下一次比較
         prevPriceRef.current = price;
 
-        // 使用 requestAnimationFrame 避免同步 setState
-        requestAnimationFrame(() => {
+        let timer: ReturnType<typeof setTimeout> | null = null;
+        const frame = requestAnimationFrame(() => {
             setFlashClass(className);
 
-            const timer = setTimeout(() => {
+            timer = setTimeout(() => {
                 setFlashClass("");
             }, 600);
-
-            return () => clearTimeout(timer);
         });
+
+        return () => {
+            cancelAnimationFrame(frame);
+            if (timer) {
+                clearTimeout(timer);
+            }
+        };
     }, [price]);
 
     return {flashClass};

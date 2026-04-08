@@ -23,6 +23,7 @@ describe("useStockDataStore retryFetch", () => {
             initialLoading: true,
             lastUpdate: null,
             error: null,
+            warnings: [],
             valuationStocks: [],
         });
     });

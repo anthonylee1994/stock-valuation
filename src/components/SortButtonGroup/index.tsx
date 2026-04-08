@@ -1,3 +1,4 @@
+import type {MarketFilter} from "@/types";
 import {SearchField} from "@heroui/react";
 import React from "react";
 import {Tabs} from "./Tabs";
@@ -5,8 +6,8 @@ import {Tabs} from "./Tabs";
 interface Props {
     sortOrder: "asc" | "desc";
     onSortOrderChange: (order: "asc" | "desc") => void;
-    marketFilter: "us_market" | "hk_market";
-    onMarketFilterChange: (market: "us_market" | "hk_market") => void;
+    marketFilter: MarketFilter;
+    onMarketFilterChange: (market: MarketFilter) => void;
     searchQuery: string;
     onSearchQueryChange: (query: string) => void;
 }
