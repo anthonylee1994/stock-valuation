@@ -10,6 +10,8 @@ export interface ValuationStock {
     metric: ValuationMetricType;
     valuationLow: number;
     valuationHigh: number;
+    potentialDownside: number;
+    potentialUpside: number;
 }
 
 export interface ValuationData {

@@ -77,10 +77,6 @@ export function formatPercent(value: number, showSign: boolean): string {
     return sign + value.toFixed(2) + "%";
 }
 
-export function calculatePotential(price: number, target: number): number {
-    return price > 0 ? ((target - price) / price) * 100 : 0;
-}
-
 export function getPriceColor(change: number) {
     if (change > 0) return "text-emerald-600 dark:text-emerald-400";
     if (change < 0) return "text-rose-600 dark:text-rose-400";

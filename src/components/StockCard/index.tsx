@@ -23,6 +23,8 @@ const MEMO_COMPARE_FIELDS: (keyof StockWithQuote)[] = [
     "postMarketChange",
     "valuationLow",
     "valuationHigh",
+    "potentialDownside",
+    "potentialUpside",
     "forwardPE",
     "priceToBook",
     "dividendYield",
@@ -32,7 +34,7 @@ const areEqual = (prev: Props, next: Props) => MEMO_COMPARE_FIELDS.every(field =
 
 export const StockCard = React.memo<Props>(({stock}: Props) => {
     const {price, change, percentChange} = getActivePrice(stock);
-    const {symbol, name, valuationLow, valuationHigh, metric, base, lowMultiple, highMultiple, forwardPE, priceToBook, dividendYield} = stock;
+    const {symbol, name, valuationLow, valuationHigh, potentialDownside, potentialUpside, metric, base, lowMultiple, highMultiple, forwardPE, priceToBook, dividendYield} = stock;
 
     const status = getStatus(price, valuationLow, valuationHigh);
     const statusConfig = STATUS_CONFIG[status];
@@ -44,6 +46,8 @@ export const StockCard = React.memo<Props>(({stock}: Props) => {
             <ValuationMetrics
                 valuationLow={valuationLow}
                 valuationHigh={valuationHigh}
+                potentialDownside={potentialDownside}
+                potentialUpside={potentialUpside}
                 metric={metric}
                 base={base}
                 lowMultiple={lowMultiple}

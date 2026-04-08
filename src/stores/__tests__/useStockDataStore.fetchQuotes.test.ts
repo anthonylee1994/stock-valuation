@@ -24,6 +24,8 @@ const valuationStocks: ValuationStock[] = [
         metric: "P/E",
         valuationLow: 100,
         valuationHigh: 200,
+        potentialDownside: -16.67,
+        potentialUpside: 66.67,
     },
 ];
 

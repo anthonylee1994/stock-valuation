@@ -9,9 +9,8 @@ interface SheetRow {
     highMultiple: number;
     valuationLow: number;
     valuationHigh: number;
-    currentPrice: number;
-    potentialDownSide: number;
-    potentialUpSide: number;
+    potentialDownside: number;
+    potentialUpside: number;
 }
 
 interface GoogleSheetsResponse {
@@ -51,7 +50,7 @@ const parsePositiveNumber = (value: string | undefined, label: string, rowNumber
 };
 
 const mapSheetRow = (row: string[], rowNumber: number): ParsedSheetRow => {
-    const [symbol, name, metricType, metricBase, lowMultiple, highMultiple, valuationLow, valuationHigh, currentPrice, potentialDownSide, potentialUpSide] = row;
+    const [symbol, name, metricType, metricBase, lowMultiple, highMultiple, valuationLow, valuationHigh, , potentialDownside, potentialUpside] = row;
 
     try {
         const normalizedSymbol = symbol?.trim();
@@ -73,9 +72,8 @@ const mapSheetRow = (row: string[], rowNumber: number): ParsedSheetRow => {
             highMultiple: parsePositiveNumber(highMultiple, "highMultiple", rowNumber),
             valuationLow: parsePositiveNumber(valuationLow, "valuationLow", rowNumber),
             valuationHigh: parsePositiveNumber(valuationHigh, "valuationHigh", rowNumber),
-            currentPrice: parseNumber(currentPrice),
-            potentialDownSide: parseNumber(potentialDownSide),
-            potentialUpSide: parseNumber(potentialUpSide),
+            potentialDownside: parseNumber(potentialDownside),
+            potentialUpside: parseNumber(potentialUpside),
         };
 
         if (parsedRow.valuationLow > parsedRow.valuationHigh) {
@@ -149,5 +147,7 @@ export const convertSheetRowToValuationStock = (row: SheetRow) => {
         highMultiple: row.highMultiple,
         valuationLow: row.valuationLow,
         valuationHigh: row.valuationHigh,
+        potentialDownside: row.potentialDownside,
+        potentialUpside: row.potentialUpside,
     };
 };
