@@ -20,7 +20,7 @@ export const StockGrid = React.memo<Props>(({stocks, hasConfiguredStocks, isFilt
             return <EmptyPlaceholder />;
         }
 
-        return <EmptyPlaceholder title={`目前冇 ${marketFilter === "us_market" ? "美股" : "港股"} 追蹤項目`} description="請切換市場，或者去 Google Sheets 更新追蹤清單。" />;
+        return <EmptyPlaceholder title={`目前冇 「${marketFilter === "us_market" ? "美股" : "港股"}」 追蹤項目`} description="請切換市場，或者去 Google Sheets 更新追蹤清單。" />;
     }
 
     return (
