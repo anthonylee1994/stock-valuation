@@ -1,6 +1,8 @@
 import type {ValuationMetricType} from "@/types";
 import {calculatePotential, formatPercent, formatPrice} from "@/utils/stockHelpers";
 import React from "react";
+import {Metric} from "./Metric";
+import {formatOptionalNumber, formatOptionalPercent, getMetricLabel} from "./helpers";
 
 interface Props {
     valuationLow: number;
@@ -20,13 +22,14 @@ export const ValuationMetrics = React.memo<Props>(({valuationLow, valuationHigh,
     const potentialUpside = calculatePotential(price, valuationHigh);
     const downClass = potentialDownside > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400";
     const upClass = potentialUpside > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400";
+    const isDividendMetric = metric === "股息率";
 
     return (
         <React.Fragment>
             <div className="grid grid-cols-3 gap-x-4 gap-y-3">
-                <Metric label="預測市盈率" value={forwardPE ? forwardPE.toFixed(2) : "-"} />
-                <Metric label="市淨率" value={priceToBook ? priceToBook.toFixed(2) : "-"} />
-                <Metric label="股息率" value={dividendYield ? formatPercent(dividendYield, false) : "-"} />
+                <Metric label="預測市盈率" value={formatOptionalNumber(forwardPE)} />
+                <Metric label="市淨率" value={formatOptionalNumber(priceToBook)} />
+                <Metric label="股息率" value={formatOptionalPercent(dividendYield)} />
                 <hr className="col-span-3" />
             </div>
             <div className="grid grid-cols-3 gap-x-4 gap-y-3">
@@ -35,42 +38,14 @@ export const ValuationMetrics = React.memo<Props>(({valuationLow, valuationHigh,
                 <hr className="col-span-3" />
             </div>
             <div className="grid grid-cols-3 gap-x-4 gap-y-3">
-                <Metric label={metric === "股息率" ? "殘值息率" : "殘值倍數"} value={metric === "股息率" ? formatPercent(highMultiple * 100, false) : lowMultiple.toFixed(2)} />
+                <Metric label={isDividendMetric ? "殘值息率" : "殘值倍數"} value={isDividendMetric ? formatPercent(highMultiple * 100, false) : lowMultiple.toFixed(2)} />
                 <Metric label="殘值" value={formatPrice(valuationLow)} />
                 <Metric label="距離殘值" value={formatPercent(potentialDownside, true)} className={downClass} />
 
-                <Metric label={metric === "股息率" ? "極值息率" : "極值倍數"} value={metric === "股息率" ? formatPercent(lowMultiple * 100, false) : highMultiple.toFixed(2)} />
+                <Metric label={isDividendMetric ? "極值息率" : "極值倍數"} value={isDividendMetric ? formatPercent(lowMultiple * 100, false) : highMultiple.toFixed(2)} />
                 <Metric label="極值" value={formatPrice(valuationHigh)} />
                 <Metric label="距離極值" value={formatPercent(potentialUpside, true)} className={upClass} />
             </div>
         </React.Fragment>
     );
 });
-
-function getMetricLabel(metric: ValuationMetricType) {
-    switch (metric) {
-        case "股息率":
-            return "每股派息";
-        case "P/E":
-            return "每股盈利";
-        case "P/S":
-            return "每股營收";
-        case "P/B":
-            return "每股資產淨值";
-        case "P/OCF":
-            return "每股營業現金流";
-    }
-}
-
-interface MetricProps {
-    label: string;
-    value: string;
-    className?: string;
-}
-
-const Metric = React.memo<MetricProps>(({label, value, className = "text-foreground"}) => (
-    <div>
-        <span className="text-xs text-muted block mb-0.5">{label}</span>
-        <span className={`text-sm font-semibold tabular-nums ${className}`}>{value}</span>
-    </div>
-));

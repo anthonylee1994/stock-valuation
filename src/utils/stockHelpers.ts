@@ -4,7 +4,7 @@ import type {StockWithQuote, ValuationData, ValuationStatus} from "@/types";
  * Validate and deduplicate stocks array
  * Keeps first occurrence of duplicate symbols and logs warnings
  */
-export const validateAndDeduplicateStocks = (stocks: ValuationData["stocks"]) => {
+export function validateAndDeduplicateStocks(stocks: ValuationData["stocks"]) {
     const seen = new Map<string, number>();
     const duplicates: string[] = [];
 
@@ -25,20 +25,20 @@ export const validateAndDeduplicateStocks = (stocks: ValuationData["stocks"]) =>
     }
 
     return deduped;
-};
+}
 
 /**
  * Extract unique symbols from stocks array and return as comma-separated string
  */
-export const getUniqueSymbols = (stocks: ValuationData["stocks"]): string => {
+export function getUniqueSymbols(stocks: ValuationData["stocks"]): string {
     const uniqueSymbols = new Set(stocks.map(s => s.symbol));
     return Array.from(uniqueSymbols).join(",");
-};
+}
 
 /**
  * Sort stocks by distance from valuation low to high or high to low
  */
-export const sortStocks = (stocks: StockWithQuote[], sortOrder: "asc" | "desc"): StockWithQuote[] => {
+export function sortStocks(stocks: StockWithQuote[], sortOrder: "asc" | "desc"): StockWithQuote[] {
     return [...stocks].sort((a, b) => {
         const aDistance = a.currentPrice > 0 ? ((a.currentPrice - a.valuationLow) / a.currentPrice) * 100 : 0;
         const bDistance = b.currentPrice > 0 ? ((b.currentPrice - b.valuationLow) / b.currentPrice) * 100 : 0;
@@ -49,38 +49,40 @@ export const sortStocks = (stocks: StockWithQuote[], sortOrder: "asc" | "desc"):
             return bDistance - aDistance;
         }
     });
-};
+}
 
 /**
  * Get the active price data (pre-market, post-market, or current) for a stock
  */
-export const getActivePrice = (stock: StockWithQuote) => ({
-    price: stock.preMarketPrice ?? stock.postMarketPrice ?? stock.currentPrice,
-    change: stock.preMarketChange ?? stock.postMarketChange ?? stock.change,
-    percentChange: stock.preMarketChangePercent ?? stock.postMarketChangePercent ?? stock.percentChange,
-});
+export function getActivePrice(stock: StockWithQuote) {
+    return {
+        price: stock.preMarketPrice ?? stock.postMarketPrice ?? stock.currentPrice,
+        change: stock.preMarketChange ?? stock.postMarketChange ?? stock.change,
+        percentChange: stock.preMarketChangePercent ?? stock.postMarketChangePercent ?? stock.percentChange,
+    };
+}
 
-export const getStatus = (currentPrice: number, low: number, high: number): ValuationStatus => {
+export function getStatus(currentPrice: number, low: number, high: number): ValuationStatus {
     if (currentPrice < low) return "undervalued";
     if (currentPrice > high) return "overvalued";
     return "fair";
-};
+}
 
-export const formatPrice = (value: number): string => {
+export function formatPrice(value: number): string {
     return value.toFixed(2);
-};
+}
 
-export const formatPercent = (value: number, showSign: boolean): string => {
+export function formatPercent(value: number, showSign: boolean): string {
     const sign = showSign && value >= 0 ? "+" : "";
     return sign + value.toFixed(2) + "%";
-};
+}
 
-export const calculatePotential = (price: number, target: number): number => {
+export function calculatePotential(price: number, target: number): number {
     return price > 0 ? ((target - price) / price) * 100 : 0;
-};
+}
 
-export const getPriceColor = (change: number) => {
+export function getPriceColor(change: number) {
     if (change > 0) return "text-emerald-600 dark:text-emerald-400";
     if (change < 0) return "text-rose-600 dark:text-rose-400";
     return "text-muted";
-};
+}

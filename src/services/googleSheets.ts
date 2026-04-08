@@ -18,17 +18,44 @@ interface GoogleSheetsResponse {
     values: string[][];
 }
 
+interface GoogleSheetsBatchResponse {
+    valueRanges: GoogleSheetsResponse[];
+}
+
 const API_KEY = import.meta.env.VITE_GOOGLE_SHEETS_API_KEY;
 const SPREADSHEET_ID = import.meta.env.VITE_GOOGLE_SHEETS_SPREADSHEET_ID;
+const SHEET_RANGES = ["美股!A2:K100", "港股!A2:K100"];
+const DEFAULT_METRIC: ValuationMetricType = "P/E";
+
+const parseNumber = (value?: string) => Number.parseFloat(value ?? "") || 0;
+
+const mapSheetRow = (row: string[]): SheetRow => {
+    const [symbol, name, metricType, metricBase, lowMultiple, highMultiple, valuationLow, valuationHigh, currentPrice, potentialDownSide, potentialUpSide] = row;
+
+    return {
+        symbol: symbol || "",
+        name: name || undefined,
+        metricType: metricType || DEFAULT_METRIC,
+        metricBase: parseNumber(metricBase),
+        lowMultiple: parseNumber(lowMultiple),
+        highMultiple: parseNumber(highMultiple),
+        valuationLow: parseNumber(valuationLow),
+        valuationHigh: parseNumber(valuationHigh),
+        currentPrice: parseNumber(currentPrice),
+        potentialDownSide: parseNumber(potentialDownSide),
+        potentialUpSide: parseNumber(potentialUpSide),
+    };
+};
+
+const normalizeSymbol = (symbol: string) => (symbol.startsWith("HKG:") ? `${symbol.replace("HKG:", "")}.HK` : symbol);
 
 export const fetchValuationDataFromSheets = async (): Promise<SheetRow[]> => {
     if (!API_KEY || !SPREADSHEET_ID) {
         throw new Error("Missing Google Sheets API credentials");
     }
 
-    // Fetch both US and HK stocks
-    const ranges = ["美股!A2:K100", "港股!A2:K100"];
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values:batchGet?${ranges.map(r => `ranges=${encodeURIComponent(r)}`).join("&")}&key=${API_KEY}`;
+    const query = SHEET_RANGES.map(range => `ranges=${encodeURIComponent(range)}`).join("&");
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values:batchGet?${query}&key=${API_KEY}`;
 
     try {
         const response = await fetch(url);
@@ -37,42 +64,13 @@ export const fetchValuationDataFromSheets = async (): Promise<SheetRow[]> => {
             throw new Error(`Google Sheets API error: ${response.statusText}`);
         }
 
-        const data: {valueRanges: GoogleSheetsResponse[]} = await response.json();
+        const data: GoogleSheetsBatchResponse = await response.json();
 
         if (!data.valueRanges || data.valueRanges.length === 0) {
             return [];
         }
 
-        // Combine all rows from both sheets
-        const allRows: SheetRow[] = [];
-
-        data.valueRanges.forEach(valueRange => {
-            if (!valueRange.values || valueRange.values.length === 0) {
-                return;
-            }
-
-            const rows = valueRange.values.map(row => {
-                const [symbol, name, metricType, metricBase, lowMultiple, highMultiple, valuationLow, valuationHigh, currentPrice, potentialDownSide, potentialUpSide] = row;
-
-                return {
-                    symbol: symbol || "",
-                    name: name || undefined,
-                    metricType: metricType || "P/E",
-                    metricBase: parseFloat(metricBase) || 0,
-                    lowMultiple: parseFloat(lowMultiple) || 0,
-                    highMultiple: parseFloat(highMultiple) || 0,
-                    valuationLow: parseFloat(valuationLow) || 0,
-                    valuationHigh: parseFloat(valuationHigh) || 0,
-                    currentPrice: parseFloat(currentPrice) || 0,
-                    potentialDownSide: parseFloat(potentialDownSide) || 0,
-                    potentialUpSide: parseFloat(potentialUpSide) || 0,
-                };
-            });
-
-            allRows.push(...rows);
-        });
-
-        return allRows;
+        return data.valueRanges.flatMap(valueRange => (valueRange.values ?? []).map(mapSheetRow));
     } catch (error) {
         console.error("Failed to fetch data from Google Sheets:", error);
         throw error;
@@ -80,14 +78,8 @@ export const fetchValuationDataFromSheets = async (): Promise<SheetRow[]> => {
 };
 
 export const convertSheetRowToValuationStock = (row: SheetRow) => {
-    // Convert HKG:XXXX format to XXXX.HK format for Hong Kong stocks
-    let symbol = row.symbol;
-    if (symbol.startsWith("HKG:")) {
-        symbol = symbol.replace("HKG:", "") + ".HK";
-    }
-
     return {
-        symbol,
+        symbol: normalizeSymbol(row.symbol),
         name: row.name,
         metric: row.metricType as ValuationMetricType,
         base: row.metricBase,

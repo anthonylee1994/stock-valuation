@@ -12,33 +12,23 @@ interface Props {
     stock: StockWithQuote;
 }
 
-/**
- * 精確的 memo 比較函數，確保所有關鍵指標變化時都能重新渲染
- */
-const areEqual = (prev: Props, next: Props) => {
-    const p = prev.stock;
-    const n = next.stock;
+const MEMO_COMPARE_FIELDS: (keyof StockWithQuote)[] = [
+    "symbol",
+    "currentPrice",
+    "change",
+    "percentChange",
+    "preMarketPrice",
+    "preMarketChange",
+    "postMarketPrice",
+    "postMarketChange",
+    "valuationLow",
+    "valuationHigh",
+    "forwardPE",
+    "priceToBook",
+    "dividendYield",
+];
 
-    return (
-        // 基本信息
-        p.symbol === n.symbol &&
-        // 當前市場價格數據
-        p.currentPrice === n.currentPrice &&
-        p.change === n.change &&
-        p.percentChange === n.percentChange &&
-        // 盤前/盤後數據
-        p.preMarketPrice === n.preMarketPrice &&
-        p.preMarketChange === n.preMarketChange &&
-        p.postMarketPrice === n.postMarketPrice &&
-        p.postMarketChange === n.postMarketChange &&
-        // 估值與財務指標
-        p.valuationLow === n.valuationLow &&
-        p.valuationHigh === n.valuationHigh &&
-        p.forwardPE === n.forwardPE &&
-        p.priceToBook === n.priceToBook &&
-        p.dividendYield === n.dividendYield
-    );
-};
+const areEqual = (prev: Props, next: Props) => MEMO_COMPARE_FIELDS.every(field => prev.stock[field] === next.stock[field]);
 
 export const StockCard = React.memo<Props>(({stock}: Props) => {
     const {price, change, percentChange} = getActivePrice(stock);
