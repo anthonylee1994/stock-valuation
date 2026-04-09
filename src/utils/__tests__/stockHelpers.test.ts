@@ -134,11 +134,11 @@ describe("sortStocks", () => {
         expect(sortStocks([], "asc")).toEqual([]);
     });
 
-    it("should sort ascending by distance from valuation low", () => {
+    it("should sort ascending by potential downside", () => {
         const stocks: StockWithQuote[] = [
-            createStockWithQuote({symbol: "AAPL", currentPrice: 150}),
-            createStockWithQuote({symbol: "GOOGL", name: "Google", currentPrice: 180, change: 20, percentChange: 12.5, previousClosePrice: 160}),
-            createStockWithQuote({symbol: "MSFT", name: "Microsoft", currentPrice: 120, change: 5, percentChange: 4.35, previousClosePrice: 115}),
+            createStockWithQuote({symbol: "AAPL", potentialDownside: -33.33}),
+            createStockWithQuote({symbol: "GOOGL", name: "Google", potentialDownside: -44.44, currentPrice: 180, change: 20, percentChange: 12.5, previousClosePrice: 160}),
+            createStockWithQuote({symbol: "MSFT", name: "Microsoft", potentialDownside: -16.67, currentPrice: 120, change: 5, percentChange: 4.35, previousClosePrice: 115}),
         ];
 
         const result = sortStocks(stocks, "asc");
@@ -148,11 +148,11 @@ describe("sortStocks", () => {
         expect(result[2].symbol).toBe("GOOGL");
     });
 
-    it("should sort descending by distance from valuation low", () => {
+    it("should sort descending by potential downside", () => {
         const stocks: StockWithQuote[] = [
-            createStockWithQuote({symbol: "AAPL", currentPrice: 150}),
-            createStockWithQuote({symbol: "GOOGL", name: "Google", currentPrice: 180, change: 20, percentChange: 12.5, previousClosePrice: 160}),
-            createStockWithQuote({symbol: "MSFT", name: "Microsoft", currentPrice: 120, change: 5, percentChange: 4.35, previousClosePrice: 115}),
+            createStockWithQuote({symbol: "AAPL", potentialDownside: -33.33}),
+            createStockWithQuote({symbol: "GOOGL", name: "Google", potentialDownside: -44.44, currentPrice: 180, change: 20, percentChange: 12.5, previousClosePrice: 160}),
+            createStockWithQuote({symbol: "MSFT", name: "Microsoft", potentialDownside: -16.67, currentPrice: 120, change: 5, percentChange: 4.35, previousClosePrice: 115}),
         ];
 
         const result = sortStocks(stocks, "desc");
@@ -162,10 +162,11 @@ describe("sortStocks", () => {
         expect(result[2].symbol).toBe("MSFT");
     });
 
-    it("should sort using the active price shown in the UI", () => {
+    it("should sort using potential downside instead of displayed market-session price", () => {
         const stocks: StockWithQuote[] = [
             createStockWithQuote({
                 symbol: "AAPL",
+                potentialDownside: -10,
                 currentPrice: 150,
                 postMarketPrice: 90,
                 postMarketChange: -60,
@@ -174,6 +175,7 @@ describe("sortStocks", () => {
             createStockWithQuote({
                 symbol: "MSFT",
                 name: "Microsoft",
+                potentialDownside: -50,
                 currentPrice: 120,
                 change: 5,
                 percentChange: 4.35,
