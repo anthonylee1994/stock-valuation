@@ -14,6 +14,7 @@ interface SheetRow {
 }
 
 interface GoogleSheetsResponse {
+    range?: string;
     values: string[][];
 }
 
@@ -39,52 +40,63 @@ const ALLOWED_METRICS = new Set<ValuationMetricType>(["P/E", "P/S", "P/B", "P/OC
 
 const parseNumber = (value?: string) => Number.parseFloat(value ?? "") || 0;
 
-const parsePositiveNumber = (value: string | undefined, label: string, rowNumber: number): number => {
+const parsePositiveNumber = (value: string | undefined, label: string, rowNumber: number, sheetName: string): number => {
     const parsed = Number.parseFloat(value ?? "");
 
     if (!Number.isFinite(parsed)) {
-        throw new Error(`第 ${rowNumber} 行欄位「${label}」不是有效數字`);
+        throw new Error(formatRowError(sheetName, rowNumber, `欄位「${label}」不是有效數字`));
     }
 
     return parsed;
 };
 
-const mapSheetRow = (row: string[], rowNumber: number): ParsedSheetRow => {
+const getRangeContext = (range?: string) => {
+    const match = range?.match(/^'?([^'!]+)'?![A-Z]+(\d+):/);
+
+    return {
+        sheetName: match?.[1] ?? "工作表",
+        startRow: match?.[2] ? Number.parseInt(match[2], 10) : 2,
+    };
+};
+
+const formatRowError = (sheetName: string, rowNumber: number, message: string) => `${sheetName} 第 ${rowNumber} 行${message}`;
+
+const mapSheetRow = (row: string[], rowNumber: number, sheetName: string): ParsedSheetRow => {
     const [symbol, name, metricType, metricBase, lowMultiple, highMultiple, valuationLow, valuationHigh, , potentialDownside, potentialUpside] = row;
 
     try {
         const normalizedSymbol = symbol?.trim();
         if (!normalizedSymbol) {
-            throw new Error(`第 ${rowNumber} 行缺少股票代號`);
+            throw new Error(formatRowError(sheetName, rowNumber, "缺少股票代號"));
         }
 
         const normalizedMetricType = metricType?.trim() || DEFAULT_METRIC;
         if (!ALLOWED_METRICS.has(normalizedMetricType as ValuationMetricType)) {
-            throw new Error(`第 ${rowNumber} 行欄位「metricType」不受支援: ${normalizedMetricType}`);
+            throw new Error(formatRowError(sheetName, rowNumber, `欄位「metricType」不受支援: ${normalizedMetricType}`));
         }
 
         const parsedRow: SheetRow = {
             symbol: normalizedSymbol,
             name: name?.trim() || undefined,
             metricType: normalizedMetricType,
-            metricBase: parsePositiveNumber(metricBase, "metricBase", rowNumber),
-            lowMultiple: parsePositiveNumber(lowMultiple, "lowMultiple", rowNumber),
-            highMultiple: parsePositiveNumber(highMultiple, "highMultiple", rowNumber),
-            valuationLow: parsePositiveNumber(valuationLow, "valuationLow", rowNumber),
-            valuationHigh: parsePositiveNumber(valuationHigh, "valuationHigh", rowNumber),
+            metricBase: parsePositiveNumber(metricBase, "metricBase", rowNumber, sheetName),
+            lowMultiple: parsePositiveNumber(lowMultiple, "lowMultiple", rowNumber, sheetName),
+            highMultiple: parsePositiveNumber(highMultiple, "highMultiple", rowNumber, sheetName),
+            valuationLow: parsePositiveNumber(valuationLow, "valuationLow", rowNumber, sheetName),
+            valuationHigh: parsePositiveNumber(valuationHigh, "valuationHigh", rowNumber, sheetName),
             potentialDownside: parseNumber(potentialDownside),
             potentialUpside: parseNumber(potentialUpside),
         };
 
         if (parsedRow.valuationLow > parsedRow.valuationHigh) {
-            throw new Error(`第 ${rowNumber} 行估值下限高於上限`);
+            throw new Error(formatRowError(sheetName, rowNumber, "估值下限高於上限"));
         }
 
         return {row: parsedRow, error: null};
     } catch (error) {
         return {
             row: null,
-            error: error instanceof Error ? error.message : `第 ${rowNumber} 行資料格式錯誤`,
+            error: error instanceof Error ? error.message : formatRowError(sheetName, rowNumber, "資料格式錯誤"),
         };
     }
 };
@@ -113,9 +125,11 @@ export const fetchValuationDataFromSheets = async (): Promise<FetchValuationRows
         }
 
         const warnings: string[] = [];
-        const rows = data.valueRanges.flatMap(valueRange =>
-            (valueRange.values ?? []).flatMap((row, index) => {
-                const parsed = mapSheetRow(row, index + 2);
+        const rows = data.valueRanges.flatMap(valueRange => {
+            const {sheetName, startRow} = getRangeContext(valueRange.range);
+
+            return (valueRange.values ?? []).flatMap((row, index) => {
+                const parsed = mapSheetRow(row, startRow + index, sheetName);
 
                 if (parsed.error) {
                     warnings.push(parsed.error);
@@ -123,8 +137,8 @@ export const fetchValuationDataFromSheets = async (): Promise<FetchValuationRows
                 }
 
                 return parsed.row ? [parsed.row] : [];
-            })
-        );
+            });
+        });
 
         if (rows.length === 0 && warnings.length > 0) {
             throw new Error(`Google Sheets 資料無法使用：${warnings[0]}`);

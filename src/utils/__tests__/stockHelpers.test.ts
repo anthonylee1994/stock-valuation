@@ -162,6 +162,31 @@ describe("sortStocks", () => {
         expect(result[2].symbol).toBe("MSFT");
     });
 
+    it("should sort using the active price shown in the UI", () => {
+        const stocks: StockWithQuote[] = [
+            createStockWithQuote({
+                symbol: "AAPL",
+                currentPrice: 150,
+                postMarketPrice: 90,
+                postMarketChange: -60,
+                postMarketChangePercent: -40,
+            }),
+            createStockWithQuote({
+                symbol: "MSFT",
+                name: "Microsoft",
+                currentPrice: 120,
+                change: 5,
+                percentChange: 4.35,
+                previousClosePrice: 115,
+            }),
+        ];
+
+        const result = sortStocks(stocks, "asc");
+
+        expect(result[0].symbol).toBe("AAPL");
+        expect(result[1].symbol).toBe("MSFT");
+    });
+
     it("should handle zero current price", () => {
         const stocks: StockWithQuote[] = [createStockWithQuote({currentPrice: 0, change: 0, percentChange: 0, previousClosePrice: 100}), createStockWithQuote({symbol: "GOOGL", name: "Google"})];
 

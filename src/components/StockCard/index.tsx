@@ -4,6 +4,7 @@ import {Card} from "@heroui/react";
 import React from "react";
 import {CardHeader} from "./CardHeader";
 import {CompactValuationBar} from "./CompactValuationBar";
+import {areStockCardPropsEqual} from "./comparator";
 import {STATUS_CONFIG} from "./constants";
 import {PriceDisplay} from "./PriceDisplay";
 import {ValuationMetrics} from "./ValuationMetrics";
@@ -11,26 +12,6 @@ import {ValuationMetrics} from "./ValuationMetrics";
 interface Props {
     stock: StockWithQuote;
 }
-
-const MEMO_COMPARE_FIELDS: (keyof StockWithQuote)[] = [
-    "symbol",
-    "currentPrice",
-    "change",
-    "percentChange",
-    "preMarketPrice",
-    "preMarketChange",
-    "postMarketPrice",
-    "postMarketChange",
-    "valuationLow",
-    "valuationHigh",
-    "potentialDownside",
-    "potentialUpside",
-    "forwardPE",
-    "priceToBook",
-    "dividendYield",
-];
-
-const areEqual = (prev: Props, next: Props) => MEMO_COMPARE_FIELDS.every(field => prev.stock[field] === next.stock[field]);
 
 export const StockCard = React.memo<Props>(({stock}: Props) => {
     const {price, change, percentChange} = getActivePrice(stock);
@@ -60,4 +41,4 @@ export const StockCard = React.memo<Props>(({stock}: Props) => {
             <CompactValuationBar price={price} valuationLow={valuationLow} valuationHigh={valuationHigh} />
         </Card>
     );
-}, areEqual);
+}, areStockCardPropsEqual);
