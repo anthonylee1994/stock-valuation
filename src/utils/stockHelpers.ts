@@ -1,4 +1,5 @@
 import type {StockWithQuote, ValuationData, ValuationStatus} from "@/types";
+import {calculateBarPositions} from "./valuationBar";
 
 /**
  * Validate and deduplicate stocks array
@@ -36,14 +37,19 @@ export function getUniqueSymbols(stocks: ValuationData["stocks"]): string {
 }
 
 /**
- * Sort stocks by distance from valuation low to high or high to low
+ * Sort stocks by the same marker position shown in the valuation bar
  */
 export function sortStocks(stocks: StockWithQuote[], sortOrder: "asc" | "desc"): StockWithQuote[] {
     return [...stocks].sort((a, b) => {
+        const aPrice = getActivePrice(a).price;
+        const bPrice = getActivePrice(b).price;
+        const aMarkerPosition = calculateBarPositions(aPrice, a.valuationLow, a.valuationHigh).markerPosition;
+        const bMarkerPosition = calculateBarPositions(bPrice, b.valuationLow, b.valuationHigh).markerPosition;
+
         if (sortOrder === "asc") {
-            return b.potentialDownside - a.potentialDownside;
+            return aMarkerPosition - bMarkerPosition;
         } else {
-            return a.potentialDownside - b.potentialDownside;
+            return bMarkerPosition - aMarkerPosition;
         }
     });
 }
