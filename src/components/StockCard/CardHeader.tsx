@@ -1,5 +1,5 @@
-import type {ValuationStatus} from "@/types";
 import React from "react";
+import type {ValuationStatus} from "@/types";
 import {STATUS_CONFIG} from "./constants";
 
 interface Props {

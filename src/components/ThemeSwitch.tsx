@@ -1,6 +1,6 @@
+import React from "react";
 import {useThemeStore} from "@/stores/useThemeStore";
 import {Button} from "@heroui/react";
-import React from "react";
 import {FiMoon, FiSun} from "react-icons/fi";
 
 export const ThemeSwitch = React.memo(() => {

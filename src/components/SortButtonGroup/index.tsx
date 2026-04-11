@@ -1,6 +1,6 @@
+import React from "react";
 import type {MarketFilter} from "@/types";
 import {SearchField} from "@heroui/react";
-import React from "react";
 import {Tabs} from "./Tabs";
 
 interface Props {

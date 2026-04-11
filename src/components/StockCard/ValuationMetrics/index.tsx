@@ -1,6 +1,6 @@
+import React from "react";
 import type {ValuationMetricType} from "@/types";
 import {formatPercent, formatPrice} from "@/utils/stockHelpers";
-import React from "react";
 import {Metric} from "./Metric";
 import {formatOptionalNumber, formatOptionalPercent, getMetricLabel} from "./helpers";
 

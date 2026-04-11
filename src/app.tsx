@@ -1,5 +1,5 @@
-import {usePolling} from "@/hooks/usePolling";
 import React from "react";
+import {usePolling} from "@/hooks/usePolling";
 import {ErrorDisplay} from "./components/ErrorDisplay";
 import {Header} from "./components/Header";
 import {LoadingSpinner} from "./components/LoadingSpinner";

@@ -101,9 +101,11 @@ const mapSheetRow = (row: string[], rowNumber: number, sheetName: string): Parse
     }
 };
 
-const normalizeSymbol = (symbol: string) => (symbol.startsWith("HKG:") ? `${symbol.replace("HKG:", "")}.HK` : symbol);
+function normalizeSymbol(symbol: string) {
+    return symbol.startsWith("HKG:") ? `${symbol.replace("HKG:", "")}.HK` : symbol;
+}
 
-export const fetchValuationDataFromSheets = async (): Promise<FetchValuationRowsResult> => {
+export async function fetchValuationDataFromSheets(): Promise<FetchValuationRowsResult> {
     if (!API_KEY || !SPREADSHEET_ID) {
         throw new Error("Missing Google Sheets API credentials");
     }
@@ -149,9 +151,9 @@ export const fetchValuationDataFromSheets = async (): Promise<FetchValuationRows
         console.error("Failed to fetch data from Google Sheets:", error);
         throw error;
     }
-};
+}
 
-export const convertSheetRowToValuationStock = (row: SheetRow) => {
+export function convertSheetRowToValuationStock(row: SheetRow) {
     return {
         symbol: normalizeSymbol(row.symbol),
         name: row.name,
@@ -164,4 +166,4 @@ export const convertSheetRowToValuationStock = (row: SheetRow) => {
         potentialDownside: row.potentialDownside,
         potentialUpside: row.potentialUpside,
     };
-};
+}

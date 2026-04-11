@@ -42,8 +42,7 @@ api.interceptors.response.use(
 
         const retryConfig = config as typeof config & RetryableConfig;
         const retryCount = retryConfig.__retryCount ?? 0;
-        const shouldRetry =
-            error.code === "ECONNABORTED" || error.code === "ERR_NETWORK" || (error.response ? error.response.status >= 500 : false);
+        const shouldRetry = error.code === "ECONNABORTED" || error.code === "ERR_NETWORK" || (error.response ? error.response.status >= 500 : false);
 
         // Retry network and 5xx failures with exponential backoff: 1s, 2s
         if (shouldRetry && retryCount < MAX_RETRIES) {

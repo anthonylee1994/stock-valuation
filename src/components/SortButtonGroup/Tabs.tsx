@@ -1,5 +1,5 @@
-import {Tabs as HUITabs} from "@heroui/react";
 import React from "react";
+import {Tabs as HUITabs} from "@heroui/react";
 
 interface Props<Key extends string> {
     value?: Key;

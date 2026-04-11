@@ -1,5 +1,5 @@
-import type {StockWithQuote} from "@/types";
 import React from "react";
+import type {StockWithQuote} from "@/types";
 import {EmptyPlaceholder} from "./EmptyPlaceholder";
 import {StockCard} from "./StockCard";
 

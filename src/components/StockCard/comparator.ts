@@ -29,4 +29,6 @@ const MEMO_COMPARE_FIELDS: (keyof StockWithQuote)[] = [
     "dividendYield",
 ];
 
-export const areStockCardPropsEqual = (prev: StockCardProps, next: StockCardProps) => MEMO_COMPARE_FIELDS.every(field => prev.stock[field] === next.stock[field]);
+export function areStockCardPropsEqual(prev: StockCardProps, next: StockCardProps) {
+    return MEMO_COMPARE_FIELDS.every(field => prev.stock[field] === next.stock[field]);
+}

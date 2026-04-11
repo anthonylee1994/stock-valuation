@@ -1,10 +1,10 @@
-import {useEffect, useRef, useState} from "react";
+import React from "react";
 
-export const usePriceAnimation = (price: number) => {
-    const prevPriceRef = useRef(price);
-    const [flashClass, setFlashClass] = useState("");
+export function usePriceAnimation(price: number) {
+    const prevPriceRef = React.useRef(price);
+    const [flashClass, setFlashClass] = React.useState("");
 
-    useEffect(() => {
+    React.useEffect(() => {
         if (prevPriceRef.current === price) return;
 
         const isIncrease = price > prevPriceRef.current;
@@ -31,4 +31,4 @@ export const usePriceAnimation = (price: number) => {
     }, [price]);
 
     return {flashClass};
-};
+}

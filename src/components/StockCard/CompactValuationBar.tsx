@@ -1,7 +1,7 @@
+import React from "react";
 import {formatPrice} from "@/utils/stockHelpers";
 import {calculateBarPositions} from "@/utils/valuationBar";
 import {Tooltip} from "@heroui/react";
-import React, {useState} from "react";
 
 interface Props {
     price: number;
@@ -11,7 +11,7 @@ interface Props {
 
 export const CompactValuationBar = React.memo<Props>(({price, valuationLow, valuationHigh}) => {
     const {markerPosition, lowPosition, highPosition} = calculateBarPositions(price, valuationLow, valuationHigh);
-    const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+    const [isTooltipOpen, setIsTooltipOpen] = React.useState(false);
 
     const barTransition = "transition-[width] duration-500 ease-in-out";
     const markerTransition = "transition-[left] duration-500 ease-in-out";

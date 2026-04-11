@@ -1,6 +1,6 @@
+import React from "react";
 import {usePriceAnimation} from "@/hooks/usePriceAnimation";
 import {formatPercent, formatPrice, getPriceColor} from "@/utils/stockHelpers";
-import React from "react";
 import {ImArrowDown, ImArrowUp, ImMinus} from "react-icons/im";
 
 interface Props {

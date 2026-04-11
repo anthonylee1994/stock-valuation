@@ -1,7 +1,7 @@
+import React from "react";
 import type {StockWithQuote} from "@/types";
 import {getActivePrice, getStatus} from "@/utils/stockHelpers";
 import {Card} from "@heroui/react";
-import React from "react";
 import {CardHeader} from "./CardHeader";
 import {CompactValuationBar} from "./CompactValuationBar";
 import {areStockCardPropsEqual} from "./comparator";

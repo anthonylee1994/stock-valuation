@@ -1,5 +1,5 @@
-import {Button} from "@heroui/react";
 import React from "react";
+import {Button} from "@heroui/react";
 import type {FallbackProps} from "react-error-boundary";
 
 export const ErrorDisplay = React.memo<FallbackProps>(({error, resetErrorBoundary}) => {
