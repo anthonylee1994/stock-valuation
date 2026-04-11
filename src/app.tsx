@@ -30,7 +30,7 @@ export const App = React.memo(() => {
     }
 
     return (
-        <div className="min-h-screen p-6 max-[640px]:p-4 mb-[env(safe-area-inset-bottom)]">
+        <div className="mb-[env(safe-area-inset-bottom)] min-h-screen p-6 max-[640px]:p-4">
             <Header warnings={warnings} />
             {initialLoading ? (
                 <LoadingSpinner />

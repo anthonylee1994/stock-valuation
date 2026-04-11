@@ -16,12 +16,12 @@ export const PriceDisplay = React.memo<Props>(({price, change, percentChange}) =
     const ariaLabel = change > 0 ? "價格上升" : change < 0 ? "價格下跌" : "價格不變";
 
     return (
-        <div className={`flex flex-col gap-0.5 px-1.5 py-1 -mx-1.5 -my-1 rounded-lg border-2 border-transparent ${flashClass}`}>
+        <div className={`-mx-1.5 -my-1 flex flex-col gap-0.5 rounded-lg border-2 border-transparent px-1.5 py-1 ${flashClass}`}>
             <div className="flex items-center gap-1">
                 <span className={`text-[1.75rem] font-bold tracking-tight tabular-nums ${priceColor}`}>{formatPrice(price)}</span>
 
                 <span
-                    className={`text-base shrink-0 ${arrowDirection === "up" ? "text-emerald-600 dark:text-emerald-400" : arrowDirection === "down" ? "text-rose-600 dark:text-rose-400" : "text-muted"}`}
+                    className={`shrink-0 text-base ${arrowDirection === "up" ? "text-emerald-600 dark:text-emerald-400" : arrowDirection === "down" ? "text-rose-600 dark:text-rose-400" : "text-muted"}`}
                     aria-label={ariaLabel}
                 >
                     {arrowDirection === "up" ? <ImArrowUp aria-hidden /> : arrowDirection === "down" ? <ImArrowDown aria-hidden /> : <ImMinus aria-hidden />}

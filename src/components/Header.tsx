@@ -7,8 +7,8 @@ interface Props {
 
 export const Header = React.memo<Props>(({warnings}) => {
     return (
-        <header className="relative max-w-320 mx-auto mb-6">
-            <div className="flex items-center justify-center gap-3 max-[640px]:justify-center max-[640px]:flex-col text-center text-[1.75rem] font-bold text-foreground tracking-wide max-[640px]:text-[1.35rem]">
+        <header className="relative mx-auto mb-6 max-w-7xl">
+            <div className="text-foreground flex items-center justify-center gap-3 text-center text-[1.75rem] font-bold tracking-wide max-[640px]:flex-col max-[640px]:justify-center max-[640px]:text-[1.35rem]">
                 估值參考
                 <ThemeSwitch />
             </div>

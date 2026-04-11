@@ -21,7 +21,7 @@ export const StockCard = React.memo<Props>(({stock}: Props) => {
     const statusConfig = STATUS_CONFIG[status];
 
     return (
-        <Card role="article" aria-labelledby={`card-title-${symbol}`} className={`p-4 bg-surface border-[3px] select-none shadow-sm rounded-xl transition-all ${statusConfig.borderClass}`}>
+        <Card role="article" aria-labelledby={`card-title-${symbol}`} className={`bg-surface rounded-xl border-[3px] p-4 shadow-sm transition-all select-none ${statusConfig.borderClass}`}>
             <CardHeader symbol={symbol} name={name} status={status} />
             <PriceDisplay price={price} change={change} percentChange={percentChange} />
             <ValuationMetrics
