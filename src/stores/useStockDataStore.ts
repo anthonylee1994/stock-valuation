@@ -12,7 +12,7 @@ import {create} from "zustand";
 let latestQuotesRequestId = 0;
 let activeQuotesAbortController: AbortController | null = null;
 
-const mergeStocksWithQuotes = (stocks: ValuationStock[], quotes: Quote[]) => {
+function mergeStocksWithQuotes(stocks: ValuationStock[], quotes: Quote[]) {
     const quoteMap = new Map<string, Quote>();
     const missingSymbols: string[] = [];
 
@@ -39,7 +39,7 @@ const mergeStocksWithQuotes = (stocks: ValuationStock[], quotes: Quote[]) => {
         stocks: mergedStocks,
         missingSymbols,
     };
-};
+}
 
 export interface StockDataStore {
     stocks: StockWithQuote[];

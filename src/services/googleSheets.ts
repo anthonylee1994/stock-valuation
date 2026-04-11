@@ -38,9 +38,11 @@ const SHEET_RANGES = ["美股!A2:K100", "港股!A2:K100"];
 const DEFAULT_METRIC: ValuationMetricType = "P/E";
 const ALLOWED_METRICS = new Set<ValuationMetricType>(["P/E", "P/S", "P/B", "P/OCF", "股息率"]);
 
-const parseNumber = (value?: string) => Number.parseFloat(value ?? "") || 0;
+function parseNumber(value?: string) {
+    return Number.parseFloat(value ?? "") || 0;
+}
 
-const parsePositiveNumber = (value: string | undefined, label: string, rowNumber: number, sheetName: string): number => {
+function parsePositiveNumber(value: string | undefined, label: string, rowNumber: number, sheetName: string): number {
     const parsed = Number.parseFloat(value ?? "");
 
     if (!Number.isFinite(parsed)) {
@@ -48,20 +50,22 @@ const parsePositiveNumber = (value: string | undefined, label: string, rowNumber
     }
 
     return parsed;
-};
+}
 
-const getRangeContext = (range?: string) => {
+function getRangeContext(range?: string) {
     const match = range?.match(/^'?([^'!]+)'?![A-Z]+(\d+):/);
 
     return {
         sheetName: match?.[1] ?? "工作表",
         startRow: match?.[2] ? Number.parseInt(match[2], 10) : 2,
     };
-};
+}
 
-const formatRowError = (sheetName: string, rowNumber: number, message: string) => `${sheetName} 第 ${rowNumber} 行${message}`;
+function formatRowError(sheetName: string, rowNumber: number, message: string) {
+    return `${sheetName} 第 ${rowNumber} 行${message}`;
+}
 
-const mapSheetRow = (row: string[], rowNumber: number, sheetName: string): ParsedSheetRow => {
+function mapSheetRow(row: string[], rowNumber: number, sheetName: string): ParsedSheetRow {
     const [symbol, name, metricType, metricBase, lowMultiple, highMultiple, valuationLow, valuationHigh, , potentialDownside, potentialUpside] = row;
 
     try {
@@ -99,7 +103,7 @@ const mapSheetRow = (row: string[], rowNumber: number, sheetName: string): Parse
             error: error instanceof Error ? error.message : formatRowError(sheetName, rowNumber, "資料格式錯誤"),
         };
     }
-};
+}
 
 function normalizeSymbol(symbol: string) {
     return symbol.startsWith("HKG:") ? `${symbol.replace("HKG:", "")}.HK` : symbol;

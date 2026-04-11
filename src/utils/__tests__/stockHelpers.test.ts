@@ -2,41 +2,45 @@ import type {StockWithQuote, ValuationStock} from "@/types";
 import {describe, expect, it, vi} from "vitest";
 import {formatPercent, formatPrice, getActivePrice, getPriceColor, getStatus, getUniqueSymbols, sortStocks, validateAndDeduplicateStocks} from "../stockHelpers";
 
-const createValuationStock = (overrides: Partial<ValuationStock> = {}): ValuationStock => ({
-    symbol: "AAPL",
-    base: 0,
-    lowMultiple: 0,
-    highMultiple: 0,
-    metric: "P/E",
-    valuationLow: 100,
-    valuationHigh: 200,
-    potentialDownside: -33.33,
-    potentialUpside: 33.33,
-    ...overrides,
-});
+function createValuationStock(overrides: Partial<ValuationStock> = {}): ValuationStock {
+    return {
+        symbol: "AAPL",
+        base: 0,
+        lowMultiple: 0,
+        highMultiple: 0,
+        metric: "P/E",
+        valuationLow: 100,
+        valuationHigh: 200,
+        potentialDownside: -33.33,
+        potentialUpside: 33.33,
+        ...overrides,
+    };
+}
 
-const createStockWithQuote = (overrides: Partial<StockWithQuote> = {}): StockWithQuote => ({
-    ...createValuationStock(),
-    currentPrice: 150,
-    name: "Apple",
-    market: "us_market",
-    change: 10,
-    percentChange: 7.14,
-    previousClosePrice: 140,
-    regularMarketTime: "2024-01-01",
-    preMarketPrice: null,
-    preMarketChange: null,
-    preMarketTime: null,
-    preMarketChangePercent: null,
-    postMarketPrice: null,
-    postMarketChange: null,
-    postMarketChangePercent: null,
-    postMarketTime: null,
-    forwardPE: null,
-    priceToBook: null,
-    dividendYield: null,
-    ...overrides,
-});
+function createStockWithQuote(overrides: Partial<StockWithQuote> = {}): StockWithQuote {
+    return {
+        ...createValuationStock(),
+        currentPrice: 150,
+        name: "Apple",
+        market: "us_market",
+        change: 10,
+        percentChange: 7.14,
+        previousClosePrice: 140,
+        regularMarketTime: "2024-01-01",
+        preMarketPrice: null,
+        preMarketChange: null,
+        preMarketTime: null,
+        preMarketChangePercent: null,
+        postMarketPrice: null,
+        postMarketChange: null,
+        postMarketChangePercent: null,
+        postMarketTime: null,
+        forwardPE: null,
+        priceToBook: null,
+        dividendYield: null,
+        ...overrides,
+    };
+}
 
 describe("validateAndDeduplicateStocks", () => {
     it("should return empty array for empty input", () => {
