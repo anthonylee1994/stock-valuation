@@ -27,18 +27,18 @@ export const ValuationMetrics = React.memo<Props>(
 
         return (
             <React.Fragment>
-                <div className="grid grid-cols-3 gap-x-4 gap-y-3">
+                <div className="grid grid-cols-3 gap-x-3 gap-y-2.5">
                     <Metric label="預測市盈率" value={formatOptionalNumber(forwardPE)} />
                     <Metric label="市淨率" value={formatOptionalNumber(priceToBook)} />
                     <Metric label="股息率" value={formatOptionalPercent(dividendYield)} />
                     <hr className="col-span-3" />
                 </div>
-                <div className="grid grid-cols-3 gap-x-4 gap-y-3">
+                <div className="grid grid-cols-3 gap-x-3 gap-y-2.5">
                     <Metric label="估值模型" value={metric} />
                     <Metric label={getMetricLabel(metric)} value={formatPrice(base)} />
                     <hr className="col-span-3" />
                 </div>
-                <div className="grid grid-cols-3 gap-x-4 gap-y-3">
+                <div className="grid grid-cols-3 gap-x-3 gap-y-2.5">
                     <Metric label={isDividendMetric ? "殘值息率" : "殘值倍數"} value={isDividendMetric ? formatPercent(highMultiple * 100, false) : lowMultiple.toFixed(2)} />
                     <Metric label="殘值" value={formatPrice(valuationLow)} />
                     <Metric label="距離殘值" value={formatPercent(potentialDownside, true)} className={downClass} />

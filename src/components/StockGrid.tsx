@@ -13,7 +13,7 @@ export const StockGrid = React.memo<Props>(({stocks}) => {
     }
 
     return (
-        <main className="grid grid-cols-1 gap-4 sm:grid-cols-[repeat(auto-fill,minmax(320px,1fr))] sm:gap-5 max-w-350 mx-auto">
+        <main className="grid grid-cols-1 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(280px,1fr))] sm:gap-4 max-w-320 mx-auto">
             {stocks.map(stock => (
                 <StockCard key={stock.symbol} stock={stock} />
             ))}

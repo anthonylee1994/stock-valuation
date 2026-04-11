@@ -17,8 +17,8 @@ export const CompactValuationBar = React.memo<Props>(({price, valuationLow, valu
     const markerTransition = "transition-[left] duration-500 ease-in-out";
 
     return (
-        <div className="px-1 py-2">
-            <div className="relative h-4 rounded-full overflow-visible shadow-inner bg-surface/50">
+        <div className="px-1 pt-1.5 pb-1">
+            <div className="relative h-3.5 rounded-full overflow-visible shadow-inner bg-surface/50">
                 <div className="absolute inset-0 flex rounded-full overflow-hidden">
                     <div className={`h-full bg-linear-to-r from-emerald-400 to-emerald-500 ${barTransition}`} style={{width: `${lowPosition}%`}} />
                     <div className={`h-full bg-linear-to-r from-amber-400 to-amber-500 ${barTransition}`} style={{width: `${highPosition - lowPosition}%`}} />
@@ -31,7 +31,7 @@ export const CompactValuationBar = React.memo<Props>(({price, valuationLow, valu
                             onClick={() => setIsTooltipOpen(!isTooltipOpen)}
                             className="relative flex flex-col items-center cursor-pointer hover:scale-125 active:scale-125 transition-transform duration-200"
                         >
-                            <div className="relative w-4 h-4 rounded-full bg-foreground z-10 shadow-lg ring-2 ring-surface" />
+                            <div className="relative w-3.5 h-3.5 rounded-full bg-foreground z-10 shadow-lg ring-2 ring-surface" />
                         </Tooltip.Trigger>
                     </div>
                     <Tooltip.Content placement="bottom" className="px-3 py-2 text-sm font-bold bg-foreground text-surface shadow-xl rounded-lg">
@@ -40,7 +40,7 @@ export const CompactValuationBar = React.memo<Props>(({price, valuationLow, valu
                 </Tooltip>
             </div>
 
-            <div className="flex justify-between mt-5 text-xs">
+            <div className="flex justify-between mt-4 text-[11px]">
                 <span className="text-muted font-medium">
                     殘值：<span className="text-emerald-600 dark:text-emerald-400 font-bold">{formatPrice(valuationLow)}</span>
                 </span>
