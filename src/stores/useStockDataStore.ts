@@ -112,7 +112,7 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
         set({loading: true, error: null});
 
         try {
-            const res = await api.get(`?symbols=${encodeURIComponent(symbols)}`, {
+            const res = await api.get(`/quotes?symbols=${encodeURIComponent(symbols)}`, {
                 signal: abortController.signal,
             });
             const decoded = decode(res.data) as unknown as ApiQuotesResponse;
