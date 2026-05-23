@@ -106,7 +106,13 @@ function mapSheetRow(row: string[], rowNumber: number, sheetName: string): Parse
 }
 
 function normalizeSymbol(symbol: string) {
-    return symbol.startsWith("HKG:") ? `${symbol.replace("HKG:", "")}.HK` : symbol;
+    if (symbol.startsWith("HKG:")) {
+        return `${symbol.replace("HKG:", "")}.HK`;
+    }
+    if (symbol.includes(".")) {
+        return symbol.replace(".", "-");
+    }
+    return symbol;
 }
 
 export async function fetchValuationDataFromSheets(): Promise<FetchValuationRowsResult> {
