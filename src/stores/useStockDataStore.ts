@@ -12,6 +12,14 @@ import {create} from "zustand";
 let latestQuotesRequestId = 0;
 let activeQuotesAbortController: AbortController | null = null;
 
+function calculatePotentialPercent(targetPrice: number, currentPrice: number) {
+    if (currentPrice === 0) {
+        return 0;
+    }
+
+    return ((targetPrice - currentPrice) / currentPrice) * 100;
+}
+
 function mergeStocksWithQuotes(stocks: ValuationStock[], quotes: Quote[]) {
     const quoteMap = new Map<string, Quote>();
     const missingSymbols: string[] = [];
@@ -31,6 +39,8 @@ function mergeStocksWithQuotes(stocks: ValuationStock[], quotes: Quote[]) {
                 ...stock,
                 ...quote,
                 ...(stock.name ? {name: stock.name} : {}),
+                potentialDownside: calculatePotentialPercent(stock.valuationLow, quote.currentPrice),
+                potentialUpside: calculatePotentialPercent(stock.valuationHigh, quote.currentPrice),
             };
         })
         .filter((s): s is StockWithQuote => s !== null);

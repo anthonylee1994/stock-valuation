@@ -123,6 +123,43 @@ describe("useStockDataStore fetchQuotes", () => {
         expect(useStockDataStore.getState().stocks[0]?.currentPrice).toBe(120);
     });
 
+    it("calculates valuation potential from the API current price", async () => {
+        vi.mocked(api.get).mockResolvedValue({
+            data: {
+                quotes: [
+                    {
+                        symbol: "AAPL",
+                        name: "Apple",
+                        market: "NASDAQ",
+                        currentPrice: 125,
+                        change: 5,
+                        percentChange: 1,
+                        previousClosePrice: 120,
+                        regularMarketTime: "2024-01-01",
+                        preMarketPrice: null,
+                        preMarketChange: null,
+                        preMarketTime: null,
+                        preMarketChangePercent: null,
+                        postMarketPrice: null,
+                        postMarketChange: null,
+                        postMarketChangePercent: null,
+                        postMarketTime: null,
+                        forwardPE: null,
+                        priceToBook: null,
+                        dividendYield: null,
+                    },
+                ],
+            },
+        } as never);
+
+        await useStockDataStore.getState().fetchQuotes();
+
+        const stock = useStockDataStore.getState().stocks[0];
+
+        expect(stock?.potentialDownside).toBe(-20);
+        expect(stock?.potentialUpside).toBe(60);
+    });
+
     it("records a warning when some symbols are missing from the quotes response", async () => {
         vi.mocked(api.get).mockResolvedValue({
             data: {
