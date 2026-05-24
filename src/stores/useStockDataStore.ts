@@ -3,7 +3,6 @@ import type {ApiQuotesResponse, Quote, StockWithQuote, ValuationStock} from "@/t
 import {api} from "@/utils/api";
 import {getUniqueSymbols, validateAndDeduplicateStocks} from "@/utils/stockHelpers";
 import {fetchValuationData} from "@/valuation";
-import {decode} from "@toon-format/toon";
 import moment from "moment";
 // @ts-expect-error - moment locale files don't have type definitions
 import "moment/dist/locale/zh-hk";
@@ -125,8 +124,7 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
             const res = await api.get(`/quotes?symbols=${encodeURIComponent(symbols)}`, {
                 signal: abortController.signal,
             });
-            const decoded = decode(res.data) as unknown as ApiQuotesResponse;
-            const json = decoded;
+            const json = res.data as ApiQuotesResponse;
 
             if (!json.quotes || json.quotes.length === 0) {
                 throw new Error("API 返回空數據。請稍後再試。");

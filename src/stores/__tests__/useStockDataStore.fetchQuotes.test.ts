@@ -1,17 +1,12 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 import {useStockDataStore} from "@/stores/useStockDataStore";
 import {api} from "@/utils/api";
-import {decode} from "@toon-format/toon";
 import type {ValuationStock} from "@/types";
 
 vi.mock("@/utils/api", () => ({
     api: {
         get: vi.fn(),
     },
-}));
-
-vi.mock("@toon-format/toon", () => ({
-    decode: vi.fn(value => value),
 }));
 
 const valuationStocks: ValuationStock[] = [
@@ -163,34 +158,30 @@ describe("useStockDataStore fetchQuotes", () => {
     it("records a warning when some symbols are missing from the quotes response", async () => {
         vi.mocked(api.get).mockResolvedValue({
             data: {
-                quotes: [],
+                quotes: [
+                    {
+                        symbol: "MSFT",
+                        name: "Microsoft",
+                        market: "NASDAQ",
+                        currentPrice: 120,
+                        change: 5,
+                        percentChange: 1,
+                        previousClosePrice: 115,
+                        regularMarketTime: "2024-01-01",
+                        preMarketPrice: null,
+                        preMarketChange: null,
+                        preMarketTime: null,
+                        preMarketChangePercent: null,
+                        postMarketPrice: null,
+                        postMarketChange: null,
+                        postMarketChangePercent: null,
+                        postMarketTime: null,
+                        forwardPE: null,
+                        priceToBook: null,
+                        dividendYield: null,
+                    },
+                ],
             },
-        } as never);
-
-        vi.mocked(decode).mockReturnValue({
-            quotes: [
-                {
-                    symbol: "MSFT",
-                    name: "Microsoft",
-                    market: "NASDAQ",
-                    currentPrice: 120,
-                    change: 5,
-                    percentChange: 1,
-                    previousClosePrice: 115,
-                    regularMarketTime: "2024-01-01",
-                    preMarketPrice: null,
-                    preMarketChange: null,
-                    preMarketTime: null,
-                    preMarketChangePercent: null,
-                    postMarketPrice: null,
-                    postMarketChange: null,
-                    postMarketChangePercent: null,
-                    postMarketTime: null,
-                    forwardPE: null,
-                    priceToBook: null,
-                    dividendYield: null,
-                },
-            ],
         });
 
         await useStockDataStore.getState().fetchQuotes();

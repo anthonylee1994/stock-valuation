@@ -19,7 +19,6 @@ export default defineConfig({
                     if (id.includes("zustand")) return "vendor-zustand";
                     if (id.includes("axios")) return "vendor-axios";
                     if (id.includes("moment")) return "vendor-moment";
-                    if (id.includes("@toon-format")) return "vendor-toon";
                     if (id.includes("react") || id.includes("scheduler")) return "vendor-react";
                 },
             },
