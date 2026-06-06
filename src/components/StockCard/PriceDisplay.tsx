@@ -25,7 +25,7 @@ export const PriceDisplay = React.memo<Props>(({price, change, percentChange}) =
             </div>
             <div className="mt-2 flex items-center justify-between border-t border-zinc-800 pt-2">
                 <span className="text-[11px] font-bold text-zinc-400 uppercase">最新 / 變動</span>
-                <span className={`text-sm font-black ${priceColor} tabular-nums`}>
+                <span className={`text-sm font-bold ${priceColor} tabular-nums`}>
                     {change > 0 ? "+" : ""}
                     {formatPrice(change)} {formatPercent(percentChange, true)}
                 </span>
