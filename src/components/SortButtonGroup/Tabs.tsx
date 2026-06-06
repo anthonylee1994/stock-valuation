@@ -18,7 +18,7 @@ const TabsImpl = <Key extends string>({value: filter, setValue: setFilter, items
     <HUITabs selectedKey={filter} onSelectionChange={key => setFilter(key as Key)} className="w-fit font-mono">
         <HUITabs.List
             aria-label={ariaLabel}
-            className="h-9 overflow-hidden rounded-[2px] border-0 bg-zinc-800 p-0 *:h-9 *:rounded-none *:border-0 *:px-4 *:text-[13px] *:font-black *:text-zinc-100 *:uppercase *:data-[selected=true]:text-white"
+            className="h-9 overflow-hidden rounded-[2px] border-0 bg-zinc-800 p-0 *:h-9 *:rounded-none *:border-0 *:px-4 *:text-[13px] *:font-bold *:text-zinc-100 *:uppercase *:data-[selected=true]:text-white"
         >
             {Object.entries(names).map(([key, label]) => (
                 <HUITabs.Tab key={key} id={key}>
