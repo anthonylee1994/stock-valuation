@@ -8,7 +8,7 @@ export const Header = React.memo<Props>(({warnings}) => {
     return (
         <header className="mx-auto w-full font-mono">
             <div className="grid grid-cols-[auto_1fr] items-center bg-[#9d0b1f]">
-                <h1 className="w-fit justify-self-start bg-amber-400 px-4 py-2 text-left text-xl font-black tracking-normal text-zinc-950 max-[640px]:px-2 max-[640px]:text-xl">估值參考</h1>
+                <h1 className="w-fit justify-self-start bg-amber-400 px-4 py-2 text-left text-xl font-bold tracking-normal text-zinc-950 max-[640px]:px-2 max-[640px]:text-xl">估值參考</h1>
                 <div className="pl-3">Stock Valuation</div>
             </div>
             {warnings.length > 0 && (

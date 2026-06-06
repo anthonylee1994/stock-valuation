@@ -34,7 +34,7 @@ export const CompactValuationBar = React.memo<Props>(({price, valuationLow, valu
                             <div className="relative top-[-3px] z-10 h-5 w-1.5 bg-zinc-50 shadow-[0_0_0_2px_rgba(0,0,0,0.9)]" />
                         </Tooltip.Trigger>
                     </div>
-                    <Tooltip.Content placement="bottom" className="rounded-[2px] bg-zinc-50 px-3 py-2 font-mono text-sm font-black text-zinc-950 shadow-xl">
+                    <Tooltip.Content placement="bottom" className="rounded-[2px] bg-zinc-50 px-3 py-2 font-mono text-sm font-bold text-zinc-950 shadow-xl">
                         ${formatPrice(price)}
                     </Tooltip.Content>
                 </Tooltip>
