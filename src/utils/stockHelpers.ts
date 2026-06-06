@@ -81,7 +81,7 @@ export function formatPercent(value: number, showSign: boolean): string {
 }
 
 export function getPriceColor(change: number) {
-    if (change > 0) return "text-emerald-600 dark:text-emerald-400";
-    if (change < 0) return "text-rose-600 dark:text-rose-400";
+    if (change > 0) return "text-emerald-400";
+    if (change < 0) return "text-rose-400";
     return "text-muted";
 }

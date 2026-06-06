@@ -21,24 +21,30 @@ export const StockCard = React.memo<Props>(({stock}: Props) => {
     const statusConfig = STATUS_CONFIG[status];
 
     return (
-        <Card role="article" aria-labelledby={`card-title-${symbol}`} className={`bg-surface rounded-xl border-[3px] p-4 shadow-sm transition-all select-none ${statusConfig.borderClass}`}>
+        <Card
+            role="article"
+            aria-labelledby={`card-title-${symbol}`}
+            className={`gap-0 overflow-hidden rounded-sm border border-t-4 border-zinc-700 bg-[#121212] p-0 font-mono shadow-none transition-colors select-none ${statusConfig.borderClass}`}
+        >
             <CardHeader symbol={symbol} name={name} status={status} />
-            <PriceDisplay price={price} change={change} percentChange={percentChange} />
-            <ValuationMetrics
-                valuationLow={valuationLow}
-                valuationHigh={valuationHigh}
-                potentialDownside={potentialDownside}
-                potentialUpside={potentialUpside}
-                metric={metric}
-                base={base}
-                lowMultiple={lowMultiple}
-                highMultiple={highMultiple}
-                forwardPE={forwardPE}
-                priceToBook={priceToBook}
-                dividendYield={dividendYield}
-                price={price}
-            />
-            <CompactValuationBar price={price} valuationLow={valuationLow} valuationHigh={valuationHigh} />
+            <div className="divide-y divide-zinc-800">
+                <PriceDisplay price={price} change={change} percentChange={percentChange} />
+                <ValuationMetrics
+                    valuationLow={valuationLow}
+                    valuationHigh={valuationHigh}
+                    potentialDownside={potentialDownside}
+                    potentialUpside={potentialUpside}
+                    metric={metric}
+                    base={base}
+                    lowMultiple={lowMultiple}
+                    highMultiple={highMultiple}
+                    forwardPE={forwardPE}
+                    priceToBook={priceToBook}
+                    dividendYield={dividendYield}
+                    price={price}
+                />
+                <CompactValuationBar price={price} valuationLow={valuationLow} valuationHigh={valuationHigh} />
+            </div>
         </Card>
     );
 }, areStockCardPropsEqual);

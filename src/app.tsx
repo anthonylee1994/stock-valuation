@@ -30,23 +30,25 @@ export const App = React.memo(() => {
     }
 
     return (
-        <div className="mb-[env(safe-area-inset-bottom)] min-h-screen p-6 max-[640px]:p-4">
+        <React.Fragment>
             <Header warnings={warnings} />
-            {initialLoading ? (
-                <LoadingSpinner />
-            ) : (
-                <React.Fragment>
-                    <SortButtonGroup
-                        sortOrder={sortOrder}
-                        onSortOrderChange={setSortOrder}
-                        marketFilter={marketFilter}
-                        onMarketFilterChange={setMarketFilter}
-                        searchQuery={searchQuery}
-                        onSearchQueryChange={setSearchQuery}
-                    />
-                    <StockGrid stocks={sortedStocks} />
-                </React.Fragment>
-            )}
-        </div>
+            <div className="mb-[env(safe-area-inset-bottom)] min-h-screen p-3 sm:p-4">
+                {initialLoading ? (
+                    <LoadingSpinner />
+                ) : (
+                    <React.Fragment>
+                        <SortButtonGroup
+                            sortOrder={sortOrder}
+                            onSortOrderChange={setSortOrder}
+                            marketFilter={marketFilter}
+                            onMarketFilterChange={setMarketFilter}
+                            searchQuery={searchQuery}
+                            onSearchQueryChange={setSearchQuery}
+                        />
+                        <StockGrid stocks={sortedStocks} />
+                    </React.Fragment>
+                )}
+            </div>
+        </React.Fragment>
     );
 });

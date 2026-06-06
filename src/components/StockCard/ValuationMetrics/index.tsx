@@ -21,24 +21,30 @@ interface Props {
 
 export const ValuationMetrics = React.memo<Props>(
     ({valuationLow, valuationHigh, potentialDownside, potentialUpside, metric, base, lowMultiple, highMultiple, forwardPE, priceToBook, dividendYield}) => {
-        const downClass = potentialDownside > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400";
-        const upClass = potentialUpside > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400";
+        const downClass = potentialDownside > 0 ? "text-emerald-400" : "text-rose-400";
+        const upClass = potentialUpside > 0 ? "text-emerald-400" : "text-rose-400";
         const isDividendMetric = metric === "股息率";
 
         return (
-            <React.Fragment>
-                <div className="grid grid-cols-3 gap-x-3 gap-y-2.5">
+            <div className="border-none">
+                <div className="grid grid-cols-3 border-t border-zinc-800 bg-[#121212]">
                     <Metric label="預測市盈率" value={formatOptionalNumber(forwardPE)} />
                     <Metric label="市淨率" value={formatOptionalNumber(priceToBook)} />
                     <Metric label="股息率" value={formatOptionalPercent(dividendYield)} />
-                    <hr className="col-span-3" />
                 </div>
-                <div className="grid grid-cols-3 gap-x-3 gap-y-2.5">
+                <div className="grid grid-cols-3 bg-[#121212]">
                     <Metric label="估值模型" value={metric} />
                     <Metric label={getMetricLabel(metric)} value={formatPrice(base)} />
-                    <hr className="col-span-3" />
+                    <div className="border-b border-zinc-800 px-2.5 py-2">
+                        <span className="mb-1 block truncate text-[11px] font-bold text-zinc-400 uppercase">估值區間</span>
+                        <span className="flex flex-wrap items-center gap-x-1 text-[12px] leading-tight font-black text-amber-300 tabular-nums">
+                            <span>{formatPrice(valuationLow)}</span>
+                            <span>-</span>
+                            <span>{formatPrice(valuationHigh)}</span>
+                        </span>
+                    </div>
                 </div>
-                <div className="grid grid-cols-3 gap-x-3 gap-y-2.5">
+                <div className="grid grid-cols-3 bg-[#121212]">
                     <Metric label={isDividendMetric ? "殘值息率" : "殘值倍數"} value={isDividendMetric ? formatPercent(highMultiple * 100, false) : lowMultiple.toFixed(2)} />
                     <Metric label="殘值" value={formatPrice(valuationLow)} />
                     <Metric label="距離殘值" value={formatPercent(potentialDownside, true)} className={downClass} />
@@ -47,7 +53,7 @@ export const ValuationMetrics = React.memo<Props>(
                     <Metric label="極值" value={formatPrice(valuationHigh)} />
                     <Metric label="距離極值" value={formatPercent(potentialUpside, true)} className={upClass} />
                 </div>
-            </React.Fragment>
+            </div>
         );
     }
 );
