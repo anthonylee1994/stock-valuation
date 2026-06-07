@@ -17,8 +17,8 @@ export const CompactValuationBar = React.memo<Props>(({price, valuationLow, valu
     const markerTransition = "transition-[left] duration-500 ease-in-out";
 
     return (
-        <div className="bg-[#141414] px-3 pt-3 pb-3">
-            <div className="relative h-4 overflow-visible border border-zinc-700 bg-zinc-900">
+        <div className="bg-[#262626] px-3 pt-3 pb-3">
+            <div className="relative h-4 overflow-visible border border-black bg-zinc-900">
                 <div className="absolute inset-0 flex overflow-hidden">
                     <div className={`h-full bg-emerald-400 ${barTransition}`} style={{width: `${lowPosition}%`}} />
                     <div className={`h-full bg-amber-300 ${barTransition}`} style={{width: `${highPosition - lowPosition}%`}} />

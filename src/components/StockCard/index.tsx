@@ -24,10 +24,10 @@ export const StockCard = React.memo<Props>(({stock}: Props) => {
         <Card
             role="article"
             aria-labelledby={`card-title-${symbol}`}
-            className={`gap-0 overflow-hidden rounded-sm border border-t-4 border-zinc-700 bg-[#121212] p-0 font-mono shadow-none transition-colors select-none ${statusConfig.borderClass}`}
+            className={`gap-0 overflow-hidden rounded-sm border border-t-4 border-black bg-[#262626] p-0 font-mono shadow-none transition-colors select-none ${statusConfig.borderClass}`}
         >
             <CardHeader symbol={symbol} name={name} status={status} />
-            <div className="divide-y divide-zinc-800">
+            <div className="divide-y divide-black">
                 <PriceDisplay price={price} change={change} percentChange={percentChange} />
                 <ValuationMetrics
                     valuationLow={valuationLow}
