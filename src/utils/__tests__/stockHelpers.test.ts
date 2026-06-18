@@ -138,7 +138,7 @@ describe("sortStocks", () => {
         expect(sortStocks([], "asc")).toEqual([]);
     });
 
-    it("should sort ascending by valuation bar marker position", () => {
+    it("should sort ascending by valuation range position", () => {
         const stocks: StockWithQuote[] = [
             createStockWithQuote({symbol: "AAPL", currentPrice: 80, valuationLow: 100, valuationHigh: 200}),
             createStockWithQuote({symbol: "GOOGL", name: "Google", currentPrice: 150, valuationLow: 100, valuationHigh: 200, change: 20, percentChange: 12.5, previousClosePrice: 130}),
@@ -152,7 +152,7 @@ describe("sortStocks", () => {
         expect(result[2].symbol).toBe("MSFT");
     });
 
-    it("should sort descending by valuation bar marker position", () => {
+    it("should sort descending by valuation range position", () => {
         const stocks: StockWithQuote[] = [
             createStockWithQuote({symbol: "AAPL", currentPrice: 80, valuationLow: 100, valuationHigh: 200}),
             createStockWithQuote({symbol: "GOOGL", name: "Google", currentPrice: 150, valuationLow: 100, valuationHigh: 200, change: 20, percentChange: 12.5, previousClosePrice: 130}),
@@ -164,6 +164,18 @@ describe("sortStocks", () => {
         expect(result[0].symbol).toBe("MSFT");
         expect(result[1].symbol).toBe("GOOGL");
         expect(result[2].symbol).toBe("AAPL");
+    });
+
+    it("should compare stocks by normalized valuation position instead of each card bar position", () => {
+        const stocks: StockWithQuote[] = [
+            createStockWithQuote({symbol: "GEV", currentPrice: 1059, valuationLow: 664.5, valuationHigh: 930.3}),
+            createStockWithQuote({symbol: "JPM", name: "JPMorgan Chase", currentPrice: 334.5, valuationLow: 182.72, valuationHigh: 342.6}),
+            createStockWithQuote({symbol: "IBKR", name: "Interactive Brokers", currentPrice: 95.47, valuationLow: 45, valuationHigh: 85}),
+        ];
+
+        const result = sortStocks(stocks, "asc");
+
+        expect(result.map(stock => stock.symbol)).toEqual(["JPM", "IBKR", "GEV"]);
     });
 
     it("should sort using the displayed active price when calculating marker position", () => {

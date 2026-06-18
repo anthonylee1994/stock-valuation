@@ -1,5 +1,4 @@
 import type {StockWithQuote, ValuationData, ValuationStatus} from "@/types";
-import {calculateBarPositions} from "./valuationBar";
 
 /**
  * Validate and deduplicate stocks array
@@ -36,21 +35,29 @@ export function getUniqueSymbols(stocks: ValuationData["stocks"]): string {
     return Array.from(uniqueSymbols).join(",");
 }
 
+function getValuationPosition(price: number, valuationLow: number, valuationHigh: number): number {
+    const valuationRange = valuationHigh - valuationLow;
+
+    if (valuationRange <= 0) {
+        return price >= valuationHigh ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
+    }
+
+    return (price - valuationLow) / valuationRange;
+}
+
 /**
- * Sort stocks by the same marker position shown in the valuation bar
+ * Sort stocks by price position relative to each stock's valuation range
  */
 export function sortStocks(stocks: StockWithQuote[], sortOrder: "asc" | "desc"): StockWithQuote[] {
     return [...stocks].sort((a, b) => {
-        const aPrice = getActivePrice(a).price;
-        const bPrice = getActivePrice(b).price;
-        const aMarkerPosition = calculateBarPositions(aPrice, a.valuationLow, a.valuationHigh).markerPosition;
-        const bMarkerPosition = calculateBarPositions(bPrice, b.valuationLow, b.valuationHigh).markerPosition;
+        const aPosition = getValuationPosition(getActivePrice(a).price, a.valuationLow, a.valuationHigh);
+        const bPosition = getValuationPosition(getActivePrice(b).price, b.valuationLow, b.valuationHigh);
 
         if (sortOrder === "asc") {
-            return aMarkerPosition - bMarkerPosition;
-        } else {
-            return bMarkerPosition - aMarkerPosition;
+            return aPosition - bPosition;
         }
+
+        return bPosition - aPosition;
     });
 }
 
