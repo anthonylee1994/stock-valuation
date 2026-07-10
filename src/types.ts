@@ -1,4 +1,4 @@
-export type ValuationMetricType = "P/E" | "P/S" | "P/B" | "P/OCF" | "股息率";
+export type ValuationMetricType = "P/E" | "P/S" | "P/B" | "P/EV" | "P/OCF" | "股息率";
 export type MarketFilter = "us_market" | "hk_market";
 
 export interface ValuationStock {

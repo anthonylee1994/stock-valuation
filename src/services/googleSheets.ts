@@ -36,7 +36,7 @@ const API_KEY = import.meta.env.VITE_GOOGLE_SHEETS_API_KEY;
 const SPREADSHEET_ID = import.meta.env.VITE_GOOGLE_SHEETS_SPREADSHEET_ID;
 const SHEET_RANGES = ["美股!A2:K100", "港股!A2:K100"];
 const DEFAULT_METRIC: ValuationMetricType = "P/E";
-const ALLOWED_METRICS = new Set<ValuationMetricType>(["P/E", "P/S", "P/B", "P/OCF", "股息率"]);
+const ALLOWED_METRICS = new Set<ValuationMetricType>(["P/E", "P/S", "P/B", "P/EV", "P/OCF", "股息率"]);
 
 function parseNumber(value?: string) {
     return Number.parseFloat(value ?? "") || 0;

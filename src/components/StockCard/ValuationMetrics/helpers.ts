@@ -11,6 +11,8 @@ export function getMetricLabel(metric: ValuationMetricType) {
             return "每股營收";
         case "P/B":
             return "每股資產淨值";
+        case "P/EV":
+            return "每股內含價值";
         case "P/OCF":
             return "每股營業現金流";
     }
