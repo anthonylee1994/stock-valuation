@@ -1,9 +1,11 @@
-export type ValuationMetricType = "P/E" | "P/S" | "P/B" | "P/EV" | "P/OCF" | "股息率";
+export type ValuationMetricType = string;
+export type Sector = string;
 export type MarketFilter = "us_market" | "hk_market";
 
 export interface ValuationStock {
     symbol: string;
     name?: string;
+    sector: Sector;
     base: number;
     lowMultiple: number;
     highMultiple: number;

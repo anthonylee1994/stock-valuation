@@ -5,6 +5,7 @@ import {formatPercent, formatPrice, getActivePrice, getPriceColor, getStatus, ge
 function createValuationStock(overrides: Partial<ValuationStock> = {}): ValuationStock {
     return {
         symbol: "AAPL",
+        sector: "科技",
         base: 0,
         lowMultiple: 0,
         highMultiple: 0,

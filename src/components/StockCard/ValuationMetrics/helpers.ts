@@ -15,6 +15,8 @@ export function getMetricLabel(metric: ValuationMetricType) {
             return "每股內含價值";
         case "P/OCF":
             return "每股營業現金流";
+        default:
+            return "基準值";
     }
 }
 

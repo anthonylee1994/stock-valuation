@@ -13,6 +13,7 @@ const valuationStocks: ValuationStock[] = [
     {
         symbol: "AAPL",
         name: "Apple",
+        sector: "科技",
         base: 1,
         lowMultiple: 10,
         highMultiple: 20,

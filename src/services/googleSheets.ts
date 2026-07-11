@@ -1,9 +1,10 @@
-import type {ValuationMetricType} from "@/types";
+import type {Sector, ValuationMetricType} from "@/types";
 
 interface SheetRow {
     symbol: string;
     name?: string;
-    metricType: string;
+    metricType: ValuationMetricType;
+    sector: Sector;
     metricBase: number;
     lowMultiple: number;
     highMultiple: number;
@@ -34,9 +35,12 @@ export interface FetchValuationRowsResult {
 
 const API_KEY = import.meta.env.VITE_GOOGLE_SHEETS_API_KEY;
 const SPREADSHEET_ID = import.meta.env.VITE_GOOGLE_SHEETS_SPREADSHEET_ID;
-const SHEET_RANGES = ["美股!A2:K100", "港股!A2:K100"];
+const METRIC_SHEET_NAME = "估值模型";
+const SECTOR_SHEET_NAME = "板塊";
+const CONFIG_SHEET_NAMES = new Set([METRIC_SHEET_NAME, SECTOR_SHEET_NAME]);
+const SHEET_RANGES = [`${METRIC_SHEET_NAME}!A2:A100`, `${SECTOR_SHEET_NAME}!A2:A100`, "美股!A2:L100", "港股!A2:L100"];
 const DEFAULT_METRIC: ValuationMetricType = "P/E";
-const ALLOWED_METRICS = new Set<ValuationMetricType>(["P/E", "P/S", "P/B", "P/EV", "P/OCF", "股息率"]);
+const DEFAULT_SECTOR: Sector = "科技";
 
 function parseNumber(value?: string) {
     return Number.parseFloat(value ?? "") || 0;
@@ -65,8 +69,14 @@ function formatRowError(sheetName: string, rowNumber: number, message: string) {
     return `${sheetName} 第 ${rowNumber} 行${message}`;
 }
 
-function mapSheetRow(row: string[], rowNumber: number, sheetName: string): ParsedSheetRow {
-    const [symbol, name, metricType, metricBase, lowMultiple, highMultiple, valuationLow, valuationHigh, , potentialDownside, potentialUpside] = row;
+function getAllowedValues(valueRanges: GoogleSheetsResponse[], sheetName: string) {
+    const valueRange = valueRanges.find(range => getRangeContext(range.range).sheetName === sheetName);
+
+    return new Set((valueRange?.values ?? []).map(row => row[0]?.trim()).filter((value): value is string => Boolean(value)));
+}
+
+function mapSheetRow(row: string[], rowNumber: number, sheetName: string, allowedMetrics: Set<string>, allowedSectors: Set<string>): ParsedSheetRow {
+    const [symbol, name, metricType, metricBase, lowMultiple, highMultiple, valuationLow, valuationHigh, , potentialDownside, potentialUpside, sector] = row;
 
     try {
         const normalizedSymbol = symbol?.trim();
@@ -75,14 +85,20 @@ function mapSheetRow(row: string[], rowNumber: number, sheetName: string): Parse
         }
 
         const normalizedMetricType = metricType?.trim() || DEFAULT_METRIC;
-        if (!ALLOWED_METRICS.has(normalizedMetricType as ValuationMetricType)) {
+        if (!allowedMetrics.has(normalizedMetricType)) {
             throw new Error(formatRowError(sheetName, rowNumber, `欄位「metricType」不受支援: ${normalizedMetricType}`));
+        }
+
+        const normalizedSector = sector?.trim() || DEFAULT_SECTOR;
+        if (!allowedSectors.has(normalizedSector)) {
+            throw new Error(formatRowError(sheetName, rowNumber, `欄位「sector」不受支援: ${normalizedSector}`));
         }
 
         const parsedRow: SheetRow = {
             symbol: normalizedSymbol,
             name: name?.trim() || undefined,
             metricType: normalizedMetricType,
+            sector: normalizedSector,
             metricBase: parsePositiveNumber(metricBase, "metricBase", rowNumber, sheetName),
             lowMultiple: parsePositiveNumber(lowMultiple, "lowMultiple", rowNumber, sheetName),
             highMultiple: parsePositiveNumber(highMultiple, "highMultiple", rowNumber, sheetName),
@@ -136,12 +152,25 @@ export async function fetchValuationDataFromSheets(): Promise<FetchValuationRows
             return {rows: [], warnings: []};
         }
 
+        const allowedMetrics = getAllowedValues(data.valueRanges, METRIC_SHEET_NAME);
+        const allowedSectors = getAllowedValues(data.valueRanges, SECTOR_SHEET_NAME);
+
+        if (allowedMetrics.size === 0) {
+            throw new Error(`${METRIC_SHEET_NAME}工作表沒有可用嘅 Metric Type`);
+        }
+        if (allowedSectors.size === 0) {
+            throw new Error(`${SECTOR_SHEET_NAME}工作表沒有可用嘅板塊`);
+        }
+
         const warnings: string[] = [];
         const rows = data.valueRanges.flatMap(valueRange => {
             const {sheetName, startRow} = getRangeContext(valueRange.range);
+            if (CONFIG_SHEET_NAMES.has(sheetName)) {
+                return [];
+            }
 
             return (valueRange.values ?? []).flatMap((row, index) => {
-                const parsed = mapSheetRow(row, startRow + index, sheetName);
+                const parsed = mapSheetRow(row, startRow + index, sheetName, allowedMetrics, allowedSectors);
 
                 if (parsed.error) {
                     warnings.push(parsed.error);
@@ -167,7 +196,8 @@ export function convertSheetRowToValuationStock(row: SheetRow) {
     return {
         symbol: normalizeSymbol(row.symbol),
         name: row.name,
-        metric: row.metricType as ValuationMetricType,
+        metric: row.metricType,
+        sector: row.sector,
         base: row.metricBase,
         lowMultiple: row.lowMultiple,
         highMultiple: row.highMultiple,

@@ -6,6 +6,7 @@ function createStock(overrides: Partial<StockWithQuote> = {}): StockWithQuote {
     return {
         symbol: "AAPL",
         name: "Apple",
+        sector: "科技",
         base: 10,
         lowMultiple: 12,
         highMultiple: 18,
