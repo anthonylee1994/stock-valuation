@@ -1,4 +1,4 @@
-import type {StockWithQuote, ValuationData, ValuationStatus} from "@/types";
+import type {MarketFilter, Sector, StockWithQuote, ValuationData, ValuationStatus, ValuationStock} from "@/types";
 
 /**
  * Validate and deduplicate stocks array
@@ -33,6 +33,16 @@ export function validateAndDeduplicateStocks(stocks: ValuationData["stocks"]) {
 export function getUniqueSymbols(stocks: ValuationData["stocks"]): string {
     const uniqueSymbols = new Set(stocks.map(s => s.symbol));
     return Array.from(uniqueSymbols).join(",");
+}
+
+export function filterValuationStocks<T extends ValuationStock>(stocks: T[], marketFilter: MarketFilter, sectorFilter: Sector | null): T[] {
+    return stocks.filter(stock => {
+        const isHongKongStock = stock.symbol.endsWith(".HK");
+        const matchesMarket = marketFilter === "hk_market" ? isHongKongStock : !isHongKongStock;
+        const matchesSector = sectorFilter === null || stock.sector === sectorFilter;
+
+        return matchesMarket && matchesSector;
+    });
 }
 
 function getValuationPosition(price: number, valuationLow: number, valuationHigh: number): number {

@@ -1,7 +1,8 @@
 import {POLLING_INTERVAL} from "@/constants/stockConstants";
+import {useStockPreferencesStore} from "@/stores/useStockPreferencesStore";
 import type {ApiQuotesResponse, Quote, StockWithQuote, ValuationStock} from "@/types";
 import {api} from "@/utils/api";
-import {getUniqueSymbols, validateAndDeduplicateStocks} from "@/utils/stockHelpers";
+import {filterValuationStocks, getUniqueSymbols, validateAndDeduplicateStocks} from "@/utils/stockHelpers";
 import {fetchValuationData} from "@/valuation";
 import moment from "moment";
 import "moment/dist/locale/zh-hk";
@@ -49,6 +50,10 @@ function mergeStocksWithQuotes(stocks: ValuationStock[], quotes: Quote[]) {
     };
 }
 
+interface FetchQuotesOptions {
+    showLoading?: boolean;
+}
+
 export interface StockDataStore {
     stocks: StockWithQuote[];
     loading: boolean;
@@ -64,7 +69,7 @@ export interface StockDataStore {
     setWarnings: (warnings: string[]) => void;
     setValuationStocks: (stocks: ValuationStock[]) => void;
     fetchValuationData: () => Promise<void>;
-    fetchQuotes: () => Promise<void>;
+    fetchQuotes: (options?: FetchQuotesOptions) => Promise<void>;
     startPolling: () => () => void;
     retryFetch: () => void;
 }
@@ -103,21 +108,25 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
         }
     },
 
-    fetchQuotes: async () => {
+    fetchQuotes: async ({showLoading = true} = {}) => {
         const {valuationStocks} = get();
-
-        if (valuationStocks.length === 0) {
-            return;
-        }
-
-        const symbols = getUniqueSymbols(valuationStocks);
+        const {marketFilter, sectorFilter} = useStockPreferencesStore.getState();
+        const filteredValuationStocks = filterValuationStocks(valuationStocks, marketFilter, sectorFilter);
         const requestId = latestQuotesRequestId + 1;
         latestQuotesRequestId = requestId;
 
         activeQuotesAbortController?.abort();
+
+        if (filteredValuationStocks.length === 0) {
+            activeQuotesAbortController = null;
+            set({stocks: [], loading: false, initialLoading: false, error: null});
+            return;
+        }
+
+        const symbols = getUniqueSymbols(filteredValuationStocks);
         const abortController = new AbortController();
         activeQuotesAbortController = abortController;
-        set({loading: true, error: null});
+        set(showLoading ? {loading: true, error: null} : {error: null});
 
         try {
             const res = await api.get(`/quotes?symbols=${encodeURIComponent(symbols)}`, {
@@ -133,7 +142,7 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
                 return;
             }
 
-            const merged = mergeStocksWithQuotes(valuationStocks, json.quotes);
+            const merged = mergeStocksWithQuotes(filteredValuationStocks, json.quotes);
             const now = new Date();
             const formattedDate = moment(now).fromNow();
             const warnings = [...get().warnings.filter(warning => !warning.startsWith("部分報價缺失："))];
@@ -190,13 +199,13 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
 
         const interval = setInterval(() => {
             if (!document.hidden) {
-                fetchQuotes();
+                fetchQuotes({showLoading: false});
             }
         }, POLLING_INTERVAL);
 
         const handleVisibilityChange = () => {
             if (!document.hidden) {
-                fetchQuotes();
+                fetchQuotes({showLoading: false});
             }
         };
 

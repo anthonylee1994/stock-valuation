@@ -2,14 +2,24 @@ import React from "react";
 import type {StockWithQuote} from "@/types";
 import {EmptyPlaceholder} from "./EmptyPlaceholder";
 import {StockCard} from "./StockCard";
+import {Spinner} from "@heroui/react";
 
 interface Props {
+    loading: boolean;
     stocks: StockWithQuote[];
 }
 
-export const StockGrid = React.memo<Props>(({stocks}) => {
-    if (stocks.length === 0) {
+export const StockGrid = React.memo<Props>(({stocks, loading}) => {
+    if (!loading && stocks.length === 0) {
         return <EmptyPlaceholder />;
+    }
+
+    if (loading) {
+        return (
+            <div className="my-10 flex w-full items-center justify-center">
+                <Spinner size="xl" color="current" className="h-20 w-20" />
+            </div>
+        );
     }
 
     return (

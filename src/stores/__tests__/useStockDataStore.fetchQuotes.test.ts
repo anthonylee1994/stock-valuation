@@ -1,5 +1,6 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 import {useStockDataStore} from "@/stores/useStockDataStore";
+import {useStockPreferencesStore} from "@/stores/useStockPreferencesStore";
 import {api} from "@/utils/api";
 import type {ValuationStock} from "@/types";
 
@@ -28,6 +29,7 @@ const valuationStocks: ValuationStock[] = [
 describe("useStockDataStore fetchQuotes", () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        useStockPreferencesStore.setState({marketFilter: "us_market", sectorFilter: null});
         useStockDataStore.setState({
             stocks: [],
             loading: false,
@@ -189,5 +191,93 @@ describe("useStockDataStore fetchQuotes", () => {
 
         expect(useStockDataStore.getState().warnings).toContain("部分報價缺失：AAPL");
         expect(useStockDataStore.getState().stocks).toEqual([]);
+    });
+
+    it("only requests symbols matching the selected market and sector", async () => {
+        useStockPreferencesStore.setState({marketFilter: "us_market", sectorFilter: "科技"});
+        useStockDataStore.setState({
+            valuationStocks: [
+                valuationStocks[0],
+                {...valuationStocks[0], symbol: "MSFT", name: "Microsoft", sector: "金融"},
+                {...valuationStocks[0], symbol: "0700.HK", name: "Tencent", sector: "科技"},
+            ],
+        });
+        vi.mocked(api.get).mockResolvedValue({
+            data: {
+                quotes: [
+                    {
+                        symbol: "AAPL",
+                        name: "Apple",
+                        market: "us_market",
+                        currentPrice: 125,
+                        change: 5,
+                        percentChange: 1,
+                        previousClosePrice: 120,
+                        regularMarketTime: "2024-01-01",
+                        preMarketPrice: null,
+                        preMarketChange: null,
+                        preMarketTime: null,
+                        preMarketChangePercent: null,
+                        postMarketPrice: null,
+                        postMarketChange: null,
+                        postMarketChangePercent: null,
+                        postMarketTime: null,
+                        forwardPE: null,
+                        priceToBook: null,
+                        dividendYield: null,
+                    },
+                ],
+            },
+        });
+
+        await useStockDataStore.getState().fetchQuotes();
+
+        expect(api.get).toHaveBeenCalledWith("/quotes?symbols=AAPL", expect.objectContaining({signal: expect.anything()}));
+        expect(useStockDataStore.getState().stocks.map(stock => stock.symbol)).toEqual(["AAPL"]);
+    });
+
+    it("does not set loading while a background quote request is pending", async () => {
+        let resolveRequest: ((value: unknown) => void) | undefined;
+        vi.mocked(api.get).mockImplementation(
+            () =>
+                new Promise(resolve => {
+                    resolveRequest = resolve;
+                })
+        );
+
+        const request = useStockDataStore.getState().fetchQuotes({showLoading: false});
+
+        expect(useStockDataStore.getState().loading).toBe(false);
+
+        resolveRequest?.({
+            data: {
+                quotes: [
+                    {
+                        symbol: "AAPL",
+                        name: "Apple",
+                        market: "us_market",
+                        currentPrice: 125,
+                        change: 5,
+                        percentChange: 1,
+                        previousClosePrice: 120,
+                        regularMarketTime: "2024-01-01",
+                        preMarketPrice: null,
+                        preMarketChange: null,
+                        preMarketTime: null,
+                        preMarketChangePercent: null,
+                        postMarketPrice: null,
+                        postMarketChange: null,
+                        postMarketChangePercent: null,
+                        postMarketTime: null,
+                        forwardPE: null,
+                        priceToBook: null,
+                        dividendYield: null,
+                    },
+                ],
+            },
+        });
+        await request;
+
+        expect(useStockDataStore.getState().loading).toBe(false);
     });
 });
