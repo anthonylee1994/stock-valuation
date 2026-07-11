@@ -16,7 +16,7 @@ export const StockGrid = React.memo<Props>(({stocks, loading}) => {
 
     if (loading) {
         return (
-            <div className="my-10 flex w-full items-center justify-center">
+            <div className="my-20 flex w-full items-center justify-center">
                 <Spinner size="xl" color="current" className="h-20 w-20" />
             </div>
         );
