@@ -4,7 +4,6 @@ import {api} from "@/utils/api";
 import {getUniqueSymbols, validateAndDeduplicateStocks} from "@/utils/stockHelpers";
 import {fetchValuationData} from "@/valuation";
 import moment from "moment";
-// @ts-expect-error - moment locale files don't have type definitions
 import "moment/dist/locale/zh-hk";
 import {create} from "zustand";
 
