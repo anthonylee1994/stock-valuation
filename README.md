@@ -25,7 +25,7 @@
 - **樣式**: Tailwind CSS 4
 - **狀態管理**: Zustand
 - **建置工具**: Vite
-- **部署**: GitHub Pages
+- **部署**: Vercel
 
 ## 開始使用
 
@@ -107,9 +107,7 @@ stock-valuation/
 │   ├── app.tsx             # 主 App 元件
 │   └── main.tsx            # App 入口
 ├── public/                 # 靜態資源
-├── .github/
-│   └── workflows/
-│       └── ci.yml          # lint、測試、型別及 build 檢查
+├── vercel.json             # Vercel build 同 SPA routing 設定
 └── package.json
 ```
 
@@ -152,7 +150,7 @@ Google Sheets 至少需要以下欄位：
 
 ## 部署
 
-GitHub Actions 會喺每次 push 去 `main` 或建立 Pull Request 時執行 lint、型別檢查、測試同 production build。部署可將 `dist/` 發佈到 GitHub Pages 或其他靜態網站服務。
+專案使用 Vercel 部署。連接 Git repository 後，Vercel 會按照 `vercel.json` 執行 `pnpm build`，再發佈 `dist/`。
 
 ### 手動部署
 
@@ -164,7 +162,7 @@ Build 完嘅檔案會放喺 `dist/` 目錄入面。
 
 ### 環境變數
 
-喺你 GitHub repo 嘅設定入面 **Settings > Secrets and variables > Actions > Variables** 設定以下變數：
+喺 Vercel project 嘅 **Settings > Environment Variables** 設定以下變數：
 
 - `VITE_QUOTES_API_URL`: 你嘅報價 API 端點
 - `VITE_GOOGLE_SHEETS_API_KEY`: Google Sheets API key

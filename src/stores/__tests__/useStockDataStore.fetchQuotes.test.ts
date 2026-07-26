@@ -39,6 +39,7 @@ describe("useStockDataStore fetchQuotes", () => {
     });
 
     afterEach(() => {
+        vi.useRealTimers();
         vi.restoreAllMocks();
     });
 
@@ -114,7 +115,7 @@ describe("useStockDataStore fetchQuotes", () => {
         expect(useStockDataStore.getState().stocks[0]?.currentPrice).toBe(120);
     });
 
-    it("calculates valuation potential from the API current price", async () => {
+    it("calculates valuation potential from the active market price", async () => {
         vi.mocked(getJson).mockResolvedValue({
             quotes: [
                 {
@@ -126,10 +127,10 @@ describe("useStockDataStore fetchQuotes", () => {
                     percentChange: 1,
                     previousClosePrice: 120,
                     regularMarketTime: "2024-01-01",
-                    preMarketPrice: null,
-                    preMarketChange: null,
+                    preMarketPrice: 100,
+                    preMarketChange: -20,
                     preMarketTime: null,
-                    preMarketChangePercent: null,
+                    preMarketChangePercent: -16,
                     postMarketPrice: null,
                     postMarketChange: null,
                     postMarketChangePercent: null,
@@ -145,8 +146,8 @@ describe("useStockDataStore fetchQuotes", () => {
 
         const stock = useStockDataStore.getState().stocks[0];
 
-        expect(stock?.potentialDownside).toBe(-20);
-        expect(stock?.potentialUpside).toBe(60);
+        expect(stock?.potentialDownside).toBe(0);
+        expect(stock?.potentialUpside).toBe(100);
     });
 
     it("records a warning when some symbols are missing from the quotes response", async () => {
@@ -264,5 +265,62 @@ describe("useStockDataStore fetchQuotes", () => {
         await request;
 
         expect(useStockDataStore.getState().loading).toBe(false);
+    });
+
+    it("keeps stale stocks and surfaces a warning when a background refresh fails", async () => {
+        vi.mocked(getJson)
+            .mockResolvedValueOnce({
+                quotes: [
+                    {
+                        symbol: "AAPL",
+                        name: "Apple",
+                        market: "us_market",
+                        currentPrice: 125,
+                        change: 5,
+                        percentChange: 1,
+                        previousClosePrice: 120,
+                        regularMarketTime: "2024-01-01",
+                        preMarketPrice: null,
+                        preMarketChange: null,
+                        preMarketTime: null,
+                        preMarketChangePercent: null,
+                        postMarketPrice: null,
+                        postMarketChange: null,
+                        postMarketChangePercent: null,
+                        postMarketTime: null,
+                        forwardPE: null,
+                        priceToBook: null,
+                        dividendYield: null,
+                    },
+                ],
+            })
+            .mockRejectedValueOnce(new Error("Network unavailable"));
+
+        await useStockDataStore.getState().fetchQuotes();
+        await useStockDataStore.getState().fetchQuotes({showLoading: false});
+
+        const state = useStockDataStore.getState();
+        expect(state.stocks[0]?.currentPrice).toBe(125);
+        expect(state.error).toBeNull();
+        expect(state.warnings).toContain("報價更新失敗：Network unavailable");
+    });
+
+    it("does not overlap scheduled polling requests", async () => {
+        vi.useFakeTimers();
+        vi.mocked(getJson).mockImplementation(
+            (_path, signal) =>
+                new Promise((_resolve, reject) => {
+                    signal?.addEventListener("abort", () => reject(new DOMException("Request aborted", "AbortError")), {once: true});
+                })
+        );
+
+        const cleanup = useStockDataStore.getState().startPolling();
+        await Promise.resolve();
+        await vi.advanceTimersByTimeAsync(10_000);
+
+        expect(getJson).toHaveBeenCalledTimes(1);
+
+        cleanup();
+        await Promise.resolve();
     });
 });

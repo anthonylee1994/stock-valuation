@@ -168,6 +168,25 @@ describe("fetchValuationDataFromSheets", () => {
         expect(result.warnings).toEqual([]);
     });
 
+    it("preserves Yahoo Finance Hong Kong symbols", async () => {
+        const {convertSheetRowToValuationStock} = await import("../googleSheets");
+        const stock = convertSheetRowToValuationStock({
+            symbol: "0700.HK",
+            name: "Tencent",
+            metricType: "P/E",
+            sector: "科技",
+            metricBase: 10,
+            lowMultiple: 12,
+            highMultiple: 18,
+            valuationLow: 180,
+            valuationHigh: 220,
+            potentialDownside: 0,
+            potentialUpside: 0,
+        });
+
+        expect(stock.symbol).toBe("0700.HK");
+    });
+
     it("rejects sectors not defined by the sector sheet", async () => {
         vi.stubGlobal(
             "fetch",

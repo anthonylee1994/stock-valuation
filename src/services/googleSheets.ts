@@ -38,7 +38,8 @@ const SPREADSHEET_ID = import.meta.env.VITE_GOOGLE_SHEETS_SPREADSHEET_ID;
 const METRIC_SHEET_NAME = "估值模型";
 const SECTOR_SHEET_NAME = "板塊";
 const CONFIG_SHEET_NAMES = new Set([METRIC_SHEET_NAME, SECTOR_SHEET_NAME]);
-const SHEET_RANGES = [`${METRIC_SHEET_NAME}!A2:A100`, `${SECTOR_SHEET_NAME}!A2:A100`, "美股!A2:L100", "港股!A2:L100"];
+const SHEET_RANGES = [`${METRIC_SHEET_NAME}!A2:A`, `${SECTOR_SHEET_NAME}!A2:A`, "美股!A2:L", "港股!A2:L"];
+const REQUEST_TIMEOUT = 15_000;
 const DEFAULT_METRIC: ValuationMetricType = "P/E";
 const DEFAULT_SECTOR: Sector = "科技";
 
@@ -125,6 +126,9 @@ function normalizeSymbol(symbol: string) {
     if (symbol.startsWith("HKG:")) {
         return `${symbol.replace("HKG:", "")}.HK`;
     }
+    if (symbol.endsWith(".HK")) {
+        return symbol;
+    }
     if (symbol.includes(".")) {
         return symbol.replace(".", "-");
     }
@@ -140,7 +144,7 @@ export async function fetchValuationDataFromSheets(): Promise<FetchValuationRows
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values:batchGet?${query}&key=${API_KEY}`;
 
     try {
-        const response = await fetch(url);
+        const response = await fetch(url, {signal: AbortSignal.timeout(REQUEST_TIMEOUT)});
 
         if (!response.ok) {
             throw new Error(`Google Sheets API error: ${response.statusText}`);

@@ -2,12 +2,14 @@ import {POLLING_INTERVAL} from "@/constants/stockConstants";
 import {useStockPreferencesStore} from "@/stores/useStockPreferencesStore";
 import type {ApiQuotesResponse, Quote, StockWithQuote, ValuationStock} from "@/types";
 import {getJson} from "@/utils/api";
-import {filterValuationStocks, getUniqueSymbols, validateAndDeduplicateStocks} from "@/utils/stockHelpers";
+import {filterValuationStocks, getActivePrice, getUniqueSymbols, validateAndDeduplicateStocks} from "@/utils/stockHelpers";
 import {fetchValuationData} from "@/valuation";
 import {create} from "zustand";
 
 let latestQuotesRequestId = 0;
 let activeQuotesAbortController: AbortController | null = null;
+const MISSING_QUOTES_WARNING_PREFIX = "部分報價缺失：";
+const UPDATE_ERROR_WARNING_PREFIX = "報價更新失敗：";
 
 function calculatePotentialPercent(targetPrice: number, currentPrice: number) {
     if (currentPrice === 0) {
@@ -32,12 +34,17 @@ function mergeStocksWithQuotes(stocks: ValuationStock[], quotes: Quote[]) {
                 missingSymbols.push(stock.symbol);
                 return null;
             }
-            return {
+            const mergedStock: StockWithQuote = {
                 ...stock,
                 ...quote,
-                ...(stock.name ? {name: stock.name} : {}),
-                potentialDownside: calculatePotentialPercent(stock.valuationLow, quote.currentPrice),
-                potentialUpside: calculatePotentialPercent(stock.valuationHigh, quote.currentPrice),
+                name: stock.name ?? quote.name ?? stock.symbol,
+            };
+            const activePrice = getActivePrice(mergedStock).price;
+
+            return {
+                ...mergedStock,
+                potentialDownside: calculatePotentialPercent(stock.valuationLow, activePrice),
+                potentialUpside: calculatePotentialPercent(stock.valuationHigh, activePrice),
             };
         })
         .filter((s): s is StockWithQuote => s !== null);
@@ -136,10 +143,10 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
             }
 
             const merged = mergeStocksWithQuotes(filteredValuationStocks, json.quotes);
-            const warnings = [...get().warnings.filter(warning => !warning.startsWith("部分報價缺失："))];
+            const warnings = [...get().warnings.filter(warning => !warning.startsWith(MISSING_QUOTES_WARNING_PREFIX) && !warning.startsWith(UPDATE_ERROR_WARNING_PREFIX))];
 
             if (merged.missingSymbols.length > 0) {
-                warnings.push(`部分報價缺失：${merged.missingSymbols.join(", ")}`);
+                warnings.push(`${MISSING_QUOTES_WARNING_PREFIX}${merged.missingSymbols.join(", ")}`);
             }
 
             set({
@@ -154,11 +161,21 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
                 return;
             }
 
-            set({
-                error: e instanceof Error ? e : new Error("無法載入股票數據。請檢查網絡連接。"),
-                loading: false,
-                initialLoading: false,
-            });
+            const error = e instanceof Error ? e : new Error("無法載入股票數據。請檢查網絡連接。");
+
+            if (!showLoading && get().stocks.length > 0) {
+                const warnings = get().warnings.filter(warning => !warning.startsWith(UPDATE_ERROR_WARNING_PREFIX));
+                set({
+                    loading: false,
+                    warnings: [...warnings, `${UPDATE_ERROR_WARNING_PREFIX}${error.message}`],
+                });
+            } else {
+                set({
+                    error,
+                    loading: false,
+                    initialLoading: false,
+                });
+            }
         } finally {
             if (activeQuotesAbortController === abortController) {
                 activeQuotesAbortController = null;
@@ -191,13 +208,13 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
         fetchQuotes();
 
         const interval = setInterval(() => {
-            if (!document.hidden) {
+            if (!document.hidden && !activeQuotesAbortController) {
                 fetchQuotes({showLoading: false});
             }
         }, POLLING_INTERVAL);
 
         const handleVisibilityChange = () => {
-            if (!document.hidden) {
+            if (!document.hidden && !activeQuotesAbortController) {
                 fetchQuotes({showLoading: false});
             }
         };
