@@ -1,11 +1,9 @@
 import {POLLING_INTERVAL} from "@/constants/stockConstants";
 import {useStockPreferencesStore} from "@/stores/useStockPreferencesStore";
 import type {ApiQuotesResponse, Quote, StockWithQuote, ValuationStock} from "@/types";
-import {api} from "@/utils/api";
+import {getJson} from "@/utils/api";
 import {filterValuationStocks, getUniqueSymbols, validateAndDeduplicateStocks} from "@/utils/stockHelpers";
 import {fetchValuationData} from "@/valuation";
-import moment from "moment";
-import "moment/dist/locale/zh-hk";
 import {create} from "zustand";
 
 let latestQuotesRequestId = 0;
@@ -58,17 +56,15 @@ export interface StockDataStore {
     stocks: StockWithQuote[];
     loading: boolean;
     initialLoading: boolean;
-    lastUpdate: string | null;
     error: Error | null;
     warnings: string[];
     valuationStocks: ValuationStock[];
     setStocks: (stocks: StockWithQuote[]) => void;
     setLoading: (loading: boolean) => void;
-    setLastUpdate: (lastUpdate: string | null) => void;
     setError: (error: Error | null) => void;
     setWarnings: (warnings: string[]) => void;
     setValuationStocks: (stocks: ValuationStock[]) => void;
-    fetchValuationData: () => Promise<void>;
+    fetchValuationData: () => Promise<boolean>;
     fetchQuotes: (options?: FetchQuotesOptions) => Promise<void>;
     startPolling: () => () => void;
     retryFetch: () => void;
@@ -78,14 +74,12 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
     stocks: [],
     loading: true,
     initialLoading: true,
-    lastUpdate: null,
     error: null,
     warnings: [],
     valuationStocks: [],
 
     setStocks: stocks => set({stocks}),
     setLoading: loading => set({loading}),
-    setLastUpdate: lastUpdate => set({lastUpdate}),
     setError: error => set({error}),
     setWarnings: warnings => set({warnings}),
     setValuationStocks: valuationStocks => set({valuationStocks}),
@@ -98,6 +92,7 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
                 valuationStocks: deduped,
                 warnings: data.warnings,
             });
+            return true;
         } catch (e) {
             console.error("Failed to fetch valuation data:", e);
             set({
@@ -105,6 +100,7 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
                 loading: false,
                 initialLoading: false,
             });
+            return false;
         }
     },
 
@@ -129,10 +125,7 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
         set(showLoading ? {loading: true, error: null} : {error: null});
 
         try {
-            const res = await api.get(`/quotes?symbols=${encodeURIComponent(symbols)}`, {
-                signal: abortController.signal,
-            });
-            const json = res.data as ApiQuotesResponse;
+            const json = await getJson<ApiQuotesResponse>(`/quotes?symbols=${encodeURIComponent(symbols)}`, abortController.signal);
 
             if (!json.quotes || json.quotes.length === 0) {
                 throw new Error("API 返回空數據。請稍後再試。");
@@ -143,8 +136,6 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
             }
 
             const merged = mergeStocksWithQuotes(filteredValuationStocks, json.quotes);
-            const now = new Date();
-            const formattedDate = moment(now).fromNow();
             const warnings = [...get().warnings.filter(warning => !warning.startsWith("部分報價缺失："))];
 
             if (merged.missingSymbols.length > 0) {
@@ -153,7 +144,6 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
 
             set({
                 stocks: merged.stocks,
-                lastUpdate: formattedDate,
                 loading: false,
                 initialLoading: false,
                 error: null,
@@ -180,7 +170,10 @@ export const useStockDataStore = create<StockDataStore>((set, get) => ({
         const {fetchValuationData, fetchQuotes, valuationStocks} = get();
 
         if (valuationStocks.length === 0) {
-            void fetchValuationData().then(() => {
+            void fetchValuationData().then(loaded => {
+                if (!loaded) {
+                    return;
+                }
                 const {valuationStocks: latestValuationStocks} = get();
                 if (latestValuationStocks.length > 0) {
                     void fetchQuotes();

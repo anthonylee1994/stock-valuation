@@ -24,7 +24,6 @@ describe("useStockDataStore retryFetch", () => {
             stocks: [],
             loading: true,
             initialLoading: true,
-            lastUpdate: null,
             error: null,
             warnings: [],
             valuationStocks: [],
@@ -39,6 +38,7 @@ describe("useStockDataStore retryFetch", () => {
         const fetchQuotes = vi.fn().mockResolvedValue(undefined);
         const fetchValuationData = vi.fn().mockImplementation(async () => {
             useStockDataStore.setState({valuationStocks});
+            return true;
         });
 
         useStockDataStore.setState({
@@ -57,7 +57,7 @@ describe("useStockDataStore retryFetch", () => {
 
     it("fetches quotes directly when valuation data is already available", () => {
         const fetchQuotes = vi.fn().mockResolvedValue(undefined);
-        const fetchValuationData = vi.fn().mockResolvedValue(undefined);
+        const fetchValuationData = vi.fn().mockResolvedValue(true);
 
         useStockDataStore.setState({
             valuationStocks,
@@ -69,5 +69,16 @@ describe("useStockDataStore retryFetch", () => {
 
         expect(fetchQuotes).toHaveBeenCalledTimes(1);
         expect(fetchValuationData).not.toHaveBeenCalled();
+    });
+
+    it("does not fetch quotes when retrying valuation data fails", async () => {
+        const fetchQuotes = vi.fn().mockResolvedValue(undefined);
+        const fetchValuationData = vi.fn().mockResolvedValue(false);
+
+        useStockDataStore.setState({fetchValuationData, fetchQuotes});
+        useStockDataStore.getState().retryFetch();
+        await Promise.resolve();
+
+        expect(fetchQuotes).not.toHaveBeenCalled();
     });
 });

@@ -25,7 +25,6 @@
 - **樣式**: Tailwind CSS 4
 - **狀態管理**: Zustand
 - **建置工具**: Vite
-- **路由**: React Router v7
 - **部署**: GitHub Pages
 
 ## 開始使用
@@ -87,21 +86,22 @@ stock-valuation/
 │   ├── components/          # React 元件
 │   │   ├── Header.tsx       # App 標題同更新資訊
 │   │   ├── LoadingSpinner.tsx
-│   │   ├── SortButtonGroup.tsx
+│   │   ├── SortButtonGroup/
 │   │   ├── StockCard/       # 股票卡片元件同子元件
 │   │   │   ├── index.tsx
 │   │   │   ├── CardHeader.tsx
 │   │   │   ├── PriceDisplay.tsx
-│   │   │   ├── ValuationMetrics.tsx
+│   │   │   ├── ValuationMetrics/
 │   │   │   ├── CompactValuationBar.tsx
 │   │   │   └── constants.ts
 │   │   └── StockGrid.tsx
 │   ├── stores/             # Zustand stores
 │   │   ├── useStockDataStore.ts        # Stock data, fetch, polling
 │   │   ├── useStockPreferencesStore.ts # Sort order, market filter
-│   │   └── useThemeStore.ts
 │   ├── utils/              # 工具函式
-│   │   └── sortStocks.ts
+│   │   ├── api.ts
+│   │   ├── stockHelpers.ts
+│   │   └── valuationBar.ts
 │   ├── types.ts            # TypeScript 型別定義
 │   ├── valuation.ts        # 估值邏輯
 │   ├── app.tsx             # 主 App 元件
@@ -109,7 +109,7 @@ stock-valuation/
 ├── public/                 # 靜態資源
 ├── .github/
 │   └── workflows/
-│       └── deploy.yml      # GitHub Pages 部署
+│       └── ci.yml          # lint、測試、型別及 build 檢查
 └── package.json
 ```
 
@@ -152,7 +152,7 @@ Google Sheets 至少需要以下欄位：
 
 ## 部署
 
-個 App 會喺每次 push 去 `main` branch 嗰陣透過 GitHub Actions 自動部署去 GitHub Pages。
+GitHub Actions 會喺每次 push 去 `main` 或建立 Pull Request 時執行 lint、型別檢查、測試同 production build。部署可將 `dist/` 發佈到 GitHub Pages 或其他靜態網站服務。
 
 ### 手動部署
 

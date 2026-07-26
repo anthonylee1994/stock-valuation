@@ -17,8 +17,6 @@ export default defineConfig({
                     if (id.includes("@heroui")) return "vendor-heroui";
                     if (id.includes("react-icons")) return "vendor-icons";
                     if (id.includes("zustand")) return "vendor-zustand";
-                    if (id.includes("axios")) return "vendor-axios";
-                    if (id.includes("moment")) return "vendor-moment";
                     if (id.includes("react") || id.includes("scheduler")) return "vendor-react";
                 },
             },

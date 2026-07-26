@@ -24,7 +24,7 @@ describe("usePolling", () => {
 
     it("starts polling after valuation data is loaded and cleans up on unmount", async () => {
         const cleanup = vi.fn();
-        const fetchValuationData = vi.fn().mockResolvedValue(undefined);
+        const fetchValuationData = vi.fn().mockResolvedValue(true);
         const startPolling = vi.fn().mockReturnValue(cleanup);
 
         getState.mockReturnValue({
@@ -45,10 +45,10 @@ describe("usePolling", () => {
     });
 
     it("does not start polling if the hook unmounts before valuation data resolves", async () => {
-        let resolveFetch: (() => void) | undefined;
+        let resolveFetch: ((loaded: boolean) => void) | undefined;
         const fetchValuationData = vi.fn(
             () =>
-                new Promise<void>(resolve => {
+                new Promise<boolean>(resolve => {
                     resolveFetch = resolve;
                 })
         );
@@ -62,14 +62,14 @@ describe("usePolling", () => {
         const {unmount} = renderHook(() => usePolling("us_market", null));
 
         unmount();
-        resolveFetch?.();
+        resolveFetch?.(true);
         await Promise.resolve();
 
         expect(startPolling).not.toHaveBeenCalled();
     });
 
     it("fetches fresh quotes when market or sector changes", async () => {
-        const fetchValuationData = vi.fn().mockResolvedValue(undefined);
+        const fetchValuationData = vi.fn().mockResolvedValue(true);
         const fetchQuotes = vi.fn().mockResolvedValue(undefined);
         const startPolling = vi.fn().mockReturnValue(vi.fn());
 
@@ -90,5 +90,22 @@ describe("usePolling", () => {
         rerender({marketFilter: "hk_market", sectorFilter: "科技"});
 
         expect(fetchQuotes).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not start polling when valuation data fails to load", async () => {
+        const fetchValuationData = vi.fn().mockResolvedValue(false);
+        const startPolling = vi.fn();
+
+        getState.mockReturnValue({
+            fetchValuationData,
+            startPolling,
+        } as unknown as StockDataStore);
+
+        renderHook(() => usePolling("us_market", null));
+
+        await waitFor(() => {
+            expect(fetchValuationData).toHaveBeenCalledTimes(1);
+        });
+        expect(startPolling).not.toHaveBeenCalled();
     });
 });

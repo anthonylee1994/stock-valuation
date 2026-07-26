@@ -10,8 +10,8 @@ export function usePolling(marketFilter: MarketFilter, sectorFilter: Sector | nu
         let cancelled = false;
         let cleanup: (() => void) | undefined;
 
-        void fetchValuationData().then(() => {
-            if (cancelled) {
+        void fetchValuationData().then(loaded => {
+            if (cancelled || !loaded) {
                 return;
             }
 

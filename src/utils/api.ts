@@ -1,10 +1,5 @@
-import axios, {AxiosError} from "axios";
-
 const MAX_RETRIES = 2;
-
-type RetryableConfig = {
-    __retryCount?: number;
-};
+const REQUEST_TIMEOUT = 15_000;
 
 // Validate environment variables
 const API_URL = import.meta.env.VITE_QUOTES_API_URL;
@@ -12,48 +7,47 @@ if (!API_URL) {
     throw new Error("VITE_QUOTES_API_URL environment variable is not defined");
 }
 
-export const api = axios.create({
-    baseURL: API_URL,
-    timeout: 15000, // 15 seconds timeout
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
+function wait(delay: number, signal?: AbortSignal) {
+    return new Promise<void>((resolve, reject) => {
+        const timeout = window.setTimeout(() => {
+            signal?.removeEventListener("abort", handleAbort);
+            resolve();
+        }, delay);
+        const handleAbort = () => {
+            window.clearTimeout(timeout);
+            reject(signal?.reason ?? new DOMException("Request aborted", "AbortError"));
+        };
 
-// Request interceptor
-api.interceptors.request.use(
-    config => {
-        return config;
-    },
-    error => {
-        return Promise.reject(error);
-    }
-);
+        signal?.addEventListener("abort", handleAbort, {once: true});
+    });
+}
 
-// Response interceptor with retry logic
-api.interceptors.response.use(
-    response => response,
-    async (error: AxiosError) => {
-        const config = error.config;
+export async function getJson<T>(path: string, signal?: AbortSignal): Promise<T> {
+    const url = `${API_URL.replace(/\/$/, "")}${path}`;
 
-        if (!config) {
-            return Promise.reject(error);
+    for (let attempt = 0; ; attempt += 1) {
+        const timeoutSignal = AbortSignal.timeout(REQUEST_TIMEOUT);
+        const requestSignal = signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal;
+
+        try {
+            const response = await fetch(url, {signal: requestSignal});
+
+            if (!response.ok) {
+                const error = new Error(`API request failed: ${response.status} ${response.statusText}`);
+                if (response.status < 500) {
+                    throw Object.assign(error, {retryable: false});
+                }
+                throw error;
+            }
+
+            return (await response.json()) as T;
+        } catch (error) {
+            const retryable = !(error instanceof Error && "retryable" in error && error.retryable === false);
+            if (signal?.aborted || !retryable || attempt >= MAX_RETRIES) {
+                throw error;
+            }
+
+            await wait(2 ** attempt * 1000, signal);
         }
-
-        const retryConfig = config as typeof config & RetryableConfig;
-        const retryCount = retryConfig.__retryCount ?? 0;
-        const shouldRetry = error.code === "ECONNABORTED" || error.code === "ERR_NETWORK" || (error.response ? error.response.status >= 500 : false);
-
-        // Retry network and 5xx failures with exponential backoff: 1s, 2s
-        if (shouldRetry && retryCount < MAX_RETRIES) {
-            retryConfig.__retryCount = retryCount + 1;
-
-            const delay = Math.pow(2, retryCount) * 1000;
-            await new Promise(resolve => setTimeout(resolve, delay));
-
-            return api(retryConfig);
-        }
-
-        return Promise.reject(error);
     }
-);
+}
