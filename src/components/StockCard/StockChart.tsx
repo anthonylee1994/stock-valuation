@@ -11,7 +11,7 @@ export const StockChart = React.memo<Props>(({symbol, market}) => {
     const src =
         market === "us_market"
             ? `https://charts2.finviz.com/chart.ashx?t=${symbol.toLocaleLowerCase()}`
-            : `https://charts.aastocks.com/servlet/Charts?fontsize=12&15MinDelay=T&lang=1&titlestyle=1&vol=1&Indicator=1&indpara1=10&indpara2=20&indpara3=50&indpara4=100&indpara5=150&scheme=3&com=100&chartwidth=466&chartheight=219&stockid=${symbol.toLocaleLowerCase()}&period=9&type=1&logoStyle=1`;
+            : `https://charts.aastocks.com/servlet/Charts?fontsize=12&15MinDelay=T&lang=1&titlestyle=1&vol=1&Indicator=1&indpara1=10&indpara2=20&indpara3=50&indpara4=100&indpara5=150&scheme=3&com=100&chartwidth=466&chartheight=219&stockid=${symbol.toLocaleLowerCase()}&period=7&type=1&logoStyle=1`;
     // Track the src that has finished (or failed) loading, so a symbol change shows the spinner again
     const [settledSrc, setSettledSrc] = React.useState<string | null>(null);
     const isLoading = settledSrc !== src;
