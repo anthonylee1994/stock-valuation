@@ -30,7 +30,7 @@ export const StockCard = React.memo<Props>(({stock}: Props) => {
             <CardHeader symbol={symbol} name={name} status={status} />
             <div className="divide-y divide-black">
                 <PriceDisplay price={price} change={change} percentChange={percentChange} />
-                <StockChart symbol={symbol} />
+                <StockChart symbol={symbol} market={stock.market} />
                 <ValuationMetrics
                     valuationLow={valuationLow}
                     valuationHigh={valuationHigh}
