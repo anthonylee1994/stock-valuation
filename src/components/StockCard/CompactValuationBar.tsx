@@ -17,7 +17,7 @@ export const CompactValuationBar = React.memo<Props>(({price, valuationLow, valu
     const markerTransition = "transition-[left] duration-500 ease-in-out";
 
     return (
-        <div className="bg-[#262626] px-3 pt-3 pb-3">
+        <div className="bg-[#262626] px-3 py-3">
             <div className="relative h-4 overflow-visible border border-black bg-zinc-900">
                 <div className="absolute inset-0 flex overflow-hidden">
                     <div className={`h-full bg-emerald-400 ${barTransition}`} style={{width: `${lowPosition}%`}} />
@@ -31,16 +31,16 @@ export const CompactValuationBar = React.memo<Props>(({price, valuationLow, valu
                             onClick={() => setIsTooltipOpen(!isTooltipOpen)}
                             className="relative flex cursor-pointer flex-col items-center transition-transform duration-200 hover:scale-125 active:scale-125"
                         >
-                            <div className="relative top-[-3px] z-10 h-5 w-1.5 bg-zinc-50 shadow-[0_0_0_2px_rgba(0,0,0,0.9)]" />
+                            <div className="relative -top-0.75 z-10 h-5 w-1.5 bg-zinc-50 shadow-[0_0_0_2px_rgba(0,0,0,0.9)]" />
                         </Tooltip.Trigger>
                     </div>
-                    <Tooltip.Content placement="bottom" className="rounded-[2px] bg-zinc-50 px-3 py-2 font-mono text-sm font-bold text-zinc-950 shadow-xl">
+                    <Tooltip.Content placement="bottom" className="rounded-xs bg-zinc-50 px-3 py-2 font-mono text-sm font-bold text-zinc-950 shadow-xl">
                         ${formatPrice(price)}
                     </Tooltip.Content>
                 </Tooltip>
             </div>
 
-            <div className="mt-3 flex justify-between gap-3 text-[12px] font-bold uppercase">
+            <div className="mt-3 flex justify-between gap-3 text-xs font-bold uppercase">
                 <span className="min-w-0 truncate text-zinc-400">
                     殘值：<span className="font-bold text-emerald-400">{formatPrice(valuationLow)}</span>
                 </span>
