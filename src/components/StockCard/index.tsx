@@ -7,6 +7,7 @@ import {CompactValuationBar} from "./CompactValuationBar";
 import {areStockCardPropsEqual} from "./comparator";
 import {STATUS_CONFIG} from "./constants";
 import {PriceDisplay} from "./PriceDisplay";
+import {StockChart} from "./StockChart";
 import {ValuationMetrics} from "./ValuationMetrics";
 
 interface Props {
@@ -29,6 +30,7 @@ export const StockCard = React.memo<Props>(({stock}: Props) => {
             <CardHeader symbol={symbol} name={name} status={status} />
             <div className="divide-y divide-black">
                 <PriceDisplay price={price} change={change} percentChange={percentChange} />
+                <StockChart symbol={symbol} />
                 <ValuationMetrics
                     valuationLow={valuationLow}
                     valuationHigh={valuationHigh}
